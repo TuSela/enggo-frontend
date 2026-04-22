@@ -1,0 +1,11 @@
+package com.example.appenggo
+
+data class LoginResponse(
+    val code: Int,
+    val result: ResultData
+)
+
+data class ResultData(
+    val token: String,
+    val authenticated: Boolean
+)
