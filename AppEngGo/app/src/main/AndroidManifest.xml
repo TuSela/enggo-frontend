@@ -13,11 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppEngGo"
-        android:usesCleartextTraffic="true">   <!-- 🔥 THÊM DÒNG NÀY -->
+        android:usesCleartextTraffic="true">
 
         <!-- LOGIN chạy đầu -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,8 +25,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity android:name=".view.MainActivity" />
+        <activity android:name=".view.RegisterActivity" />
 
     </application>
 

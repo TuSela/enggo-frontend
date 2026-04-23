@@ -4,14 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.appenggo"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36 // Nâng lên 36 để tương thích với thư viện mới
 
     defaultConfig {
         applicationId = "com.example.appenggo"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 36 // Nâng lên 36
         versionCode = 1
         versionName = "1.0"
 
@@ -39,6 +37,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    
+    // Lifecycle components
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
