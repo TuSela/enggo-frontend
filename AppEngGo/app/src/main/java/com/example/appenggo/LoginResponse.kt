@@ -1,4 +1,4 @@
-package com.example.appenggo.model
+package com.example.appenggo
 
 data class LoginResponse(
     val code: Int,
