@@ -1,4 +1,4 @@
-package com.example.appenggo
+package com.example.appenggo.model
 
 data class LoginRequest(
     val username: String,

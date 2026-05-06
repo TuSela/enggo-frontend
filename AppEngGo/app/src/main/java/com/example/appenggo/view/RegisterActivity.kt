@@ -1,4 +1,4 @@
-package com.example.appenggo
+package com.example.appenggo.view
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -7,36 +7,74 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.lifecycle.ViewModelProvider
+import com.example.appenggo.R
+import com.example.appenggo.RetrofitClient
+import com.example.appenggo.model.SignupRequest
+import com.example.appenggo.repository.AuthRepository
+import com.example.appenggo.viewmodel.AuthResult
+import com.example.appenggo.viewmodel.AuthViewModel
+import com.example.appenggo.viewmodel.AuthViewModelFactory
 
 class RegisterActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: AuthViewModel
+    
     private lateinit var edUsername: EditText
     private lateinit var edEmail: EditText
     private lateinit var edPassword: EditText
     private lateinit var edConfirmPassword: EditText
     private lateinit var btnRegister: Button
-    private lateinit var txtLogin: TextView // Thêm dòng này
+    private lateinit var txtLogin: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        setupViewModel()
+        initViews()
+        observeViewModel()
+    }
+
+    private fun setupViewModel() {
+        val repository = AuthRepository(RetrofitClient.api)
+        val factory = AuthViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
+    }
+
+    private fun initViews() {
         edUsername = findViewById(R.id.edtUsername)
         edEmail = findViewById(R.id.edtEmail)
         edPassword = findViewById(R.id.edtPassword)
         edConfirmPassword = findViewById(R.id.edtConfirmPassword)
         btnRegister = findViewById(R.id.btnRegister)
-        txtLogin = findViewById(R.id.txtLogin) // Thêm dòng này
-
-        // Quay lại màn hình đăng nhập
-        txtLogin.setOnClickListener {
-            finish() // Đóng RegisterActivity để quay lại LoginActivity
-        }
+        txtLogin = findViewById(R.id.txtLogin)
 
         btnRegister.setOnClickListener {
             handleRegister()
+        }
+
+        txtLogin.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun observeViewModel() {
+        viewModel.signupResult.observe(this) { result ->
+            when (result) {
+                is AuthResult.Loading -> {
+                    btnRegister.isEnabled = false
+                }
+                is AuthResult.Success -> {
+                    btnRegister.isEnabled = true
+                    Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+                is AuthResult.Error -> {
+                    btnRegister.isEnabled = true
+                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -50,42 +88,20 @@ class RegisterActivity : AppCompatActivity() {
             edUsername.error = "Nhập username!"
             return
         }
-
         if (TextUtils.isEmpty(email)) {
             edEmail.error = "Nhập email!"
             return
         }
-
         if (TextUtils.isEmpty(password)) {
             edPassword.error = "Nhập password!"
             return
         }
-        if (TextUtils.isEmpty(confirmPassword)) {
-            edConfirmPassword.error = "Nhập lại password!"
-            return
-        }
-
         if (password != confirmPassword) {
             edConfirmPassword.error = "Mật khẩu không khớp!"
             return
         }
 
         val request = SignupRequest(username, email, password)
-
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitClient.api.signup(request)
-
-                if (response.isSuccessful) {
-                    Toast.makeText(this@RegisterActivity, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this@RegisterActivity, "Đăng ký thất bại!", Toast.LENGTH_SHORT).show()
-                }
-
-            } catch (e: Exception) {
-                Toast.makeText(this@RegisterActivity, "Lỗi kết nối!", Toast.LENGTH_SHORT).show()
-            }
-        }
+        viewModel.signup(request)
     }
 }
