@@ -28,6 +28,9 @@
         <activity android:name=".view.MainActivity" />
         <activity android:name=".view.RegisterActivity" />
         <activity android:name=".view.VocabularyActivity" />
+        <activity android:name=".view.PvpActivity" />
+        <activity android:name=".view.QuizActivity" />
+        <activity android:name=".view.QuizResultActivity" />
 
     </application>
 

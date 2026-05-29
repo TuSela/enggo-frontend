@@ -21,6 +21,8 @@ class HomeFragment : Fragment() {
     private var pbDailyMission: ProgressBar? = null
     private var btnLearnVocabulary: View? = null
 
+    private var btn_battle: View? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,6 +45,7 @@ class HomeFragment : Fragment() {
         tvProgress = view.findViewById(R.id.tv_progress)
         pbDailyMission = view.findViewById(R.id.pb_daily_mission)
         btnLearnVocabulary = view.findViewById(R.id.btn_learn_vocabulary)
+        btn_battle = view.findViewById(R.id.btn_battle)
     }
 
     private fun setupClickListeners() {
@@ -50,7 +53,14 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), VocabularyActivity::class.java)
             startActivity(intent)
         }
+        btn_battle?.setOnClickListener {
+            // Nếu bạn đã tạo PvpActivity
+            val intent = Intent(requireContext(), PvpActivity::class.java)
+            startActivity(intent)
+        }
+
     }
+
 
     private fun observeViewModel() {
         viewModel.userStats.observe(viewLifecycleOwner) { stats ->
