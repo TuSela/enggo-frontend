@@ -3,7 +3,7 @@ package com.example.appenggo.view
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -13,8 +13,8 @@ class PvpActivity : AppCompatActivity() {
 
     private lateinit var tabRanking: TextView
     private lateinit var tabInvite: TextView
-    private lateinit var layoutRankingContent: LinearLayout
-    private lateinit var layoutInviteContent: LinearLayout
+    private lateinit var layoutRankingContent: ScrollView
+    private lateinit var layoutInviteContent: ScrollView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +52,12 @@ class PvpActivity : AppCompatActivity() {
         layoutInviteContent.visibility = View.GONE
 
         // Cập nhật Style cho Tab Xếp Hạng (Active)
-        tabRanking.background = ContextCompat.getDrawable(this, R.drawable.btn_blue_fancy)
-        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.white))
+        tabRanking.background = ContextCompat.getDrawable(this, R.drawable.bg_pvp_tab_selected)
+        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.primary_blue))
 
         // Cập nhật Style cho Tab Mời Bạn (Inactive)
-        tabInvite.background = ContextCompat.getDrawable(this, R.drawable.bg_card_light_blue)
-        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.black))
+        tabInvite.background = null
+        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.gray_text))
     }
 
     private fun showInviteTab() {
@@ -66,11 +66,11 @@ class PvpActivity : AppCompatActivity() {
         layoutRankingContent.visibility = View.GONE
 
         // Cập nhật Style cho Tab Mời Bạn (Active)
-        tabInvite.background = ContextCompat.getDrawable(this, R.drawable.btn_blue_fancy)
-        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.white))
+        tabInvite.background = ContextCompat.getDrawable(this, R.drawable.bg_pvp_tab_selected)
+        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.primary_blue))
 
         // Cập nhật Style cho Tab Xếp Hạng (Inactive)
-        tabRanking.background = ContextCompat.getDrawable(this, R.drawable.bg_card_light_blue)
-        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.black))
+        tabRanking.background = null
+        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.gray_text))
     }
 }

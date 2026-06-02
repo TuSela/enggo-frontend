@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Lớp đế đậm tạo hiệu ứng 3D -->
+    <item>
+        <shape>
+            <solid android:color="#D35400" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+    <!-- Lớp mặt màu cam sáng -->
+    <item android:bottom="6dp">
+        <shape>
+            <solid android:color="#FF9600" />
+            <corners android:radius="14dp" />
+        </shape>
+    </item>
+</layer-list>
