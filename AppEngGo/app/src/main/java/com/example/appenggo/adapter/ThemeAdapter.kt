@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
@@ -23,14 +24,17 @@ class ThemeAdapter(
 
         fun bind(theme: ThemeResponse, position: Int) {
             tvThemeName.text = theme.themeName
-            
-            // Highlight selected item
+
+            val ivCheck = itemView.findViewById<ImageView>(R.id.iv_check)
+
             if (selectedPosition == position) {
-                cardTheme.setStrokeWidth(4)
-                cardTheme.setCardBackgroundColor(ContextCompat.getColor(itemView.context, R.color.bg_light_blue))
+                cardTheme.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_pvp_setting_card_selected)
+                cardTheme.strokeWidth = 0
+                ivCheck.visibility = View.VISIBLE
             } else {
-                cardTheme.setStrokeWidth(0)
-                cardTheme.setCardBackgroundColor(ContextCompat.getColor(itemView.context, R.color.white))
+                cardTheme.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_pvp_setting_card)
+                cardTheme.strokeWidth = 0
+                ivCheck.visibility = View.GONE
             }
 
             itemView.setOnClickListener {

@@ -2,18 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="HOME" />
+    <item
+        android:id="@+id/nav_learn"
         android:icon="@drawable/ic_book"
-        android:title="Học tập" />
+        android:title="LEARN" />
     <item
-        android:id="@+id/nav_ranking"
+        android:id="@+id/nav_pvp"
         android:icon="@drawable/ic_sword"
-        android:title="Xếp hạng" />
+        android:title="PVP" />
     <item
-        android:id="@+id/nav_community"
+        android:id="@+id/nav_friend"
         android:icon="@drawable/ic_group"
-        android:title="Cộng đồng" />
+        android:title="FRIEND" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_user"
-        android:title="Cá nhân" />
+        android:title="PROFILE" />
 </menu>
