@@ -28,6 +28,12 @@ interface ApiService {
         @Query("diffs") diffs: Int
     ): ApiResponse<PageResponse<ExamItemResponse>>
 
+    @POST("api/exams/random")
+    suspend fun getRandomExam(
+        @Header("Authorization") token: String,
+        @Body request: RandomExamRequest
+    ): ApiResponse<RandomExamResponse>
+
     @GET("api/exams/{id}/start")
     suspend fun startExam(
         @Header("Authorization") token: String,

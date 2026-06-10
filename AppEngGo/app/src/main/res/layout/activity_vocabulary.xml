@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFFFFF"
-    android:padding="20dp">
+    android:background="#FFFFFF">
 
     <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp">
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
+            android:padding="4dp"
             android:src="@drawable/ic_arrow_back" />
 
         <TextView
@@ -26,96 +27,222 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Luyện từ vựng"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textColor="#3C3C3C"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium" />
     </RelativeLayout>
 
-    <!-- PHẦN 1: CHỌN CHỦ ĐỀ (Có thể cuộn) -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1.2"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1. Chọn chủ đề"
-            android:textColor="@color/primary_blue"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_themes"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="12dp"
-            android:scrollbars="vertical" />
-    </LinearLayout>
-
-    <!-- ĐƯỜNG NGĂN CÁCH (Divider) -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#F0F0F0"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp" />
-
-    <!-- PHẦN 2: CHỌN ĐỘ KHÓ VÀ TÌM KIẾM (Cố định ở dưới) -->
+    <!-- PHẦN 1: CHỌN CHỦ ĐỀ — scroll được, chiếm phần còn lại -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2. Chọn độ khó"
-            android:textColor="@color/primary_blue"
-            android:textSize="18sp"
+            android:text="Chọn chủ đề"
+            android:textColor="#1A1A1A"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Chọn chủ đề bạn muốn luyện tập"
+            android:textColor="#9E9E9E"
+            android:textSize="13sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_themes"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="14dp"
+            android:scrollbars="none" />
+    </LinearLayout>
+
+    <!-- PHẦN CỐ ĐỊNH: Độ khó + Số câu + Nút bắt đầu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <!-- Độ khó -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
-            <TextView android:id="@+id/tv_easy" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Dễ" android:gravity="center" android:padding="10dp" android:background="@drawable/bg_chip_gray" android:layout_marginEnd="5dp"/>
-            <TextView android:id="@+id/tv_medium" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Vừa" android:gravity="center" android:padding="10dp" android:background="@drawable/bg_chip_gray" android:layout_marginHorizontal="5dp"/>
-            <TextView android:id="@+id/tv_hard" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Khó" android:gravity="center" android:padding="10dp" android:background="@drawable/bg_chip_gray" android:layout_marginStart="5dp"/>
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_difficulty"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Độ khó"
+                    android:textColor="#3C3C3C"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Container 1 khối xám, chip active nổi lên -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_difficulty_container"
+                android:padding="4dp">
+
+                <TextView
+                    android:id="@+id/tv_easy"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Dễ"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@android:color/transparent"
+                    android:textColor="#6B7280" />
+
+                <TextView
+                    android:id="@+id/tv_medium"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Trung bình"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_button_orange_grad"
+                    android:textColor="#FFFFFF" />
+
+                <TextView
+                    android:id="@+id/tv_hard"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="Khó"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:background="@android:color/transparent"
+                    android:textColor="#6B7280" />
+            </LinearLayout>
         </LinearLayout>
 
+
+        <!-- Số câu -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_list"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Số câu"
+                    android:textColor="#3C3C3C"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Container 1 khối cho counter -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_pvp_setting_card"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/btn_count_minus"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="−"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_counter_btn"
+                    android:textColor="#3D3D3D" />
+
+                <TextView
+                    android:id="@+id/tv_count_value"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="20"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A1A"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/btn_count_plus"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="+"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:background="@drawable/bg_counter_btn"
+                    android:textColor="#3D3D3D" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Nút bắt đầu -->
         <Button
             android:id="@+id/btn_start"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/btn_orange_fancy"
-            android:text="Tìm kiếm đề thi"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_button_orange_grad"
+            android:text="BẮT ĐẦU LUYỆN TẬP"
             android:textColor="#FFFFFF"
+            android:textSize="16sp"
             android:textStyle="bold"
+            android:letterSpacing="0.04"
             app:backgroundTint="@null" />
 
-        <!-- AREA TO SHOW RESULTS (Bên trong phần 2, có thể cuộn nếu kết quả dài) -->
-        <TextView
-            android:id="@+id/tv_results_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="3. Danh sách đề thi"
-            android:textColor="@color/primary_blue"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="20dp"
-            android:visibility="gone" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_exams"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:visibility="gone" />
-
     </LinearLayout>
+
 </LinearLayout>

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +17,6 @@ class HomeFragment : Fragment() {
     private var tvStreak: TextView? = null
     private var tvLevel: TextView? = null
     private var tvProgress: TextView? = null
-    private var pbDailyMission: ProgressBar? = null
     private var btnLearnVocabulary: View? = null
 
     private var btn_battle: View? = null
@@ -43,7 +41,6 @@ class HomeFragment : Fragment() {
         tvStreak = view.findViewById(R.id.tv_streak)
         tvLevel = view.findViewById(R.id.tv_level)
         tvProgress = view.findViewById(R.id.tv_progress)
-        pbDailyMission = view.findViewById(R.id.pb_daily_mission)
         btnLearnVocabulary = view.findViewById(R.id.btn_learn_vocabulary)
         btn_battle = view.findViewById(R.id.btn_battle)
     }
@@ -64,14 +61,9 @@ class HomeFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.userStats.observe(viewLifecycleOwner) { stats ->
-            tvStreak?.text = "🔥 ${stats.streak}"
+            tvStreak?.text = " ${stats.streak}"
             tvLevel?.text = "LV. ${stats.level}"
             tvProgress?.text = "${stats.currentProgress}/${stats.totalProgress}"
-            
-            if (stats.totalProgress > 0) {
-                val progressPercent = (stats.currentProgress.toFloat() / stats.totalProgress * 100).toInt()
-                pbDailyMission?.progress = progressPercent
-            }
         }
     }
 }

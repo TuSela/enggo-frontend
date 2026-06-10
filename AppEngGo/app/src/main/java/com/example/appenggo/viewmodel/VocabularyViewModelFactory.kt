@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.repository.ThemeRepository
 
-class VocabularyViewModelFactory(private val repository: ThemeRepository) : ViewModelProvider.Factory {
+class VocabularyViewModelFactory(
+    private val repository: ThemeRepository
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(VocabularyViewModel::class.java) -> {
@@ -15,7 +17,7 @@ class VocabularyViewModelFactory(private val repository: ThemeRepository) : View
                 @Suppress("UNCHECKED_CAST")
                 QuizViewModel(repository) as T
             }
-            else -> throw IllegalArgumentException("Unknown ViewModel class")
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }

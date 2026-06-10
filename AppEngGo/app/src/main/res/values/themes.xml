@@ -6,6 +6,15 @@
 
     <style name="Theme.AppEngGo" parent="Base.Theme.AppEngGo" />
 
+    <!-- Style cho BottomSheet để có góc bo tròn -->
+    <style name="BottomSheetDialogTheme" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet_rounded</item>
+    </style>
+
     <!-- Ẩn indicator mặc định của Material -->
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@android:color/transparent</item>

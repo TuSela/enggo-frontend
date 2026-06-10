@@ -3,7 +3,6 @@ package com.example.appenggo.view
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,25 +10,29 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
 import com.example.appenggo.Resource
 import com.example.appenggo.RetrofitClient
-import com.example.appenggo.adapter.ExamAdapter
 import com.example.appenggo.adapter.ThemeAdapter
 import com.example.appenggo.repository.ThemeRepository
 import com.example.appenggo.viewmodel.VocabularyViewModel
 import com.example.appenggo.viewmodel.VocabularyViewModelFactory
+import com.google.gson.Gson
 
 class VocabularyActivity : AppCompatActivity() {
 
     private lateinit var viewModel: VocabularyViewModel
     private lateinit var themeAdapter: ThemeAdapter
-    private lateinit var examAdapter: ExamAdapter
-    
+
     private var selectedThemeId: Int? = null
     private var selectedDifficulty = 1
+    private var selectedCount = 10
+    private val minCount = 5
+    private val maxCount = 20
+    private val stepCount = 5
+    private val defaultQuestionTypes = listOf("MULTIPLE_CHOICE", "FILL_BLANK", "MATCHING")
+    private var isNavigating = false  // flag tránh navigate 2 lần
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +41,7 @@ class VocabularyActivity : AppCompatActivity() {
         setupViewModel()
         initViews()
         setupObservers()
-        
+
         val token = getToken()
         if (token != null) {
             viewModel.fetchThemes(token)
@@ -46,6 +49,11 @@ class VocabularyActivity : AppCompatActivity() {
             Toast.makeText(this, "Vui lòng đăng nhập lại!", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isNavigating = false  // reset khi quay lại từ QuizActivity
     }
 
     private fun getToken(): String? {
@@ -60,105 +68,111 @@ class VocabularyActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        val btnBack = findViewById<ImageView>(R.id.btn_back)
-        val btnStart = findViewById<Button>(R.id.btn_start)
-        val rvThemes = findViewById<RecyclerView>(R.id.rv_themes)
-        val rvExams = findViewById<RecyclerView>(R.id.rv_exams)
-        val tvResultsLabel = findViewById<TextView>(R.id.tv_results_label)
+        val btnBack      = findViewById<ImageView>(R.id.btn_back)
+        val btnStart     = findViewById<Button>(R.id.btn_start)
+        val rvThemes     = findViewById<RecyclerView>(R.id.rv_themes)
+        val tvEasy       = findViewById<TextView>(R.id.tv_easy)
+        val tvMedium     = findViewById<TextView>(R.id.tv_medium)
+        val tvHard       = findViewById<TextView>(R.id.tv_hard)
+        val btnMinus     = findViewById<TextView>(R.id.btn_count_minus)
+        val btnPlus      = findViewById<TextView>(R.id.btn_count_plus)
+        val tvCountValue = findViewById<TextView>(R.id.tv_count_value)
 
-        val tvEasy = findViewById<TextView>(R.id.tv_easy)
-        val tvMedium = findViewById<TextView>(R.id.tv_medium)
-        val tvHard = findViewById<TextView>(R.id.tv_hard)
-
-        // 1. Setup RecyclerView cho Chủ đề
         themeAdapter = ThemeAdapter(emptyList()) { selectedTheme ->
             selectedThemeId = selectedTheme.id
         }
         rvThemes.layoutManager = GridLayoutManager(this, 2)
         rvThemes.adapter = themeAdapter
 
-        // 2. Setup RecyclerView cho Đề thi
-        examAdapter = ExamAdapter(emptyList()) { selectedExam ->
-            // Chuyển sang QuizActivity khi chọn đề
-            val intent = Intent(this, QuizActivity::class.java)
-            intent.putExtra("EXAM_ID", selectedExam.id)
-            startActivity(intent)
-        }
-        rvExams.layoutManager = LinearLayoutManager(this)
-        rvExams.adapter = examAdapter
-
         btnBack.setOnClickListener { finish() }
 
-        // Logic chọn độ khó
-        tvEasy.setOnClickListener { updateDifficultyUI(1, tvEasy, tvMedium, tvHard) }
+        tvEasy.setOnClickListener   { updateDifficultyUI(1, tvEasy, tvMedium, tvHard) }
         tvMedium.setOnClickListener { updateDifficultyUI(2, tvMedium, tvEasy, tvHard) }
-        tvHard.setOnClickListener { updateDifficultyUI(3, tvHard, tvEasy, tvMedium) }
-
+        tvHard.setOnClickListener   { updateDifficultyUI(3, tvHard, tvEasy, tvMedium) }
         updateDifficultyUI(1, tvEasy, tvMedium, tvHard)
 
-        // Nút "Tìm đề thi"
+        updateCountDisplay(tvCountValue, btnMinus, btnPlus)
+
+        btnMinus.setOnClickListener {
+            if (selectedCount > minCount) {
+                selectedCount -= stepCount
+                updateCountDisplay(tvCountValue, btnMinus, btnPlus)
+            }
+        }
+        btnPlus.setOnClickListener {
+            if (selectedCount < maxCount) {
+                selectedCount += stepCount
+                updateCountDisplay(tvCountValue, btnMinus, btnPlus)
+            }
+        }
+
         btnStart.setOnClickListener {
-            val token = getToken()
+            val token = getToken() ?: return@setOnClickListener
             if (selectedThemeId == null) {
                 Toast.makeText(this, "Hãy chọn một chủ đề trước!", Toast.LENGTH_SHORT).show()
-            } else if (token != null) {
-                viewModel.searchExams(token, selectedThemeId!!, selectedDifficulty)
+                return@setOnClickListener
             }
+            viewModel.getRandomExam(
+                token          = token,
+                themeId        = selectedThemeId!!,
+                difficulty     = selectedDifficulty,
+                totalQuestions = selectedCount,
+                questionTypes  = defaultQuestionTypes
+            )
         }
     }
 
     private fun setupObservers() {
-        // Quan sát danh sách chủ đề
         viewModel.themes.observe(this) { resource ->
             when (resource) {
-                is Resource.Success -> {
-                    resource.data?.let { themeAdapter.updateData(it) }
-                }
-                is Resource.Error -> {
-                    Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
-                }
+                is Resource.Success -> resource.data?.let { themeAdapter.updateData(it) }
+                is Resource.Error   -> Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
                 else -> {}
             }
         }
 
-        // Quan sát kết quả tìm kiếm đề thi
-        viewModel.exams.observe(this) { resource ->
-            val rvExams = findViewById<RecyclerView>(R.id.rv_exams)
-            val tvResultsLabel = findViewById<TextView>(R.id.tv_results_label)
+        viewModel.randomExam.observe(this) { resource ->
             val btnStart = findViewById<Button>(R.id.btn_start)
-
             when (resource) {
                 is Resource.Loading -> {
                     btnStart.isEnabled = false
+                    btnStart.text = "Đang tải..."
                 }
                 is Resource.Success -> {
                     btnStart.isEnabled = true
-                    val examsList = resource.data?.content
-                    if (!examsList.isNullOrEmpty()) {
-                        examAdapter.updateData(examsList)
-                        tvResultsLabel.visibility = View.VISIBLE
-                        rvExams.visibility = View.VISIBLE
-                    } else {
-                        tvResultsLabel.visibility = View.GONE
-                        rvExams.visibility = View.GONE
-                        Toast.makeText(this, "Không có đề thi nào phù hợp!", Toast.LENGTH_SHORT).show()
+                    btnStart.text = "Bắt đầu"
+                    if (!isNavigating) {
+                        isNavigating = true
+                        resource.data?.let { examData ->
+                            val intent = Intent(this, QuizActivity::class.java).apply {
+                                putExtra("EXAM_DATA", Gson().toJson(examData))
+                            }
+                            startActivity(intent)
+                        }
                     }
                 }
                 is Resource.Error -> {
                     btnStart.isEnabled = true
+                    btnStart.text = "Bắt đầu"
                     Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    private fun updateDifficultyUI(diff: Int, selected: TextView, unselected1: TextView, unselected2: TextView) {
+    private fun updateCountDisplay(tvValue: TextView, btnMinus: TextView, btnPlus: TextView) {
+        tvValue.text   = "$selectedCount câu"
+        btnMinus.alpha = if (selectedCount <= minCount) 0.3f else 1f
+        btnPlus.alpha  = if (selectedCount >= maxCount) 0.3f else 1f
+    }
+
+    private fun updateDifficultyUI(diff: Int, selected: TextView, vararg unselected: TextView) {
         selectedDifficulty = diff
         selected.setBackgroundResource(R.drawable.bg_button_orange_grad)
         selected.setTextColor(Color.WHITE)
-        unselected1.setBackgroundResource(R.drawable.bg_chip_gray)
-        unselected1.setTextColor(Color.BLACK)
-        unselected2.setBackgroundResource(R.drawable.bg_chip_gray)
-        unselected2.setTextColor(Color.BLACK)
+        unselected.forEach {
+            it.setBackgroundColor(Color.TRANSPARENT)
+            it.setTextColor(Color.parseColor("#6B7280"))
+        }
     }
 }

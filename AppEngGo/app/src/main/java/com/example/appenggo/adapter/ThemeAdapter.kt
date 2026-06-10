@@ -62,4 +62,15 @@ class ThemeAdapter(
         this.themes = newThemes
         notifyDataSetChanged()
     }
+    fun getSelectedTheme(): ThemeResponse? {
+        return if (selectedPosition >= 0) themes[selectedPosition] else null
+    }
+
+    fun setSelectedTheme(id: Int) {
+        val index = themes.indexOfFirst { it.id == id }
+        if (index >= 0) {
+            selectedPosition = index
+            notifyDataSetChanged()
+        }
+    }
 }
