@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appenggo.Resource
-import com.example.appenggo.model.ExamItemResponse
-import com.example.appenggo.model.PageResponse
-import com.example.appenggo.model.ThemeResponse
+import com.example.appenggo.model.Response.ExamItemResponse
+import com.example.appenggo.model.Response.PageResponse
+import com.example.appenggo.model.Response.ThemeResponse
 import com.example.appenggo.repository.ThemeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

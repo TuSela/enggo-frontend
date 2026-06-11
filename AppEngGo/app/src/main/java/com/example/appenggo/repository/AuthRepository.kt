@@ -1,9 +1,9 @@
 package com.example.appenggo.repository
 
 import com.example.appenggo.ApiService
-import com.example.appenggo.model.LoginRequest
-import com.example.appenggo.model.LoginResponse
-import com.example.appenggo.model.SignupRequest
+import com.example.appenggo.model.Request.LoginRequest
+import com.example.appenggo.model.Response.LoginResponse
+import com.example.appenggo.model.Request.SignupRequest
 import retrofit2.Response
 
 class AuthRepository(private val apiService: ApiService) {

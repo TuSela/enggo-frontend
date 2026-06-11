@@ -1,6 +1,8 @@
 package com.example.appenggo
 
-import com.example.appenggo.model.*
+import com.example.appenggo.model.Request.LoginRequest
+import com.example.appenggo.model.Request.SignupRequest
+import com.example.appenggo.model.Response.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -41,4 +43,16 @@ interface ApiService {
         @Path("attemptId") attemptId: Int,
         @Body request: SubmitExamRequest
     ): ApiResponse<SubmitExamResponse>
+
+    // Friend API
+    @POST("api/friends/request/{receiverId}")
+    suspend fun sendFriendRequest(
+        @Header("Authorization") token: String,
+        @Path("receiverId") receiverId: Int
+    ): ApiResponse<Boolean>
+    
+    @GET("api/social/friends")
+    suspend fun getFriends(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<UserResponse>>
 }

@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appenggo.model.LoginRequest
-import com.example.appenggo.model.LoginResponse
-import com.example.appenggo.model.SignupRequest
+import com.example.appenggo.model.Request.LoginRequest
+import com.example.appenggo.model.Response.LoginResponse
+import com.example.appenggo.model.Request.SignupRequest
 import com.example.appenggo.repository.AuthRepository
 import kotlinx.coroutines.launch
 

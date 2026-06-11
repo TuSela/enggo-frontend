@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
-import com.example.appenggo.model.ThemeResponse
+import com.example.appenggo.model.Response.ThemeResponse
 import com.google.android.material.card.MaterialCardView
 
 class ThemeAdapter(

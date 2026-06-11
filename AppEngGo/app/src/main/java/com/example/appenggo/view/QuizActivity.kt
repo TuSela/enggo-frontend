@@ -19,8 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.Resource
 import com.example.appenggo.RetrofitClient
-import com.example.appenggo.model.ExamQuestionWrapper
-import com.example.appenggo.model.SubmitExamResponse
+import com.example.appenggo.model.Response.ExamQuestionWrapper
+import com.example.appenggo.model.Response.SubmitExamResponse
 import com.example.appenggo.repository.ThemeRepository
 import com.example.appenggo.viewmodel.QuizViewModel
 import com.example.appenggo.viewmodel.VocabularyViewModelFactory

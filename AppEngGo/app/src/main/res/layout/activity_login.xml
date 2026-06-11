@@ -94,7 +94,8 @@
             android:src="@drawable/ic_eye" />
     </RelativeLayout>
 
-    <!-- Button - Sửa ở đây để hiện màu cam -->
+    <!-- Button - Fixed to use standard background property if tint still causes issues,
+         but with proper theme it should work. Also changed type in Activity to MaterialButton -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
@@ -105,7 +106,7 @@
         android:textStyle="bold"
         android:textAllCaps="false"
         app:cornerRadius="30dp"
-        app:backgroundTint="#FF9800"
+        android:backgroundTint="#FF9800"
         app:layout_constraintTop_toBottomOf="@id/layoutPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

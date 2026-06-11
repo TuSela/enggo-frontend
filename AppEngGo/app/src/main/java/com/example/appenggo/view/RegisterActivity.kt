@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.RetrofitClient
-import com.example.appenggo.model.SignupRequest
+import com.example.appenggo.model.Request.SignupRequest
 import com.example.appenggo.repository.AuthRepository
 import com.example.appenggo.viewmodel.AuthResult
 import com.example.appenggo.viewmodel.AuthViewModel

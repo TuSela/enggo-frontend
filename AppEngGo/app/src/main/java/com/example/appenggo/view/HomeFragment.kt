@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.viewmodel.MainViewModel
-
+import android.widget.Toast
 class HomeFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
@@ -22,6 +22,9 @@ class HomeFragment : Fragment() {
     private var btnLearnVocabulary: View? = null
 
     private var btn_battle: View? = null
+
+    private var currentUserId: Int = -1
+    private var currentToken: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,25 +56,50 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), VocabularyActivity::class.java)
             startActivity(intent)
         }
+
         btn_battle?.setOnClickListener {
-            // Nếu bạn đã tạo PvpActivity
-            val intent = Intent(requireContext(), PvpActivity::class.java)
+            if (currentUserId == -1 || currentToken.isEmpty()) {
+                Toast.makeText(requireContext(), "Đang tải thông tin tài khoản, vui lòng thử lại!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // 🎯 TRUYỀN THẲNG SANG PVPACTIVITY
+            val intent = Intent(requireContext(), PvpActivity::class.java).apply {
+                putExtra("USER_ID", currentUserId)
+                putExtra("JWT_TOKEN", currentToken)
+            }
             startActivity(intent)
         }
-
     }
-
-
     private fun observeViewModel() {
         viewModel.userStats.observe(viewLifecycleOwner) { stats ->
+
+            // 🎯 LẤY ID VÀ TOKEN ĐÃ LƯU TRONG SHAREDPREFERENCES LÚC ĐĂNG NHẬP THÀNH CÔNG
+            val sharedPref = requireActivity().getSharedPreferences(
+                "app_prefs",
+                android.content.Context.MODE_PRIVATE
+            )
+            currentUserId = sharedPref.getInt("USER_ID", -1)
+            currentToken = sharedPref.getString("TOKEN", "") ?: ""
+
+            // Log thử ra Logcat để bạn tiện theo dõi xem máy đã bóc đúng dữ liệu chưa
+            android.util.Log.d(
+                "PVP_WS",
+                "HomeFragment bốc được từ bộ nhớ máy - UID: $currentUserId | Token trống?: ${currentToken.isEmpty()}"
+            )
+
+            // Hiển thị các thông số tiến trình học lên giao diện
             tvStreak?.text = "🔥 ${stats.streak}"
             tvLevel?.text = "LV. ${stats.level}"
             tvProgress?.text = "${stats.currentProgress}/${stats.totalProgress}"
-            
+
             if (stats.totalProgress > 0) {
-                val progressPercent = (stats.currentProgress.toFloat() / stats.totalProgress * 100).toInt()
+                val progressPercent =
+                    (stats.currentProgress.toFloat() / stats.totalProgress * 100).toInt()
                 pbDailyMission?.progress = progressPercent
             }
         }
     }
 }
+
+

@@ -1,7 +1,7 @@
 package com.example.appenggo.repository
 
 import com.example.appenggo.ApiService
-import com.example.appenggo.model.SubmitExamRequest
+import com.example.appenggo.model.Response.SubmitExamRequest
 
 class ThemeRepository(private val apiService: ApiService) {
     suspend fun getAllThemes(token: String) = apiService.getAllThemesGroupedByCategory(token)

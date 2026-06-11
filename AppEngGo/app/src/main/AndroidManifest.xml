@@ -30,6 +30,7 @@
         <activity android:name=".view.VocabularyActivity" />
         <activity android:name=".view.PvpActivity" />
         <activity android:name=".view.QuizActivity" />
+        <activity android:name=".view.PvpQuizActivity" />
         <activity android:name=".view.QuizResultActivity" />
 
     </application>

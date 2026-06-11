@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
-import com.example.appenggo.model.ExamItemResponse
+import com.example.appenggo.model.Response.ExamItemResponse
 
 class ExamAdapter(
     private var exams: List<ExamItemResponse>,

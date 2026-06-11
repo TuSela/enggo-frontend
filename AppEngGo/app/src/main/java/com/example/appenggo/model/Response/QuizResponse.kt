@@ -1,4 +1,4 @@
-package com.example.appenggo.model
+package com.example.appenggo.model.Response
 
 import com.google.gson.annotations.SerializedName
 
