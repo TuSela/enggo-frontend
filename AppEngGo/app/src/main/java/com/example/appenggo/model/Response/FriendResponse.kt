@@ -1,11 +1,14 @@
 package com.example.appenggo.model.Response
 
+import com.example.appenggo.model.Request.RandomBlueprintRequest
+
 data class InviteResponse(
     val inviteId: Int,
     val inviterPlayerId: Int,
     val inviteePlayerId: Int,
     val inviterUsername: String,
     val inviteeUsername: String,
+    val randomBlueprintRequest: RandomBlueprintRequest? = null,
     val status: String
 )
 

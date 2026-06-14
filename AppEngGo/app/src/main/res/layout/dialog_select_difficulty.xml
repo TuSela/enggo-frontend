@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card_white"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:background="#E0E0E0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:text="Chọn độ khó"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Easy -->
+    <RelativeLayout
+        android:id="@+id/option_easy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_card_white"
+        android:elevation="1dp"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/iv_easy"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_light_blue"
+            android:padding="8dp"
+            android:src="@drawable/bg_streak"
+            app:tint="@color/primary_blue" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/iv_easy"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dễ"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Câu hỏi cơ bản, thời gian dài"
+                android:textColor="#8E8E8E"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <RadioButton
+            android:id="@+id/rb_easy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <!-- Medium -->
+    <RelativeLayout
+        android:id="@+id/option_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_option_selected"
+        android:elevation="2dp"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/iv_medium"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_light_orange"
+            android:padding="8dp"
+            android:src="@drawable/bg_streak" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/iv_medium"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vừa"
+                android:textColor="@color/primary_orange"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cân bằng thử thách và tốc độ"
+                android:textColor="#8E8E8E"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <RadioButton
+            android:id="@+id/rb_medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:checked="true"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <!-- Hard -->
+    <RelativeLayout
+        android:id="@+id/option_hard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_card_white"
+        android:elevation="1dp"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/iv_hard"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="#FFE8EC"
+            android:padding="8dp"
+            android:src="@drawable/bg_streak"
+            app:tint="#F44336" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/iv_hard"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Khó"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Câu hỏi nâng cao, áp lực thời gian"
+                android:textColor="#8E8E8E"
+                android:textSize="12sp" />
+        </LinearLayout>
+        <RadioButton
+            android:id="@+id/rb_hard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:clickable="false" />
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_confirm_difficulty"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_correct"
+        android:backgroundTint="#76D20C"
+        android:text="XÁC NHẬN"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

@@ -11,10 +11,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
 import com.example.appenggo.adapter.FriendAdapter
+import com.example.appenggo.adapter.SelectThemeAdapter
+import com.example.appenggo.model.Request.RandomBlueprintRequest
+import com.example.appenggo.model.Response.UserResponse
 import com.example.appenggo.viewmodel.PvpViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.json.JSONObject
 
 class PvpActivity : AppCompatActivity() {
@@ -24,16 +30,31 @@ class PvpActivity : AppCompatActivity() {
     private lateinit var layoutRankingContent: LinearLayout
     private lateinit var layoutInviteContent: LinearLayout
 
-    private lateinit var btnEnter: Button
+    private lateinit var btnEnter: Button // Ranking Find Match
+    private lateinit var btnStartPvpFriend: Button // Invite Friend Start
+
     private lateinit var pvpViewModel: PvpViewModel
     private var matchmakingDialog: AlertDialog? = null
+    private var waitingInviteDialog: AlertDialog? = null
 
     // Friend PvP Views
     private lateinit var rvFriends: RecyclerView
     private lateinit var friendAdapter: FriendAdapter
-    private lateinit var tvMyUsernameRanking: TextView
     private lateinit var tvMyUsernameInvite: TextView
     private lateinit var tvNoFriends: TextView
+    private lateinit var viewOpponentPlaceholder: View
+    
+    // Config Display Views
+    private lateinit var tvSelectedTheme: TextView
+    private lateinit var tvSelectedDifficulty: TextView
+    private lateinit var tvSelectedQuestions: TextView
+    
+    // Current Configuration
+    private var selectedThemeIds = mutableListOf<Int>()
+    private var selectedThemeName: String = "Từ vựng"
+    private var selectedDifficulty: Int = 2 // Default Medium (1=Easy, 2=Medium, 3=Hard)
+    private var selectedQuestions: Int = 10
+    private var selectedFriend: UserResponse? = null
 
     private var currentUserId: Int = -1
     private var token: String = ""
@@ -51,7 +72,6 @@ class PvpActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Đánh dấu PvpActivity đang hoạt động để MainActivity không xử lý chồng chéo
         PvpViewModel.isPvpActivityActive = true
     }
 
@@ -65,22 +85,29 @@ class PvpActivity : AppCompatActivity() {
         tabInvite = findViewById(R.id.tab_invite)
         layoutRankingContent = findViewById(R.id.layout_ranking_content)
         layoutInviteContent = findViewById(R.id.layout_invite_content)
+        
         btnEnter = findViewById(R.id.btn_enter)
+        btnStartPvpFriend = findViewById(R.id.btn_start_pvp_friend)
 
         rvFriends = findViewById(R.id.rv_friends_online)
-        tvMyUsernameRanking = findViewById(R.id.tv_username_ranking)
         tvMyUsernameInvite = findViewById(R.id.tv_my_username_invite)
         tvNoFriends = findViewById(R.id.tv_no_friends)
+        viewOpponentPlaceholder = findViewById(R.id.view_opponent_placeholder)
+        
+        tvSelectedTheme = findViewById(R.id.tv_selected_theme)
+        tvSelectedDifficulty = findViewById(R.id.tv_selected_difficulty)
+        tvSelectedQuestions = findViewById(R.id.tv_selected_questions)
 
-        findViewById<ImageView>(R.id.btn_back).setOnClickListener {
-            finish()
-        }
+        findViewById<ImageView>(R.id.btn_back).setOnClickListener { finish() }
 
         friendAdapter = FriendAdapter(emptyList()) { friend ->
-            pvpViewModel.sendInvite(friend.username)
-            Toast.makeText(this, "Đã gửi lời mời tới ${friend.username}", Toast.LENGTH_SHORT).show()
+            selectedFriend = friend
+            Toast.makeText(this, "Đã chọn ${friend.username}", Toast.LENGTH_SHORT).show()
         }
         rvFriends.adapter = friendAdapter
+        rvFriends.layoutManager = LinearLayoutManager(this)
+        
+        updateConfigDisplay()
     }
 
     private fun initViewModel() {
@@ -90,7 +117,7 @@ class PvpActivity : AppCompatActivity() {
         currentUserId = intent.getIntExtra("USER_ID", -1)
         val username = intent.getStringExtra("USERNAME") ?: "User"
 
-        tvMyUsernameRanking.text = username
+        findViewById<TextView>(R.id.tv_username_ranking).text = username
         tvMyUsernameInvite.text = username
 
         if (token.isEmpty() || currentUserId == -1) {
@@ -107,6 +134,7 @@ class PvpActivity : AppCompatActivity() {
 
         pvpViewModel.startPvpSession(token)
         pvpViewModel.subscribeToFriendInvites(currentUserId)
+        pvpViewModel.loadAllThemes(token)
     }
 
     private fun setupClickListeners() {
@@ -119,11 +147,153 @@ class PvpActivity : AppCompatActivity() {
                 showMatchmakingLoadingDialog()
             }
         }
+        
+        btnStartPvpFriend.setOnClickListener {
+            val friend = selectedFriend
+            if (friend == null) {
+                Toast.makeText(this, "Vui lòng chọn một người bạn để thách đấu!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (selectedThemeIds.isEmpty()) {
+                Toast.makeText(this, "Vui lòng chọn ít nhất 1 chủ đề!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val blueprint = RandomBlueprintRequest(
+                difficulty = selectedDifficulty.toByte(),
+                themeIds = selectedThemeIds,
+                totalQuestions = selectedQuestions
+            )
+
+            pvpViewModel.sendInvite(friend.username, blueprint)
+            showWaitingInviteDialog(friend.username)
+        }
+
+        findViewById<View>(R.id.card_select_theme).setOnClickListener { showThemeSelectionDialog() }
+        findViewById<View>(R.id.card_select_difficulty).setOnClickListener { showDifficultyDialog() }
+        findViewById<View>(R.id.card_select_questions).setOnClickListener { showQuestionsDialog() }
+    }
+
+    private fun updateConfigDisplay() {
+        tvSelectedTheme.text = if (selectedThemeIds.isEmpty()) "Từ vựng" else selectedThemeName
+        tvSelectedDifficulty.text = when(selectedDifficulty) {
+            1 -> "Dễ"
+            2 -> "Vừa"
+            3 -> "Khó"
+            else -> "Vừa"
+        }
+        tvSelectedQuestions.text = "$selectedQuestions Câu"
+    }
+
+    private fun showDifficultyDialog() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_select_difficulty, null)
+        
+        val optEasy = view.findViewById<View>(R.id.option_easy)
+        val optMedium = view.findViewById<View>(R.id.option_medium)
+        val optHard = view.findViewById<View>(R.id.option_hard)
+        val rbEasy = view.findViewById<RadioButton>(R.id.rb_easy)
+        val rbMedium = view.findViewById<RadioButton>(R.id.rb_medium)
+        val rbHard = view.findViewById<RadioButton>(R.id.rb_hard)
+        
+        fun resetSelection() {
+            optEasy.setBackgroundResource(R.drawable.bg_card_white)
+            optMedium.setBackgroundResource(R.drawable.bg_card_white)
+            optHard.setBackgroundResource(R.drawable.bg_card_white)
+            rbEasy.isChecked = false
+            rbMedium.isChecked = false
+            rbHard.isChecked = false
+        }
+
+        when(selectedDifficulty) {
+            1 -> { optEasy.setBackgroundResource(R.drawable.bg_option_selected); rbEasy.isChecked = true }
+            2 -> { optMedium.setBackgroundResource(R.drawable.bg_option_selected); rbMedium.isChecked = true }
+            3 -> { optHard.setBackgroundResource(R.drawable.bg_option_selected); rbHard.isChecked = true }
+        }
+
+        var tempDifficulty = selectedDifficulty
+
+        optEasy.setOnClickListener { resetSelection(); optEasy.setBackgroundResource(R.drawable.bg_option_selected); rbEasy.isChecked = true; tempDifficulty = 1 }
+        optMedium.setOnClickListener { resetSelection(); optMedium.setBackgroundResource(R.drawable.bg_option_selected); rbMedium.isChecked = true; tempDifficulty = 2 }
+        optHard.setOnClickListener { resetSelection(); optHard.setBackgroundResource(R.drawable.bg_option_selected); rbHard.isChecked = true; tempDifficulty = 3 }
+
+        view.findViewById<Button>(R.id.btn_confirm_difficulty).setOnClickListener {
+            selectedDifficulty = tempDifficulty
+            updateConfigDisplay()
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(view)
+        dialog.show()
+    }
+
+    private fun showQuestionsDialog() {
+        val dialog = BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_select_questions, null)
+        
+        val tvCount = view.findViewById<TextView>(R.id.tv_question_count_dialog)
+        var tempCount = selectedQuestions
+        tvCount.text = tempCount.toString()
+
+        view.findViewById<TextView>(R.id.btn_minus_questions).setOnClickListener {
+            if (tempCount > 5) {
+                tempCount -= 5
+                tvCount.text = tempCount.toString()
+            }
+        }
+        view.findViewById<TextView>(R.id.btn_plus_questions).setOnClickListener {
+            if (tempCount < 50) {
+                tempCount += 5
+                tvCount.text = tempCount.toString()
+            }
+        }
+
+        view.findViewById<Button>(R.id.btn_confirm_questions).setOnClickListener {
+            selectedQuestions = tempCount
+            updateConfigDisplay()
+            dialog.dismiss()
+        }
+        
+        view.findViewById<View>(R.id.btn_close_dialog).setOnClickListener { dialog.dismiss() }
+
+        dialog.setContentView(view)
+        dialog.show()
+    }
+
+    private fun showThemeSelectionDialog() {
+        val dialog = BottomSheetDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        val view = layoutInflater.inflate(R.layout.dialog_select_theme, null)
+        
+        val rvThemes = view.findViewById<RecyclerView>(R.id.rv_themes_selection)
+        val themes = pvpViewModel.themes.value ?: emptyList()
+        val adapter = SelectThemeAdapter(themes)
+        rvThemes.adapter = adapter
+        rvThemes.layoutManager = GridLayoutManager(this, 2)
+
+        view.findViewById<Button>(R.id.btn_confirm_themes).setOnClickListener {
+            val ids = adapter.getSelectedIds()
+            if (ids.isNotEmpty()) {
+                selectedThemeIds.clear()
+                selectedThemeIds.addAll(ids)
+                selectedThemeName = themes.find { it.id == ids[0] }?.themeName ?: "Nhiều chủ đề"
+                if (ids.size > 1) selectedThemeName += " (+${ids.size - 1})"
+                updateConfigDisplay()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "Vui lòng chọn ít nhất 1 chủ đề!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
+        view.findViewById<View>(R.id.btn_close_themes).setOnClickListener { dialog.dismiss() }
+
+        dialog.setContentView(view)
+        dialog.show()
     }
 
     private fun observeViewModelData() {
         pvpViewModel.connectionState.observe(this) { isConnected ->
             btnEnter.isEnabled = isConnected
+            btnStartPvpFriend.isEnabled = isConnected
         }
 
         pvpViewModel.queueStatus.observe(this) { status ->
@@ -148,14 +318,26 @@ class PvpActivity : AppCompatActivity() {
         }
 
         pvpViewModel.incomingInvite.observe(this) { invite ->
-            // 🎯 KIỂM TRA NULL: Chỉ hiển thị dialog khi có lời mời thực sự (không phải dữ liệu cũ đã clear)
             invite?.let {
                 showIncomingInviteDialog(it.inviterUsername, it.inviteId)
             }
         }
 
+        pvpViewModel.inviteResult.observe(this) { result ->
+            waitingInviteDialog?.dismiss()
+            val message = when (result) {
+                "INVITE_DECLINED" -> "Bạn của bạn đã từ chối lời mời."
+                "INVITE_TIMEOUT" -> "Lời mời đã hết hạn do không có phản hồi."
+                "INVITE_EXPIRED" -> "Lời mời đã hết hạn."
+                else -> null
+            }
+            message?.let { Toast.makeText(this, it, Toast.LENGTH_LONG).show() }
+        }
+
         pvpViewModel.matchResultJson.observe(this) { responseString ->
             if (responseString == null) return@observe
+            waitingInviteDialog?.dismiss()
+
             if (responseString == "MATCH_TIMEOUT") {
                 matchmakingDialog?.dismiss()
                 Toast.makeText(this, "Trận đấu bị hủy!", Toast.LENGTH_SHORT).show()
@@ -178,9 +360,9 @@ class PvpActivity : AppCompatActivity() {
         pvpViewModel.pvpQuizJson.observe(this) { quizJson ->
             if (quizJson == null || currentMatchId == -1) return@observe
 
-            // 🎯 CHỐNG LẶP: Thử tiêu thụ trận đấu. Chỉ 1 nơi (PvpActivity hoặc MainActivity) được phép mở.
             if (PvpViewModel.tryConsumeMatch(currentMatchId)) {
                 matchmakingDialog?.dismiss()
+                waitingInviteDialog?.dismiss()
                 val intent = Intent(this, PvpQuizActivity::class.java).apply {
                     putExtra("MATCH_JSON", quizJson)
                     putExtra("MATCH_ID", currentMatchId)
@@ -192,6 +374,17 @@ class PvpActivity : AppCompatActivity() {
                 finish() 
             }
         }
+    }
+
+    private fun showWaitingInviteDialog(friendName: String) {
+        waitingInviteDialog = AlertDialog.Builder(this)
+            .setTitle("Đang chờ phản hồi")
+            .setMessage("Đã gửi lời mời tới $friendName. Vui lòng đợi trong giây lát...")
+            .setNegativeButton("Hủy") { _, _ ->
+                // Backend hiện tại không có app/invite/cancel, ta chỉ tắt dialog ở đây
+            }
+            .setCancelable(false)
+            .show()
     }
 
     private fun showIncomingInviteDialog(inviterName: String, inviteId: Int) {
@@ -245,19 +438,21 @@ class PvpActivity : AppCompatActivity() {
     private fun showRankingTab() {
         layoutRankingContent.visibility = View.VISIBLE
         layoutInviteContent.visibility = View.GONE
-        tabRanking.background = ContextCompat.getDrawable(this, R.drawable.btn_blue_fancy)
-        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.white))
-        tabInvite.background = ContextCompat.getDrawable(this, R.drawable.bg_card_light_blue)
-        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.black))
+        btnStartPvpFriend.visibility = View.GONE
+        tabRanking.setBackgroundResource(R.drawable.bg_card_white)
+        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.primary_blue))
+        tabInvite.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        tabInvite.setTextColor(android.graphics.Color.parseColor("#8E8E8E"))
     }
 
     private fun showInviteTab() {
         layoutInviteContent.visibility = View.VISIBLE
         layoutRankingContent.visibility = View.GONE
-        tabInvite.background = ContextCompat.getDrawable(this, R.drawable.btn_blue_fancy)
-        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.white))
-        tabRanking.background = ContextCompat.getDrawable(this, R.drawable.bg_card_light_blue)
-        tabRanking.setTextColor(ContextCompat.getColor(this, R.color.black))
+        btnStartPvpFriend.visibility = View.VISIBLE
+        tabInvite.setBackgroundResource(R.drawable.bg_card_white)
+        tabInvite.setTextColor(ContextCompat.getColor(this, R.color.primary_blue))
+        tabRanking.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        tabRanking.setTextColor(android.graphics.Color.parseColor("#8E8E8E"))
         
         pvpViewModel.loadFriendList(token)
     }

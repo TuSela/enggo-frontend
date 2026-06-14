@@ -17,7 +17,7 @@ class PvpRepository {
         @Volatile
         private var mStompClient: StompClient? = null
 
-        private const val SERVER_IP = "192.168.2.6"
+        private const val SERVER_IP = "192.168.2.7"
         private const val WS_URL = "ws://$SERVER_IP:8080/api/ws/websocket"
 
         @Synchronized
@@ -39,7 +39,6 @@ class PvpRepository {
             return null
         }
 
-        // Đảm bảo token có tiền tố Bearer
         val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
 
         return client.lifecycle()
@@ -103,15 +102,12 @@ class PvpRepository {
                 }, {
                     Log.e("PVP_WS", "Gửi Progress thất bại", it)
                 })
-        } else {
-            Log.e("PVP_WS", "Không thể gửi progress: WebSocket chưa kết nối!")
         }
     }
 
     fun sendQuizSubmit(matchId: Int, jsonRequest: String) {
         val client = getStompClient()
         if (client.isConnected) {
-            Log.d("PVP_WS", "Submit tới /app/match/$matchId/submit: $jsonRequest")
             client.send("/app/match/$matchId/submit", jsonRequest)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -120,12 +116,10 @@ class PvpRepository {
                 }, {
                     Log.e("PVP_WS", "Gửi Submit thất bại", it)
                 })
-        } else {
-            Log.e("PVP_WS", "Không thể gửi Submit: WebSocket chưa kết nối!")
         }
     }
 
-    // --- Các hàm cho PvP Thường (Matchmaking) ---
+    // --- Matchmaking ---
     fun subscribeQueueStatus(userId: Int, onStatusReceived: (String) -> Unit): Disposable {
         return getStompClient().topic("/topic/queue-status/$userId")
             .subscribeOn(Schedulers.io())
@@ -150,28 +144,22 @@ class PvpRepository {
     fun sendJoinQueue(userId: Int) { 
         if (getStompClient().isConnected) {
             getStompClient().send("/app/find_match").subscribe() 
-        } else {
-            Log.e("PVP_WS", "Không thể Join Queue: WebSocket chưa kết nối!")
         }
     }
     
     fun sendReadyConfirm(matchId: Int) { 
         if (getStompClient().isConnected) {
             getStompClient().send("/app/join-queue", matchId.toString()).subscribe() 
-        } else {
-            Log.e("PVP_WS", "Không thể Sẵn sàng: WebSocket chưa kết nối!")
         }
     }
     
     fun sendLeaveQueue(userId: Int) { 
         if (getStompClient().isConnected) {
             getStompClient().send("/app/leave-queue", userId.toString()).subscribe() 
-        } else {
-            Log.e("PVP_WS", "Không thể rời Queue: WebSocket chưa kết nối!")
         }
     }
 
-    // --- Các hàm cho PvP Friend (Invitation) ---
+    // --- Friend Invite (New Backend Logic) ---
     fun subscribeIncomingInvite(userId: Int, onInviteReceived: (String) -> Unit): Disposable {
         return getStompClient().topic("/topic/invite/$userId")
             .subscribeOn(Schedulers.io())
@@ -192,10 +180,7 @@ class PvpRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
-        } else {
-            Log.e("PVP_WS", "Không thể gửi lời mời: WebSocket chưa kết nối!")
-            null
-        }
+        } else null
     }
 
     fun respondToInvite(jsonRequest: String): Disposable? {
@@ -204,10 +189,7 @@ class PvpRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
-        } else {
-            Log.e("PVP_WS", "Không thể phản hồi lời mời: WebSocket chưa kết nối!")
-            null
-        }
+        } else null
     }
 
     fun forceDisconnect() {

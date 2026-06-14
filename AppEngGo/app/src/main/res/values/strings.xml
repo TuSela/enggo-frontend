@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">AppEngGo</string>
+    <string-array name="pvp_difficulties">
+        <item>Dễ</item>
+        <item>Trung bình</item>
+        <item>Khó</item>
+    </string-array>
 </resources>

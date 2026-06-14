@@ -8,8 +8,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.appenggo.RetrofitClient
 import com.example.appenggo.model.Request.InviteRequest
 import com.example.appenggo.model.Request.InviteRespondRequest
+import com.example.appenggo.model.Request.RandomBlueprintRequest
 import com.example.appenggo.model.Response.InviteResponse
 import com.example.appenggo.model.Response.UserResponse
+import com.example.appenggo.model.Entity.ThemeEntity
 import com.example.appenggo.repository.PvpRepository
 import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
@@ -24,9 +26,8 @@ class PvpViewModel : ViewModel() {
         var lastStartedMatchId: Int = -1
 
         @Volatile
-        var isPvpActivityActive: Boolean = false // Đánh dấu PvpActivity có đang hiển thị không
+        var isPvpActivityActive: Boolean = false 
 
-        // Dữ liệu PvP dùng chung toàn ứng dụng (Static)
         private val _matchResultJson = MutableLiveData<String?>()
         val matchResultJson: LiveData<String?> = _matchResultJson
 
@@ -39,7 +40,6 @@ class PvpViewModel : ViewModel() {
         private val _inviteResult = MutableLiveData<String>()
         val inviteResult: LiveData<String> = _inviteResult
 
-        // Quản lý Disposable tĩnh
         private var matchFoundDisposable: Disposable? = null
         private var inviteDisposable: Disposable? = null
         private var inviteResultDisposable: Disposable? = null
@@ -47,7 +47,6 @@ class PvpViewModel : ViewModel() {
         
         private val globalCompositeDisposable = CompositeDisposable()
 
-        // Hàm kiểm tra và "tiêu thụ" trận đấu, đảm bảo chỉ mở Activity 1 lần
         @Synchronized
         fun tryConsumeMatch(matchId: Int): Boolean {
             if (matchId == -1 || matchId == lastStartedMatchId) return false
@@ -60,7 +59,6 @@ class PvpViewModel : ViewModel() {
     private val gson = Gson()
     private val apiService = RetrofitClient.api
 
-    // Expose static LiveData through instance for easier access in Activities
     val matchResultJson: LiveData<String?> get() = Companion.matchResultJson
     val pvpQuizJson: LiveData<String?> get() = Companion.pvpQuizJson
     val incomingInvite: LiveData<InviteResponse?> get() = Companion.incomingInvite
@@ -78,6 +76,9 @@ class PvpViewModel : ViewModel() {
     private val _friendList = MutableLiveData<List<UserResponse>>()
     val friendList: LiveData<List<UserResponse>> = _friendList
 
+    private val _themes = MutableLiveData<List<ThemeEntity>>()
+    val themes: LiveData<List<ThemeEntity>> = _themes
+
     fun startPvpSession(token: String) {
         pvpRepository.connectWebSocket(
             token = token,
@@ -90,11 +91,10 @@ class PvpViewModel : ViewModel() {
     }
 
     private fun subscribeMatchFoundInternal(userId: Int) {
-        // Chỉ subscribe 1 lần duy nhất cho 1 Topic
         if (matchFoundDisposable != null && !matchFoundDisposable!!.isDisposed) return
         
         matchFoundDisposable = pvpRepository.subscribeMatchFound(userId) { matchJson ->
-            Log.d("PVP_VM", "MatchFound Received (Global Topic)")
+            Log.d("PVP_VM", "MatchFound Received")
             _matchResultJson.postValue(matchJson)
             try {
                 val matchObj = JSONObject(matchJson)
@@ -133,6 +133,7 @@ class PvpViewModel : ViewModel() {
 
         if (inviteResultDisposable == null || inviteResultDisposable!!.isDisposed) {
             inviteResultDisposable = pvpRepository.subscribeInviteResult(userId) { result ->
+                // result nhận được có thể là "INVITE_DECLINED", "INVITE_TIMEOUT", ...
                 _inviteResult.postValue(result)
             }
             inviteResultDisposable?.let { globalCompositeDisposable.add(it) }
@@ -141,15 +142,17 @@ class PvpViewModel : ViewModel() {
         subscribeMatchFoundInternal(userId)
     }
 
-    fun sendInvite(inviteeUsername: String) {
-        val request = InviteRequest(inviteeUsername)
+    fun sendInvite(inviteeUsername: String, blueprint: RandomBlueprintRequest) {
+        val request = InviteRequest(inviteeUsername, blueprint)
         pvpRepository.sendFriendInvite(gson.toJson(request))
     }
 
     fun respondToInvite(inviteId: Int, accepted: Boolean) {
-        val request = InviteRespondRequest(inviteId, accepted)
-        pvpRepository.respondToInvite(gson.toJson(request))
-        // Xóa lời mời sau khi đã phản hồi để không bị hiện lại khi quay lại màn hình
+        val payload = mapOf(
+            "inviteId" to inviteId,
+            "accepted" to accepted
+        )
+        pvpRepository.respondToInvite(gson.toJson(payload))
         _incomingInvite.postValue(null)
     }
 
@@ -160,11 +163,31 @@ class PvpViewModel : ViewModel() {
                 val response = apiService.getFriends(formattedToken)
                 if (response.code == 1000) {
                     _friendList.postValue(response.result ?: emptyList())
-                } else {
-                    _friendList.postValue(emptyList())
                 }
             } catch (e: Exception) {
                 _friendList.postValue(emptyList())
+            }
+        }
+    }
+
+    fun loadAllThemes(token: String) {
+        viewModelScope.launch {
+            try {
+                val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
+                val response = apiService.getAllThemesGroupedByCategory(formattedToken)
+                if (response.code == 1000) {
+                    val allThemes = response.result?.values?.flatten()?.map { themeRes ->
+                        ThemeEntity(
+                            id = themeRes.id,
+                            themeName = themeRes.themeName,
+                            category = themeRes.category,
+                            active = themeRes.active
+                        )
+                    } ?: emptyList()
+                    _themes.postValue(allThemes)
+                }
+            } catch (e: Exception) {
+                Log.e("PVP_VM", "Lỗi tải themes: ${e.message}")
             }
         }
     }
@@ -182,7 +205,7 @@ class PvpViewModel : ViewModel() {
         Log.d("PVP_VM", "Clearing Global PvP Data")
         _pvpQuizJson.postValue(null)
         _matchResultJson.postValue(null)
-        _incomingInvite.postValue(null) // Xóa cả lời mời đang chờ
+        _incomingInvite.postValue(null)
     }
 
     fun sendReadyStatus(matchId: Int) {
@@ -197,6 +220,5 @@ class PvpViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         instanceCompositeDisposable.clear()
-        Log.d("PVP_VM", "Instance Disposed.")
     }
 }
