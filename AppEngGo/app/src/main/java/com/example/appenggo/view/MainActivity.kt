@@ -22,21 +22,40 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
         try {
-            setContentView(R.layout.activity_main)
             setupPvpGlobalListener()
 
-            val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+
             if (savedInstanceState == null) {
-                replaceFragment(HomeFragment())
+                loadFragment(HomeFragment())
+                bottomNav.selectedItemId = R.id.nav_home
             }
 
-            bottomNavigation.setOnItemSelectedListener { item ->
+            bottomNav.setOnItemSelectedListener { item ->
                 when (item.itemId) {
-                    R.id.nav_home -> { replaceFragment(HomeFragment()); true }
-                    R.id.nav_ranking -> { Toast.makeText(this, "Tính năng Xếp hạng đang phát triển", Toast.LENGTH_SHORT).show(); true }
-                    R.id.nav_community -> { Toast.makeText(this, "Tính năng Cộng đồng đang phát triển", Toast.LENGTH_SHORT).show(); true }
-                    R.id.nav_profile -> { Toast.makeText(this, "Tính năng Cá nhân đang phát triển", Toast.LENGTH_SHORT).show(); true }
+                    R.id.nav_home -> {
+                        loadFragment(HomeFragment())
+                        true
+                    }
+                    R.id.nav_learn -> {
+                        // loadFragment(LearnFragment())
+                        true
+                    }
+                    R.id.nav_pvp -> {
+                        // loadFragment(PvpFragment())
+                        true
+                    }
+                    R.id.nav_friend -> {
+                        // loadFragment(FriendFragment())
+                        true
+                    }
+                    R.id.nav_profile -> {
+                        // loadFragment(ProfileFragment())
+                        true
+                    }
                     else -> false
                 }
             }
@@ -60,12 +79,12 @@ class MainActivity : AppCompatActivity() {
             }
 
             pvpViewModel.matchResultJson.observe(this) { json ->
-                if (json == null) return@observe 
+                if (json == null) return@observe
 
                 try {
                     val jsonObj = JSONObject(json)
                     val matchId = if (jsonObj.has("matchId")) jsonObj.getInt("matchId") else jsonObj.getInt("id")
-                    
+
                     // Kiểm tra ID trận đấu để không hiện dialog cũ
                     if (matchId != PvpViewModel.lastStartedMatchId) {
                         currentMatchId = matchId
@@ -78,10 +97,10 @@ class MainActivity : AppCompatActivity() {
 
             pvpViewModel.pvpQuizJson.observe(this) { quizJson ->
                 if (quizJson != null && currentMatchId != -1 && currentMatchId != PvpViewModel.lastStartedMatchId) {
-                    
+
                     val matchToStart = currentMatchId
                     PvpViewModel.lastStartedMatchId = matchToStart
-                    
+
                     // Đóng dialog sẵn sàng trước khi vào trận
                     readyDialog?.dismiss()
                     readyDialog = null
@@ -92,9 +111,9 @@ class MainActivity : AppCompatActivity() {
                         // Quan trọng: Sử dụng FLAG_ACTIVITY_CLEAR_TOP để không chồng Activity
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     }
-                    
+
                     // Reset ngay lập tức để không lặp lại
-                    pvpViewModel.clearPvpQuiz() 
+                    pvpViewModel.clearPvpQuiz()
                     currentMatchId = -1
                     startActivity(intent)
                 }
@@ -127,19 +146,19 @@ class MainActivity : AppCompatActivity() {
                     pvpViewModel.sendReadyStatus(currentMatchId)
                 }
             }
-            .setNegativeButton("HỦY") { _, _ -> 
+            .setNegativeButton("HỦY") { _, _ ->
                 currentMatchId = -1
                 pvpViewModel.clearPvpQuiz()
             }
             .setCancelable(false)
             .create()
-        
+
         readyDialog?.show()
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
+            .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
 }

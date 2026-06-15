@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottom_sheet_rounded"
+    android:paddingTop="12dp"
+    android:paddingBottom="32dp"
+    android:paddingHorizontal="20dp">
+
+    <!-- Drag Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="#DDDDDD" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:text="Chọn số câu hỏi"
+        android:textColor="#4B4B4B"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Icon -->
+    <ImageView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_list_check"
+        android:background="@drawable/bg_circle"
+        android:backgroundTint="#E5F9E0"
+        android:padding="16dp" />
+
+    <!-- Label -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="32dp"
+        android:text="LỰA CHỌN SỐ LƯỢNG"
+        android:textColor="#AFAFAF"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.1" />
+
+    <!-- Counter row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!-- Minus button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_minus"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_pvp_setting_card"
+            android:text="−"
+            android:textColor="#4B4B4B"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"
+            android:padding="0dp" />
+
+        <!-- Count display -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_question_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10"
+                android:textColor="#4B4B4B"
+                android:textSize="48sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CÂU HỎI"
+                android:textColor="#AFAFAF"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Plus button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_plus"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_pvp_setting_card"
+            android:text="+"
+            android:textColor="#4B4B4B"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:stateListAnimator="@null"
+            android:padding="0dp" />
+    </LinearLayout>
+
+    <!-- Confirm Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_confirm_question"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_button_green_fancy"
+        android:text="XÁC NHẬN"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:stateListAnimator="@null" />
+
+</LinearLayout>

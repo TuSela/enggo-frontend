@@ -5,223 +5,253 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF">
 
+    <!-- Header Section -->
+    <RelativeLayout
+        android:id="@+id/header_container"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/black" />
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="THÁCH ĐẤU PVP"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/divider_header"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/header_container"
+        android:background="#F0F0F0" />
+
+    <!-- Tab Selector -->
     <LinearLayout
+        android:id="@+id/tab_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider_header"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_card_light_blue"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/tab_invite"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card_white"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="MỜI BẠN"
+            android:textColor="@color/primary_blue"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tab_ranking"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="XẾP HẠNG"
+            android:textColor="#8E8E8E"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Main Content Area -->
+    <FrameLayout
+        android:id="@+id/main_content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="20dp"
-        android:layout_above="@+id/btn_start_pvp_friend_container">
+        android:layout_above="@+id/bottom_action_container"
+        android:layout_below="@id/tab_container"
+        android:layout_marginTop="12dp">
 
-        <!-- Header Section -->
-        <RelativeLayout
+        <!-- SCREEN 1: INVITE FRIEND -->
+        <ScrollView
+            android:id="@+id/layout_invite_content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp">
+            android:layout_height="match_parent"
+            android:visibility="visible">
 
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:padding="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_arrow_back"
-                app:tint="@color/black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="THÁCH ĐẤU PVP"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <!-- Tab Selector -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_card_light_blue"
-            android:padding="4dp"
-            android:layout_marginBottom="24dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tab_invite"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_card_white"
-                android:gravity="center"
-                android:paddingVertical="10dp"
-                android:text="MỜI BẠN"
-                android:textColor="@color/primary_blue"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/tab_ranking"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingVertical="10dp"
-                android:text="XẾP HẠNG"
-                android:textColor="#8E8E8E"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <!-- GIAO DIỆN 1: XẾP HẠNG -->
             <LinearLayout
-                android:id="@+id/layout_ranking_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
-                <!-- Ranking UI remains mostly the same, but simplified for brevity -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_marginTop="20dp">
-                    <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
-                        <View android:layout_width="120dp" android:layout_height="120dp" android:background="@drawable/bg_circle" android:backgroundTint="#D9D9D9" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|center_horizontal"
-                            android:background="@drawable/bg_badge_orange"
-                            android:paddingHorizontal="16dp"
-                            android:paddingVertical="4dp"
-                            android:text="Lv 15"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-                    </FrameLayout>
-                    <TextView
-                        android:id="@+id/tv_username_ranking"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="Tuandb"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_enter"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="40dp"
-                    android:background="@drawable/btn_orange_fancy"
-                    android:text="TÌM TRẬN NGAY"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <!-- GIAO DIỆN 2: MỜI BẠN -->
-            <LinearLayout
-                android:id="@+id/layout_invite_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:paddingHorizontal="24dp">
 
                 <!-- VS Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
-                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical">
-                        <View android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/bg_circle_blue" />
-                        <TextView android:id="@+id/tv_my_username_invite" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Tuandb" android:textColor="@color/black" android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <View
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_circle_blue" />
+                        <TextView
+                            android:id="@+id/tv_my_username_invite"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="User"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
-                    <ImageView android:layout_width="48dp" android:layout_height="48dp" android:layout_marginHorizontal="16dp" android:src="@drawable/bg_badge_orange" android:padding="8dp" />
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:src="@drawable/bg_pvp_vs" />
 
-                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical">
-                        <View android:id="@+id/view_opponent_placeholder" android:layout_width="80dp" android:layout_height="80dp" android:background="@drawable/bg_circle_add_orange" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Chờ đối thủ..." android:textColor="#8E8E8E" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <View
+                            android:id="@+id/view_opponent_placeholder"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:background="@drawable/bg_circle_dotted" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Chờ đối thủ..."
+                            android:textColor="#AFAFAF" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Config Cards -->
+                <!-- Configuration Cards -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="24dp">
+                    android:layout_marginTop="32dp"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/card_select_theme"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="110dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_card_white"
-                        android:elevation="2dp"
-                        android:padding="12dp"
+                        android:background="@drawable/bg_pvp_setting_card"
                         android:gravity="center"
-                        android:orientation="vertical">
-                        <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_book" app:tint="@color/primary_blue" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CHỦ ĐỀ" android:textSize="10sp" android:layout_marginTop="4dp" android:textColor="#8E8E8E" />
-                        <TextView android:id="@+id/tv_selected_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Từ vựng" android:textStyle="bold" android:textSize="12sp" android:textColor="@color/black" />
+                        android:padding="12dp"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_book" app:tint="@color/primary_blue" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CHỦ ĐỀ" android:textSize="10sp" android:layout_marginTop="6dp" android:textColor="#AFAFAF" android:textStyle="bold" />
+                        <TextView android:id="@+id/tv_selected_theme" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Từ vựng" android:textStyle="bold" android:textSize="12sp" android:textColor="#4B4B4B" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/card_select_difficulty"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="110dp"
                         android:layout_weight="1"
-                        android:layout_marginHorizontal="12dp"
-                        android:background="@drawable/bg_option_selected"
-                        android:elevation="2dp"
-                        android:padding="12dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:background="@drawable/bg_pvp_setting_card"
                         android:gravity="center"
-                        android:orientation="vertical">
-                        <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/bg_streak" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ĐỘ KHÓ" android:textSize="10sp" android:layout_marginTop="4dp" android:textColor="@color/primary_orange" />
-                        <TextView android:id="@+id/tv_selected_difficulty" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vừa" android:textStyle="bold" android:textSize="12sp" android:textColor="@color/primary_orange" />
+                        android:padding="12dp"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_bolt" app:tint="@color/primary_orange" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ĐỘ KHÓ" android:textSize="10sp" android:layout_marginTop="6dp" android:textColor="@color/primary_orange" android:textStyle="bold" />
+                        <TextView android:id="@+id/tv_selected_difficulty" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vừa" android:textStyle="bold" android:textSize="12sp" android:textColor="#4B4B4B" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/card_select_questions"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="110dp"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_card_white"
-                        android:elevation="2dp"
-                        android:padding="12dp"
+                        android:background="@drawable/bg_pvp_setting_card"
                         android:gravity="center"
-                        android:orientation="vertical">
-                        <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_eye" app:tint="#4CAF50" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SỐ CÂU" android:textSize="10sp" android:layout_marginTop="4dp" android:textColor="#8E8E8E" />
-                        <TextView android:id="@+id/tv_selected_questions" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10 Câu" android:textStyle="bold" android:textSize="12sp" android:textColor="@color/black" />
+                        android:padding="12dp"
+                        android:orientation="vertical"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <ImageView android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_list_check" app:tint="#4CAF50" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SỐ CÂU" android:textSize="10sp" android:layout_marginTop="6dp" android:textColor="#AFAFAF" android:textStyle="bold" />
+                        <TextView android:id="@+id/tv_selected_questions" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10 Câu" android:textStyle="bold" android:textSize="12sp" android:textColor="#4B4B4B" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Friend List -->
-                <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bạn bè" android:textStyle="bold" android:textSize="18sp" android:textColor="@color/black" />
-                    <TextView android:id="@+id/tv_see_all_friends" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="XEM TẤT CẢ" android:textColor="@color/primary_blue" android:textStyle="bold" android:textSize="12sp" />
-                </RelativeLayout>
+                <!-- Search Friends Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/bg_pvp_setting_card"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="#8E8E8E" />
+                    <EditText
+                        android:id="@+id/et_search_friends"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:background="@null"
+                        android:hint="Tìm kiếm bạn bè..."
+                        android:textSize="14sp"
+                        android:inputType="text" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Bạn bè online"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_friends_online"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <TextView
@@ -230,21 +260,74 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="40dp"
-                    android:text="Bạn chưa có người bạn nào."
-                    android:textColor="@color/gray_text"
+                    android:text="Bạn chưa có người bạn nào online."
                     android:visibility="gone" />
             </LinearLayout>
-        </FrameLayout>
-    </LinearLayout>
+        </ScrollView>
 
-    <!-- Bottom Start Button -->
+        <!-- SCREEN 2: RANKING -->
+        <LinearLayout
+            android:id="@+id/layout_ranking_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingHorizontal="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+                <FrameLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+                    <View android:layout_width="120dp" android:layout_height="120dp" android:background="@drawable/bg_circle" android:backgroundTint="#D9D9D9" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:background="@drawable/bg_badge_orange"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="4dp"
+                        android:text="Lv 15"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+                <TextView
+                    android:id="@+id/tv_username_ranking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="User"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_enter"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/btn_orange_fancy"
+                android:text="TÌM TRẬN XẾP HẠNG"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Bottom Container for Action Buttons -->
     <LinearLayout
-        android:id="@+id/btn_start_pvp_friend_container"
+        android:id="@+id/bottom_action_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:orientation="vertical"
         android:padding="20dp"
         android:background="#FFFFFF">
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_start_pvp_friend"
             android:layout_width="match_parent"

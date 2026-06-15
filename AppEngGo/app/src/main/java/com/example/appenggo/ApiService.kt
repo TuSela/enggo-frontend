@@ -1,7 +1,6 @@
 package com.example.appenggo
 
-import com.example.appenggo.model.Request.LoginRequest
-import com.example.appenggo.model.Request.SignupRequest
+import com.example.appenggo.model.Request.*
 import com.example.appenggo.model.Response.*
 import retrofit2.Response
 import retrofit2.http.*
@@ -30,6 +29,12 @@ interface ApiService {
         @Query("diffs") diffs: Int
     ): ApiResponse<PageResponse<ExamItemResponse>>
 
+    @POST("api/exams/random")
+    suspend fun getRandomExam(
+        @Header("Authorization") token: String,
+        @Body request: RandomExamRequest
+    ): ApiResponse<RandomExamResponse>
+
     @GET("api/exams/{id}/start")
     suspend fun startExam(
         @Header("Authorization") token: String,
@@ -53,6 +58,10 @@ interface ApiService {
     
     @GET("api/social/friends")
     suspend fun getFriends(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<UserResponse>>
+    @GET("api/social/friends/pvp")
+    suspend fun getFriendspvp(
         @Header("Authorization") token: String
     ): ApiResponse<List<UserResponse>>
 }

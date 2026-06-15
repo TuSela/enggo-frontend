@@ -2,9 +2,32 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.AppEngGo" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#1A237E</item>
+        <item name="colorPrimary">@color/primary_blue</item>
         <item name="colorOnPrimary">#FFFFFF</item>
     </style>
 
     <style name="Theme.AppEngGo" parent="Base.Theme.AppEngGo" />
+
+    <!-- Style cho BottomSheet để có góc bo tròn -->
+    <style name="BottomSheetDialogTheme" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_bottom_sheet_rounded</item>
+    </style>
+
+    <!-- Ẩn indicator mặc định của Material -->
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@android:color/transparent</item>
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+    </style>
+
+    <!-- Style cho chữ dưới icon -->
+    <style name="BottomNav.TextAppearance" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">11sp</item>
+    </style>
 </resources>

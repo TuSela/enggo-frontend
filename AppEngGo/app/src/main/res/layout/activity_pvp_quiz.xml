@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9FA">
+    android:background="#FFFFFF">
 
-    <!-- Header: Đối kháng -->
+    <!-- Battle Header -->
     <LinearLayout
         android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_header_battle"
-        android:elevation="4dp"
+        android:elevation="8dp"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Người chơi (Bạn) -->
+        <!-- Player (Me) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -29,19 +28,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="BẠN"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/tv_my_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="0"
                 android:textColor="#FFEB3B"
                 android:textSize="32sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Trạng thái VS -->
+        <!-- VS Center -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -52,21 +53,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="VS"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold|italic" />
             <ProgressBar
                 android:id="@+id/pb_battle"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="80dp"
-                android:layout_height="6dp"
-                android:layout_marginTop="4dp"
+                android:layout_height="8dp"
+                android:layout_marginTop="8dp"
                 android:max="100"
                 android:progress="50"
                 android:progressDrawable="@drawable/custom_battle_progress" />
         </LinearLayout>
 
-        <!-- Đối thủ -->
+        <!-- Opponent -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,12 +79,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ĐỐI THỦ"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/tv_opponent_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="0"
                 android:textColor="#FFEB3B"
                 android:textSize="32sp"
@@ -91,49 +94,62 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Body: Câu hỏi -->
+    <!-- Quiz Container -->
     <FrameLayout
         android:id="@+id/fl_question_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:background="#F8F9FA"
         app:layout_constraintBottom_toTopOf="@+id/ll_footer"
         app:layout_constraintTop_toBottomOf="@id/ll_header" />
 
-    <!-- Footer: Thời gian và Điều hướng -->
+    <!-- Footer Action -->
     <LinearLayout
         android:id="@+id/ll_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="8dp"
+        android:background="#FFFFFF"
+        android:elevation="12dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/tv_timer"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:textColor="#4B4B4B"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="THỜI GIAN"
+                android:textColor="#AFAFAF"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_next"
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:backgroundTint="@color/primary_blue"
-            android:paddingHorizontal="24dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_button_blue_fancy"
+            android:paddingHorizontal="32dp"
             android:text="CÂU TIẾP THEO"
-            android:textColor="@color/white"
+            android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:textStyle="bold" />
     </LinearLayout>

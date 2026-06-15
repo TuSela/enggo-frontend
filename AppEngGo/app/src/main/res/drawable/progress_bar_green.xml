@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/progress_bar_green.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Background track -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="50dp" />
+            <solid android:color="#E0E0E0" />
+        </shape>
+    </item>
+
+    <!-- Progress fill -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <layer-list>
+
+                <!-- Layer 1: xanh nền chính -->
+                <item>
+                    <shape android:shape="rectangle">
+                        <corners android:radius="50dp" />
+                        <solid android:color="#58CC02" />
+                    </shape>
+                </item>
+
+                <!-- Layer 2: dải trắng mờ sát mép trên → tạo độ bóng -->
+                <item
+                    android:top="2dp"
+                    android:bottom="8dp"
+                    android:left="6dp"
+                    android:right="6dp">
+                    <shape android:shape="rectangle">
+                        <corners android:radius="50dp" />
+                        <solid android:color="#55FFFFFF" />
+                    </shape>
+                </item>
+
+            </layer-list>
+        </clip>
+    </item>
+
+</layer-list>

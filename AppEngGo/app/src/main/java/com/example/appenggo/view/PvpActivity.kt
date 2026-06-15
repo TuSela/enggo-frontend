@@ -3,6 +3,8 @@ package com.example.appenggo.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +17,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
+import com.example.appenggo.Resource
 import com.example.appenggo.adapter.FriendAdapter
 import com.example.appenggo.adapter.SelectThemeAdapter
 import com.example.appenggo.model.Request.RandomBlueprintRequest
+import com.example.appenggo.model.Response.InviteResponse
 import com.example.appenggo.model.Response.UserResponse
 import com.example.appenggo.viewmodel.PvpViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -28,10 +32,11 @@ class PvpActivity : AppCompatActivity() {
     private lateinit var tabRanking: TextView
     private lateinit var tabInvite: TextView
     private lateinit var layoutRankingContent: LinearLayout
-    private lateinit var layoutInviteContent: LinearLayout
+    private lateinit var layoutInviteContent: View
 
     private lateinit var btnEnter: Button // Ranking Find Match
     private lateinit var btnStartPvpFriend: Button // Invite Friend Start
+    private lateinit var etSearchFriends: EditText
 
     private lateinit var pvpViewModel: PvpViewModel
     private var matchmakingDialog: AlertDialog? = null
@@ -52,10 +57,11 @@ class PvpActivity : AppCompatActivity() {
     // Current Configuration
     private var selectedThemeIds = mutableListOf<Int>()
     private var selectedThemeName: String = "Từ vựng"
-    private var selectedDifficulty: Int = 2 // Default Medium (1=Easy, 2=Medium, 3=Hard)
+    private var selectedDifficulty: Int = 2 // Default Medium
     private var selectedQuestions: Int = 10
     private var selectedFriend: UserResponse? = null
 
+    private var fullFriendList: List<UserResponse> = emptyList()
     private var currentUserId: Int = -1
     private var token: String = ""
     private var currentMatchId: Int = -1
@@ -88,6 +94,7 @@ class PvpActivity : AppCompatActivity() {
         
         btnEnter = findViewById(R.id.btn_enter)
         btnStartPvpFriend = findViewById(R.id.btn_start_pvp_friend)
+        etSearchFriends = findViewById(R.id.et_search_friends)
 
         rvFriends = findViewById(R.id.rv_friends_online)
         tvMyUsernameInvite = findViewById(R.id.tv_my_username_invite)
@@ -107,7 +114,28 @@ class PvpActivity : AppCompatActivity() {
         rvFriends.adapter = friendAdapter
         rvFriends.layoutManager = LinearLayoutManager(this)
         
+        setupSearch()
         updateConfigDisplay()
+    }
+
+    private fun setupSearch() {
+        etSearchFriends.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                filterFriends(s.toString())
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun filterFriends(query: String) {
+        val filtered = if (query.isEmpty()) {
+            fullFriendList
+        } else {
+            fullFriendList.filter { it.username.contains(query, ignoreCase = true) }
+        }
+        friendAdapter.updateData(filtered)
+        tvNoFriends.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun initViewModel() {
@@ -265,27 +293,32 @@ class PvpActivity : AppCompatActivity() {
         val view = layoutInflater.inflate(R.layout.dialog_select_theme, null)
         
         val rvThemes = view.findViewById<RecyclerView>(R.id.rv_themes_selection)
-        val themes = pvpViewModel.themes.value ?: emptyList()
-        val adapter = SelectThemeAdapter(themes)
-        rvThemes.adapter = adapter
-        rvThemes.layoutManager = GridLayoutManager(this, 2)
+        val themesResource = pvpViewModel.themes.value
+        
+        if (themesResource is Resource.Success) {
+            val themes = themesResource.data ?: emptyList()
+            val adapter = SelectThemeAdapter(themes)
+            rvThemes.adapter = adapter
+            rvThemes.layoutManager = GridLayoutManager(this, 2)
 
-        view.findViewById<Button>(R.id.btn_confirm_themes).setOnClickListener {
-            val ids = adapter.getSelectedIds()
-            if (ids.isNotEmpty()) {
-                selectedThemeIds.clear()
-                selectedThemeIds.addAll(ids)
-                selectedThemeName = themes.find { it.id == ids[0] }?.themeName ?: "Nhiều chủ đề"
-                if (ids.size > 1) selectedThemeName += " (+${ids.size - 1})"
-                updateConfigDisplay()
-                dialog.dismiss()
-            } else {
-                Toast.makeText(this, "Vui lòng chọn ít nhất 1 chủ đề!", Toast.LENGTH_SHORT).show()
+            view.findViewById<Button>(R.id.btn_confirm_themes).setOnClickListener {
+                val ids = adapter.getSelectedIds()
+                if (ids.isNotEmpty()) {
+                    selectedThemeIds.clear()
+                    selectedThemeIds.addAll(ids)
+                    selectedThemeName = themes.find { it.id == ids[0] }?.themeName ?: "Nhiều chủ đề"
+                    if (ids.size > 1) selectedThemeName += " (+${ids.size - 1})"
+                    updateConfigDisplay()
+                    dialog.dismiss()
+                } else {
+                    Toast.makeText(this, "Vui lòng chọn ít nhất 1 chủ đề!", Toast.LENGTH_SHORT).show()
+                }
             }
+        } else {
+            Toast.makeText(this, "Đang chuẩn bị danh sách chủ đề...", Toast.LENGTH_SHORT).show()
         }
         
         view.findViewById<View>(R.id.btn_close_themes).setOnClickListener { dialog.dismiss() }
-
         dialog.setContentView(view)
         dialog.show()
     }
@@ -306,21 +339,19 @@ class PvpActivity : AppCompatActivity() {
             }
         }
 
-        pvpViewModel.friendList.observe(this) { friends ->
-            if (friends.isNullOrEmpty()) {
-                rvFriends.visibility = View.GONE
-                tvNoFriends.visibility = View.VISIBLE
-            } else {
-                rvFriends.visibility = View.VISIBLE
-                tvNoFriends.visibility = View.GONE
-                friendAdapter.updateData(friends)
+        pvpViewModel.friendList.observe(this) { resource ->
+            when (resource) {
+                is Resource.Success -> {
+                    fullFriendList = resource.data ?: emptyList()
+                    filterFriends(etSearchFriends.text.toString())
+                }
+                is Resource.Error -> Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
+                is Resource.Loading -> {}
             }
         }
 
         pvpViewModel.incomingInvite.observe(this) { invite ->
-            invite?.let {
-                showIncomingInviteDialog(it.inviterUsername, it.inviteId)
-            }
+            invite?.let { showIncomingInviteDialog(it) }
         }
 
         pvpViewModel.inviteResult.observe(this) { result ->
@@ -353,7 +384,7 @@ class PvpActivity : AppCompatActivity() {
                     showReadyDialog(matchObj.getString("player1Username"), matchObj.getString("player2Username"))
                 }
             } catch (e: Exception) {
-                Log.e("PVP_WS", "Lỗi phân tích JSON: ${e.message}")
+                Log.e("PVP_WS", "Lỗi JSON: ${e.message}")
             }
         }
 
@@ -368,7 +399,6 @@ class PvpActivity : AppCompatActivity() {
                     putExtra("MATCH_ID", currentMatchId)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 }
-                
                 pvpViewModel.clearPvpQuiz()
                 startActivity(intent)
                 finish() 
@@ -376,28 +406,37 @@ class PvpActivity : AppCompatActivity() {
         }
     }
 
-    private fun showWaitingInviteDialog(friendName: String) {
-        waitingInviteDialog = AlertDialog.Builder(this)
-            .setTitle("Đang chờ phản hồi")
-            .setMessage("Đã gửi lời mời tới $friendName. Vui lòng đợi trong giây lát...")
-            .setNegativeButton("Hủy") { _, _ ->
-                // Backend hiện tại không có app/invite/cancel, ta chỉ tắt dialog ở đây
+    private fun showIncomingInviteDialog(invite: InviteResponse) {
+        val blueprint = invite.randomBlueprintRequest
+        val details = if (blueprint != null) {
+            val diff = when(blueprint.difficulty.toInt()) {
+                1 -> "Dễ"
+                2 -> "Vừa"
+                3 -> "Khó"
+                else -> "Vừa"
+            }
+            "\n(Độ khó: $diff, Số câu: ${blueprint.totalQuestions})"
+        } else ""
+
+        AlertDialog.Builder(this)
+            .setTitle("Lời mời thách đấu")
+            .setMessage("${invite.inviterUsername} muốn đấu với bạn!$details")
+            .setPositiveButton("Đồng ý") { _, _ ->
+                pvpViewModel.respondToInvite(invite.inviteId, true)
+                showMatchmakingLoadingDialog()
+            }
+            .setNegativeButton("Từ chối") { _, _ ->
+                pvpViewModel.respondToInvite(invite.inviteId, false)
             }
             .setCancelable(false)
             .show()
     }
 
-    private fun showIncomingInviteDialog(inviterName: String, inviteId: Int) {
-        AlertDialog.Builder(this)
-            .setTitle("Lời mời thách đấu")
-            .setMessage("$inviterName muốn thi đấu PvP với bạn!")
-            .setPositiveButton("Đồng ý") { _, _ ->
-                pvpViewModel.respondToInvite(inviteId, true)
-                showMatchmakingLoadingDialog()
-            }
-            .setNegativeButton("Từ chối") { _, _ ->
-                pvpViewModel.respondToInvite(inviteId, false)
-            }
+    private fun showWaitingInviteDialog(friendName: String) {
+        waitingInviteDialog = AlertDialog.Builder(this)
+            .setTitle("Đang chờ phản hồi")
+            .setMessage("Đã gửi lời mời tới $friendName. Đang đợi họ chấp nhận...")
+            .setNegativeButton("Hủy") { dialog, _ -> dialog.dismiss() }
             .setCancelable(false)
             .show()
     }
@@ -453,7 +492,6 @@ class PvpActivity : AppCompatActivity() {
         tabInvite.setTextColor(ContextCompat.getColor(this, R.color.primary_blue))
         tabRanking.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         tabRanking.setTextColor(android.graphics.Color.parseColor("#8E8E8E"))
-        
         pvpViewModel.loadFriendList(token)
     }
 }

@@ -1,26 +1,33 @@
 package com.example.appenggo.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
+import com.example.appenggo.model.Response.InviteResponse
 import com.example.appenggo.viewmodel.MainViewModel
-import android.widget.Toast
+import com.example.appenggo.viewmodel.PvpViewModel
+
 class HomeFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var pvpViewModel: PvpViewModel
+    
     private var tvStreak: TextView? = null
     private var tvLevel: TextView? = null
     private var tvProgress: TextView? = null
     private var pbDailyMission: ProgressBar? = null
     private var btnLearnVocabulary: View? = null
-
     private var btn_battle: View? = null
 
     private var currentUserId: Int = -1
@@ -39,6 +46,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        pvpViewModel = ViewModelProvider(requireActivity())[PvpViewModel::class.java]
+        
         observeViewModel()
     }
 
@@ -63,7 +72,6 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // 🎯 TRUYỀN THẲNG SANG PVPACTIVITY
             val intent = Intent(requireContext(), PvpActivity::class.java).apply {
                 putExtra("USER_ID", currentUserId)
                 putExtra("JWT_TOKEN", currentToken)
@@ -71,35 +79,68 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
     }
+
     private fun observeViewModel() {
+        // Lấy thông tin người dùng từ SharedPreferences
+        val sharedPref = requireActivity().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        currentUserId = sharedPref.getInt("USER_ID", -1)
+        currentToken = sharedPref.getString("TOKEN", "") ?: ""
+
+        // Kết nối PvP Session nếu chưa có
+        if (currentToken.isNotEmpty() && currentUserId != -1) {
+            pvpViewModel.startPvpSession(currentToken)
+            pvpViewModel.subscribeToFriendInvites(currentUserId)
+        }
+
         viewModel.userStats.observe(viewLifecycleOwner) { stats ->
-
-            // 🎯 LẤY ID VÀ TOKEN ĐÃ LƯU TRONG SHAREDPREFERENCES LÚC ĐĂNG NHẬP THÀNH CÔNG
-            val sharedPref = requireActivity().getSharedPreferences(
-                "app_prefs",
-                android.content.Context.MODE_PRIVATE
-            )
-            currentUserId = sharedPref.getInt("USER_ID", -1)
-            currentToken = sharedPref.getString("TOKEN", "") ?: ""
-
-            // Log thử ra Logcat để bạn tiện theo dõi xem máy đã bóc đúng dữ liệu chưa
-            android.util.Log.d(
-                "PVP_WS",
-                "HomeFragment bốc được từ bộ nhớ máy - UID: $currentUserId | Token trống?: ${currentToken.isEmpty()}"
-            )
-
-            // Hiển thị các thông số tiến trình học lên giao diện
             tvStreak?.text = "🔥 ${stats.streak}"
             tvLevel?.text = "LV. ${stats.level}"
             tvProgress?.text = "${stats.currentProgress}/${stats.totalProgress}"
 
             if (stats.totalProgress > 0) {
-                val progressPercent =
-                    (stats.currentProgress.toFloat() / stats.totalProgress * 100).toInt()
+                val progressPercent = (stats.currentProgress.toFloat() / stats.totalProgress * 100).toInt()
                 pbDailyMission?.progress = progressPercent
             }
         }
+
+        // Lắng nghe lời mời thách đấu toàn cục
+        pvpViewModel.incomingInvite.observe(viewLifecycleOwner) { invite ->
+            invite?.let {
+                if (!PvpViewModel.isPvpActivityActive) {
+                    showIncomingInviteDialog(it)
+                }
+            }
+        }
+    }
+
+    private fun showIncomingInviteDialog(invite: InviteResponse) {
+        val blueprint = invite.randomBlueprintRequest
+        val details = if (blueprint != null) {
+            val diff = when(blueprint.difficulty.toInt()) {
+                1 -> "Dễ"
+                2 -> "Vừa"
+                3 -> "Khó"
+                else -> "Vừa"
+            }
+            "\n(Độ khó: $diff, Số câu: ${blueprint.totalQuestions})"
+        } else ""
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Lời mời thách đấu")
+            .setMessage("${invite.inviterUsername} muốn đấu PvP với bạn!$details")
+            .setPositiveButton("Đồng ý") { _, _ ->
+                pvpViewModel.respondToInvite(invite.inviteId, true)
+                // Chuyển sang màn hình PvP để sẵn sàng
+                val intent = Intent(requireContext(), PvpActivity::class.java).apply {
+                    putExtra("USER_ID", currentUserId)
+                    putExtra("JWT_TOKEN", currentToken)
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton("Từ chối") { _, _ ->
+                pvpViewModel.respondToInvite(invite.inviteId, false)
+            }
+            .setCancelable(false)
+            .show()
     }
 }
-
-

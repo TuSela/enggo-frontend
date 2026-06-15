@@ -35,16 +35,20 @@ class QuizViewModel(private val repository: ThemeRepository) : ViewModel() {
     val submitResult: LiveData<Resource<SubmitExamResponse>> = _submitResult
 
     private var timer: CountDownTimer? = null
+    private var isSubmitted = false
+
+    fun loadExamData(examData: StartExamResponse) {
+        _examData.value = Resource.Success(examData)
+        startTimer(examData.durationMinutes)
+    }
 
     fun startExam(token: String, examId: Int) {
         _examData.value = Resource.Loading()
         viewModelScope.launch {
             try {
-                val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
                 val response = withContext(Dispatchers.IO) {
-                    repository.startExam(formattedToken, examId)
+                    repository.startExam(token, examId)
                 }
-
                 if (response.code == 1000 && response.result != null) {
                     _examData.value = Resource.Success(response.result)
                     startTimer(response.result.durationMinutes)
@@ -65,7 +69,9 @@ class QuizViewModel(private val repository: ThemeRepository) : ViewModel() {
                 val secs = (millisUntilFinished / 1000) % 60
                 _timeLeft.value = String.format("%02d:%02d", mins, secs)
             }
-            override fun onFinish() { _timeLeft.value = "00:00" }
+            override fun onFinish() {
+                _timeLeft.value = "00:00"
+            }
         }.start()
     }
 
@@ -78,49 +84,47 @@ class QuizViewModel(private val repository: ThemeRepository) : ViewModel() {
     fun nextQuestion() {
         val current = _currentQuestionIndex.value ?: 0
         val total = (_examData.value?.data?.questions?.size ?: 0)
-        if (current < total - 1) {
-            _currentQuestionIndex.value = current + 1
-        }
+        if (current < total - 1) _currentQuestionIndex.value = current + 1
     }
 
     fun previousQuestion() {
         val current = _currentQuestionIndex.value ?: 0
-        if (current > 0) {
-            _currentQuestionIndex.value = current - 1
-        }
+        if (current > 0) _currentQuestionIndex.value = current - 1
     }
 
     fun submitExam(token: String) {
-        val exam = _examData.value?.data
-        if (exam == null) {
+        if (isSubmitted) return
+        val exam = _examData.value?.data ?: run {
             _submitResult.value = Resource.Error("Không có dữ liệu đề thi")
             return
         }
 
-        val examId = exam.examId
-        val attemptId = exam.attemptId
+        isSubmitted = true
+        timer?.cancel()
+
+        val examId     = exam.examId
+        val attemptId  = exam.attemptId
         val answersMap = _userAnswers.value ?: emptyMap()
 
         _submitResult.value = Resource.Loading()
 
         val answerRequests = exam.questions.map { wrapper ->
-            val qId = wrapper.question.id
+            val qId        = wrapper.question.id
             val userAnswer = answersMap[qId]
 
             var selectedOptionId: Int? = null
             var fillBlanks: MutableList<FillBlankAnswer>? = null
-            var matchings: MutableList<MatchingAnswer>? = null
+            var matchings: MutableList<MatchingAnswer>?   = null
 
             when (wrapper.question.questionType) {
-                "MULTIPLE_CHOICE" -> {
-                    selectedOptionId = userAnswer as? Int
-                }
+                "MULTIPLE_CHOICE" -> selectedOptionId = userAnswer as? Int
                 "FILL_BLANK" -> {
                     val map = userAnswer as? Map<Int, String>
                     if (!map.isNullOrEmpty()) {
                         fillBlanks = mutableListOf()
                         map.forEach { (blankId, input) ->
-                            val pos = wrapper.question.fillBlankOptions?.find { it.blankId == blankId }?.position ?: 0
+                            val pos = wrapper.question.fillBlankOptions
+                                ?.find { it.blankId == blankId }?.position ?: 0
                             fillBlanks?.add(FillBlankAnswer(blankId, pos, input))
                         }
                     }
@@ -135,25 +139,22 @@ class QuizViewModel(private val repository: ThemeRepository) : ViewModel() {
                     }
                 }
             }
-
             ExamAnswerRequest(qId, selectedOptionId, fillBlanks, matchings)
         }
 
-        val request = SubmitExamRequest(answerRequests)
-
         viewModelScope.launch {
             try {
-                val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
                 val response = withContext(Dispatchers.IO) {
-                    repository.submitExam(formattedToken, examId, attemptId, request)
+                    repository.submitExam(token, examId, attemptId, SubmitExamRequest(answerRequests))
                 }
-
                 if (response.code == 1000 && response.result != null) {
                     _submitResult.value = Resource.Success(response.result)
                 } else {
+                    isSubmitted = false
                     _submitResult.value = Resource.Error(response.message ?: "Lỗi từ Server (${response.code})")
                 }
             } catch (e: Exception) {
+                isSubmitted = false
                 _submitResult.value = Resource.Error("Lỗi hệ thống: ${e.message}")
             }
         }

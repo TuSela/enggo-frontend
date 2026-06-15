@@ -8,19 +8,18 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.model.Request.*
-import com.example.appenggo.model.Request.ExamAnswerRequest
 import com.example.appenggo.model.Response.*
 import com.example.appenggo.repository.PvpRepository
 import com.example.appenggo.viewmodel.PvpViewModel
 import com.google.gson.Gson
 import io.reactivex.disposables.CompositeDisposable
-import org.json.JSONObject
 
 class PvpQuizActivity : AppCompatActivity() {
 
@@ -28,28 +27,20 @@ class PvpQuizActivity : AppCompatActivity() {
     private val gson = Gson()
     private val compositeDisposable = CompositeDisposable()
 
-    // Data
     private lateinit var matchData: PvpMatchResponse
     private var currentQuestionIndex = 0
     private var myScore = 0
     private var opponentScore = 0
     private var myUserId: Int = -1
     private var matchId: Int = -1
-
-    // Biến cờ chặn nộp bài lặp lại
     private var isSubmitting = false
 
-    // Lưu trữ đáp án thô tương tự QuizViewModel
     private val rawAnswers = mutableMapOf<Int, Any>()
 
-    // Tạm thời cho Matching câu hiện tại
-    private val currentMatchingMap = mutableMapOf<Int, Int>()
-
-    // Views
     private lateinit var tvMyName: TextView
     private lateinit var tvOpponentName: TextView
-    private lateinit var tvPlayer1Score: TextView
-    private lateinit var tvPlayer2Score: TextView
+    private lateinit var tvMyScoreDisplay: TextView
+    private lateinit var tvOpponentScoreDisplay: TextView
     private lateinit var tvTimer: TextView
     private lateinit var btnNext: Button
     private lateinit var flContainer: FrameLayout
@@ -93,15 +84,29 @@ class PvpQuizActivity : AppCompatActivity() {
     private fun initViews() {
         tvMyName = findViewById(R.id.tv_my_name)
         tvOpponentName = findViewById(R.id.tv_opponent_name)
-        tvPlayer1Score = findViewById(R.id.tv_my_score)
-        tvPlayer2Score = findViewById(R.id.tv_opponent_score)
+        tvMyScoreDisplay = findViewById(R.id.tv_my_score)
+        tvOpponentScoreDisplay = findViewById(R.id.tv_opponent_score)
         tvTimer = findViewById(R.id.tv_timer)
         btnNext = findViewById(R.id.btn_next)
         flContainer = findViewById(R.id.fl_question_container)
         pbBattle = findViewById(R.id.pb_battle)
 
-        tvMyName.text = matchData.player1Username ?: "Người chơi 1"
-        tvOpponentName.text = matchData.player2Username ?: "Người chơi 2"
+        val p1Name = matchData.player1Username
+        val p2Name = matchData.player2Username
+
+        // Fix smart cast: Use safe call or local variable
+        val amIPlayer1 = p1Name?.contains("Tôi") == true || true 
+        
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val myUsername = sharedPref.getString("USERNAME", "") ?: ""
+
+        if (p1Name == myUsername) {
+            tvMyName.text = "Bạn ($p1Name)"
+            tvOpponentName.text = p2Name ?: "Đối thủ"
+        } else {
+            tvMyName.text = "Bạn ($p2Name)"
+            tvOpponentName.text = p1Name ?: "Đối thủ"
+        }
         
         btnNext.setOnClickListener { handleNextQuestion() }
     }
@@ -113,23 +118,22 @@ class PvpQuizActivity : AppCompatActivity() {
         val connectDisp = pvpRepository.connectWebSocket(token, {
             runOnUiThread { setupSubscriptions() }
         }, {
-            Log.e("PVP_QUIZ", "Lỗi kết nối lại WebSocket: ${it.message}")
+            Log.e("PVP_QUIZ", "Lỗi WebSocket: ${it.message}")
         })
         connectDisp?.let { compositeDisposable.add(it) }
     }
 
     private fun setupSubscriptions() {
-        // 1. Lắng nghe tiến độ đối thủ
         val progressDisp = pvpRepository.subscribeMatchProgress(matchId) { payload ->
             try {
-                val progress = gson.fromJson(payload, QuizProgressResponse::class.java)
+                val progress = gson.fromJson(payload, MatchProgress::class.java)
                 runOnUiThread {
-                    if (progress.userId != myUserId) {
-                        opponentScore = progress.currentScore
-                        tvPlayer2Score.text = opponentScore.toString()
-                    } else {
+                    if (progress.userId == myUserId) {
                         myScore = progress.currentScore
-                        tvPlayer1Score.text = myScore.toString()
+                        tvMyScoreDisplay.text = myScore.toString()
+                    } else {
+                        opponentScore = progress.currentScore
+                        tvOpponentScoreDisplay.text = opponentScore.toString()
                     }
                     updateBattleProgress()
                 }
@@ -139,7 +143,6 @@ class PvpQuizActivity : AppCompatActivity() {
         }
         compositeDisposable.add(progressDisp)
 
-        // 2. Lắng nghe kết quả cuối cùng (MatchResultResponse)
         val resultDisp = pvpRepository.subscribeMatchResult(matchId) { payload ->
             try {
                 val result = gson.fromJson(payload, MatchResultResponse::class.java)
@@ -156,7 +159,6 @@ class PvpQuizActivity : AppCompatActivity() {
         if (questions.isNullOrEmpty()) return
         
         flContainer.removeAllViews()
-        currentMatchingMap.clear()
         
         val question = questions[currentQuestionIndex].question
         when (question.questionType) {
@@ -177,7 +179,8 @@ class PvpQuizActivity : AppCompatActivity() {
             val rb = RadioButton(this).apply {
                 text = option.optionText
                 id = option.id
-                textSize = 18f
+                textSize = 16f
+                setPadding(20, 20, 20, 20)
             }
             rgOptions.addView(rb)
         }
@@ -196,7 +199,7 @@ class PvpQuizActivity : AppCompatActivity() {
         }
         val tvContent = TextView(this).apply {
             text = question.content
-            textSize = 20f
+            textSize = 18f
             setTextColor(Color.BLACK)
         }
         container.addView(tvContent)
@@ -206,7 +209,7 @@ class PvpQuizActivity : AppCompatActivity() {
 
         question.fillBlankOptions?.forEach { option ->
             val et = EditText(this).apply {
-                hint = "Đáp án vị trí ${option.position}..."
+                hint = "Đáp án..."
                 setText(answerMap[option.blankId] ?: "")
                 addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
@@ -274,9 +277,9 @@ class PvpQuizActivity : AppCompatActivity() {
         pvpRepository.sendMatchProgress(matchId, gson.toJson(request))
     }
 
-    private fun buildSingleAnswerRequest(questionId: Int): ExamAnswerRequest {
+    private fun buildSingleAnswerRequest(questionId: Int): com.example.appenggo.model.Request.ExamAnswerRequest {
         val mapping = matchData.questions?.find { it.question.id == questionId }
-        val question = mapping?.question ?: return ExamAnswerRequest(questionId)
+        val question = mapping?.question ?: return com.example.appenggo.model.Request.ExamAnswerRequest(questionId)
         val userAnswer = rawAnswers[questionId]
 
         var selectedOptionId: Int? = null
@@ -301,7 +304,7 @@ class PvpQuizActivity : AppCompatActivity() {
                 }
             }
         }
-        return ExamAnswerRequest(questionId, selectedOptionId, fillBlanks, matchings)
+        return com.example.appenggo.model.Request.ExamAnswerRequest(questionId, selectedOptionId, fillBlanks, matchings)
     }
 
     private fun handleNextQuestion() {
@@ -321,7 +324,6 @@ class PvpQuizActivity : AppCompatActivity() {
     }
 
     private fun submitQuiz() {
-        // 🎯 CHẶN: Nếu đang nộp bài thì không làm gì thêm
         if (isSubmitting) return
         isSubmitting = true
 
@@ -329,13 +331,8 @@ class PvpQuizActivity : AppCompatActivity() {
         lockUI()
 
         val questions = matchData.questions ?: return
-        
-        val answerRequests = questions.map { mapping ->
-            buildSingleAnswerRequest(mapping.question.id)
-        }
-        
+        val answerRequests = questions.map { mapping -> buildSingleAnswerRequest(mapping.question.id) }
         val submitRequest = ExamSubmitRequest(answerRequests)
-        Log.d("PVP_QUIZ", "Submitting ExamSubmitRequest: ${gson.toJson(submitRequest)}")
         
         pvpRepository.sendQuizSubmit(matchId, gson.toJson(submitRequest))
         Toast.makeText(this, "Đã nộp bài. Đang chờ đối thủ...", Toast.LENGTH_LONG).show()
@@ -386,24 +383,21 @@ class PvpQuizActivity : AppCompatActivity() {
             else -> Color.GRAY
         })
 
-        // Player 1 Info
-        dialogView.findViewById<TextView>(R.id.tv_p1_name).text = matchData.player1Username
-        dialogView.findViewById<TextView>(R.id.tv_p1_score).text = "Điểm: ${result.player1.playerScore}"
-        dialogView.findViewById<TextView>(R.id.tv_p1_correct).text = "Đúng: ${result.player1.correctAnswersCount}/${matchData.totalQuestions}"
-        val p1EloChange = result.player1.eloChange
-        dialogView.findViewById<TextView>(R.id.tv_p1_elo_change).apply {
-            text = "${if (p1EloChange >= 0) "+" else ""}$p1EloChange Elo"
-            setTextColor(if (p1EloChange >= 0) winColor else loseColor)
-        }
+        // Xử lý thông tin hiển thị khớp với thứ tự tvMyName / tvOpponentName
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val myUsername = sharedPref.getString("USERNAME", "") ?: ""
 
-        // Player 2 Info
-        dialogView.findViewById<TextView>(R.id.tv_p2_name).text = matchData.player2Username
-        dialogView.findViewById<TextView>(R.id.tv_p2_score).text = "Điểm: ${result.player2.playerScore}"
-        dialogView.findViewById<TextView>(R.id.tv_p2_correct).text = "Đúng: ${result.player2.correctAnswersCount}/${matchData.totalQuestions}"
-        val p2EloChange = result.player2.eloChange
-        dialogView.findViewById<TextView>(R.id.tv_p2_elo_change).apply {
-            text = "${if (p2EloChange >= 0) "+" else ""}$p2EloChange Elo"
-            setTextColor(if (p2EloChange >= 0) winColor else loseColor)
+        val p1Name = matchData.player1Username
+        val p2Name = matchData.player2Username
+
+        if (p1Name == myUsername) {
+            // Tôi là player1
+            setupPlayerResultUI(dialogView, true, p1Name, result.player1, winColor, loseColor)
+            setupPlayerResultUI(dialogView, false, p2Name, result.player2, winColor, loseColor)
+        } else {
+            // Tôi là player2
+            setupPlayerResultUI(dialogView, true, p2Name, result.player2, winColor, loseColor)
+            setupPlayerResultUI(dialogView, false, p1Name, result.player1, winColor, loseColor)
         }
 
         resultDialog = AlertDialog.Builder(this)
@@ -413,19 +407,35 @@ class PvpQuizActivity : AppCompatActivity() {
 
         dialogView.findViewById<Button>(R.id.btn_confirm_result).setOnClickListener {
             resultDialog?.dismiss()
-            
-            // 🎯 QUAN TRỌNG: Dọn dẹp trạng thái toàn cục trước khi thoát
-            // 1. Reset ID trận đấu cuối cùng
             PvpViewModel.lastStartedMatchId = -1 
-            
-            // 2. Xóa các LiveData cũ để MainActivity không trigger lại dialog sẵn sàng
             val viewModel = ViewModelProvider(this)[PvpViewModel::class.java]
             viewModel.clearPvpQuiz()
-            
             finish() 
         }
-
         resultDialog?.show()
+    }
+
+    private fun setupPlayerResultUI(
+        dialogView: View,
+        isMe: Boolean,
+        username: String?,
+        result: MatchResultResponse.PlayerResult,
+        winColor: Int,
+        loseColor: Int
+    ) {
+        val nameViewId = if (isMe) R.id.tv_p1_name else R.id.tv_p2_name
+        val scoreViewId = if (isMe) R.id.tv_p1_score else R.id.tv_p2_score
+        val correctViewId = if (isMe) R.id.tv_p1_correct else R.id.tv_p2_correct
+        val eloViewId = if (isMe) R.id.tv_p1_elo_change else R.id.tv_p2_elo_change
+
+        dialogView.findViewById<TextView>(nameViewId).text = if (isMe) "Bạn ($username)" else username
+        dialogView.findViewById<TextView>(scoreViewId).text = "Điểm: ${result.playerScore}"
+        dialogView.findViewById<TextView>(correctViewId).text = "Đúng: ${result.correctAnswersCount}/${matchData.totalQuestions}"
+        
+        dialogView.findViewById<TextView>(eloViewId).apply {
+            text = "${if (result.eloChange >= 0) "+" else ""}${result.eloChange} Elo"
+            setTextColor(if (result.eloChange >= 0) winColor else loseColor)
+        }
     }
 
     override fun onDestroy() {

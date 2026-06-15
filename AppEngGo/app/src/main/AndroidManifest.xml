@@ -32,6 +32,7 @@
         <activity android:name=".view.QuizActivity" />
         <activity android:name=".view.PvpQuizActivity" />
         <activity android:name=".view.QuizResultActivity" />
+        <activity android:name=".view.ThemeSelectionActivity" />
 
     </application>
 

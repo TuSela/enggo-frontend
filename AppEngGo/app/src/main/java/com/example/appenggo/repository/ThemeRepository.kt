@@ -2,16 +2,23 @@ package com.example.appenggo.repository
 
 import com.example.appenggo.ApiService
 import com.example.appenggo.model.Response.SubmitExamRequest
+import com.example.appenggo.model.Request.RandomExamRequest
 
 class ThemeRepository(private val apiService: ApiService) {
-    suspend fun getAllThemes(token: String) = apiService.getAllThemesGroupedByCategory(token)
+
+    // Public endpoint - không cần Bearer
+    suspend fun getAllThemes(token: String) =
+        apiService.getAllThemesGroupedByCategory(token)
 
     suspend fun getExams(token: String, themeId: Int, difficulty: Int) =
-        apiService.getExams(token, themeId, difficulty)
+        apiService.getExams("Bearer $token", themeId, difficulty)
 
     suspend fun startExam(token: String, examId: Int) =
-        apiService.startExam(token, examId)
+        apiService.startExam("Bearer $token", examId)
+
+    suspend fun getRandomExam(token: String, request: RandomExamRequest) =
+        apiService.getRandomExam("Bearer $token", request)
 
     suspend fun submitExam(token: String, examId: Int, attemptId: Int, request: SubmitExamRequest) =
-        apiService.submitExam(token, examId, attemptId, request)
+        apiService.submitExam("Bearer $token", examId, attemptId, request)
 }

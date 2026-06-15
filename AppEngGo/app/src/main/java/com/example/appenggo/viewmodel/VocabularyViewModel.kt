@@ -1,58 +1,86 @@
 package com.example.appenggo.viewmodel
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appenggo.Resource
-import com.example.appenggo.model.Response.ExamItemResponse
-import com.example.appenggo.model.Response.PageResponse
 import com.example.appenggo.model.Response.ThemeResponse
+import com.example.appenggo.SingleLiveEvent
+import com.example.appenggo.model.Request.RandomExamRequest
+import com.example.appenggo.model.Response.StartExamResponse
 import com.example.appenggo.repository.ThemeRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
-class VocabularyViewModel(private val repository: ThemeRepository) : ViewModel() {
+class VocabularyViewModel(
+    private val repository: ThemeRepository
+) : ViewModel() {
 
-    private val _themes = MutableLiveData<Resource<List<ThemeResponse>>>()
-    val themes: LiveData<Resource<List<ThemeResponse>>> = _themes
-
-    private val _exams = MutableLiveData<Resource<PageResponse<ExamItemResponse>>>()
-    val exams: LiveData<Resource<PageResponse<ExamItemResponse>>> = _exams
+    val themes     = MutableLiveData<Resource<List<ThemeResponse>>>()
+    val randomExam = SingleLiveEvent<Resource<StartExamResponse>>()
 
     fun fetchThemes(token: String) {
-        _themes.postValue(Resource.Loading())
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
+            themes.value = Resource.Loading()
             try {
-                val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
-                val response = repository.getAllThemes(formattedToken)
-                if (response.code == 1000 && response.result != null) {
-                    val allThemes = mutableListOf<ThemeResponse>()
-                    response.result.values.forEach { allThemes.addAll(it) }
-                    _themes.postValue(Resource.Success(allThemes))
-                } else {
-                    _themes.postValue(Resource.Error(response.message ?: "Lỗi tải chủ đề"))
-                }
+                val response = repository.getAllThemes(token)
+                val allThemes = response.result?.values?.flatten() ?: emptyList()
+                themes.value = Resource.Success(allThemes)
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("VocabularyVM", "fetchThemes HTTP ${e.code()}: $errorBody")
+                themes.value = Resource.Error("HTTP ${e.code()}: $errorBody")
             } catch (e: Exception) {
-                _themes.postValue(Resource.Error("Lỗi kết nối: ${e.message}"))
+                Log.e("VocabularyVM", "fetchThemes Error: ${e.message}")
+                themes.value = Resource.Error(e.message ?: "Lỗi không xác định")
             }
         }
     }
 
-    fun searchExams(token: String, themeId: Int, difficulty: Int) {
-        _exams.postValue(Resource.Loading())
-        viewModelScope.launch(Dispatchers.IO) {
+    fun getRandomExam(
+        token: String,
+        themeId: Int,
+        difficulty: Int,
+        totalQuestions: Int,
+        questionTypes: List<String>
+    ) {
+        viewModelScope.launch {
+            randomExam.value = Resource.Loading()
             try {
-                val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
-                val response = repository.getExams(formattedToken, themeId, difficulty)
-                if (response.code == 1000 && response.result != null) {
-                    _exams.postValue(Resource.Success(response.result))
-                } else {
-                    _exams.postValue(Resource.Error(response.message ?: "Không tìm thấy đề thi"))
-                }
+                // Bước 1: Tạo đề random → lấy examId
+                val randomRequest = RandomExamRequest(
+                    themeIds       = listOf(themeId),
+                    difficulty     = difficulty,
+                    totalQuestions = totalQuestions,
+                    questionTypes  = questionTypes
+                )
+                Log.d("VocabularyVM", "Bước 1 - getRandomExam request: $randomRequest")
+                val randomResponse = repository.getRandomExam(token, randomRequest)
+                Log.d("VocabularyVM", "Bước 1 - getRandomExam response: ${randomResponse.result}")
+
+                val examId = randomResponse.result?.id
+                    ?: throw Exception("Không thể tạo đề thi")
+
+                // Bước 2: Start exam → lấy attemptId + questions
+                Log.d("VocabularyVM", "Bước 2 - startExam examId: $examId")
+                val startResponse = repository.startExam(token, examId)
+                Log.d("VocabularyVM", "Bước 2 - startExam response: ${startResponse.result}")
+
+                val examData = startResponse.result
+                    ?: throw Exception("Không thể bắt đầu bài thi")
+
+                randomExam.value = Resource.Success(examData)
+
+            } catch (e: HttpException) {
+                val errorBody = e.response()?.errorBody()?.string()
+                Log.e("VocabularyVM", "HTTP ${e.code()}: $errorBody")
+                randomExam.value = Resource.Error("HTTP ${e.code()}: $errorBody")
             } catch (e: Exception) {
-                _exams.postValue(Resource.Error("Lỗi kết nối: ${e.message}"))
+                Log.e("VocabularyVM", "Error: ${e.message}", e)
+                randomExam.value = Resource.Error(e.message ?: "Lỗi không xác định")
             }
         }
     }
+
 }

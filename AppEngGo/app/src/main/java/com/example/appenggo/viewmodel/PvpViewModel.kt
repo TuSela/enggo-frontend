@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.appenggo.Resource
 import com.example.appenggo.RetrofitClient
 import com.example.appenggo.model.Request.InviteRequest
 import com.example.appenggo.model.Request.InviteRespondRequest
@@ -73,11 +74,11 @@ class PvpViewModel : ViewModel() {
     private val _queueStatus = MutableLiveData<String>()
     val queueStatus: LiveData<String> = _queueStatus
 
-    private val _friendList = MutableLiveData<List<UserResponse>>()
-    val friendList: LiveData<List<UserResponse>> = _friendList
+    private val _friendList = MutableLiveData<Resource<List<UserResponse>>>()
+    val friendList: LiveData<Resource<List<UserResponse>>> = _friendList
 
-    private val _themes = MutableLiveData<List<ThemeEntity>>()
-    val themes: LiveData<List<ThemeEntity>> = _themes
+    private val _themes = MutableLiveData<Resource<List<ThemeEntity>>>()
+    val themes: LiveData<Resource<List<ThemeEntity>>> = _themes
 
     fun startPvpSession(token: String) {
         pvpRepository.connectWebSocket(
@@ -133,7 +134,6 @@ class PvpViewModel : ViewModel() {
 
         if (inviteResultDisposable == null || inviteResultDisposable!!.isDisposed) {
             inviteResultDisposable = pvpRepository.subscribeInviteResult(userId) { result ->
-                // result nhận được có thể là "INVITE_DECLINED", "INVITE_TIMEOUT", ...
                 _inviteResult.postValue(result)
             }
             inviteResultDisposable?.let { globalCompositeDisposable.add(it) }
@@ -157,20 +157,24 @@ class PvpViewModel : ViewModel() {
     }
 
     fun loadFriendList(token: String) {
+        _friendList.postValue(Resource.Loading())
         viewModelScope.launch {
             try {
                 val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
-                val response = apiService.getFriends(formattedToken)
+                val response = apiService.getFriendspvp(formattedToken)
                 if (response.code == 1000) {
-                    _friendList.postValue(response.result ?: emptyList())
+                    _friendList.postValue(Resource.Success(response.result ?: emptyList()))
+                } else {
+                    _friendList.postValue(Resource.Error(response.message ?: "Lỗi tải bạn bè"))
                 }
             } catch (e: Exception) {
-                _friendList.postValue(emptyList())
+                _friendList.postValue(Resource.Error("Lỗi kết nối: ${e.message}"))
             }
         }
     }
 
     fun loadAllThemes(token: String) {
+        _themes.postValue(Resource.Loading())
         viewModelScope.launch {
             try {
                 val formattedToken = if (token.startsWith("Bearer ")) token else "Bearer $token"
@@ -184,10 +188,12 @@ class PvpViewModel : ViewModel() {
                             active = themeRes.active
                         )
                     } ?: emptyList()
-                    _themes.postValue(allThemes)
+                    _themes.postValue(Resource.Success(allThemes))
+                } else {
+                    _themes.postValue(Resource.Error(response.message ?: "Lỗi tải chủ đề"))
                 }
             } catch (e: Exception) {
-                Log.e("PVP_VM", "Lỗi tải themes: ${e.message}")
+                _themes.postValue(Resource.Error("Lỗi kết nối: ${e.message}"))
             }
         }
     }
@@ -216,7 +222,6 @@ class PvpViewModel : ViewModel() {
     fun clickCancelMatch(userId: Int) {
         pvpRepository.sendLeaveQueue(userId)
     }
-
     override fun onCleared() {
         super.onCleared()
         instanceCompositeDisposable.clear()
