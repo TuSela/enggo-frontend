@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Viền xanh lá cho avatar ĐANG HOẠT ĐỘNG -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#EFEFEF" />
+    <stroke android:width="3dp" android:color="#58CC02" />
+</shape>

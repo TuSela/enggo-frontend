@@ -70,7 +70,8 @@ class LoginActivity : AppCompatActivity() {
                     btnLogin.isEnabled = true
                     val loginData = result.data
                     if (loginData != null && loginData.result.authenticated) {
-                        saveToken(loginData.result.token)
+                        val username = edUsername.text.toString().trim()
+                        saveToken(loginData.result.token, username)
                         Toast.makeText(this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
                         
                         val intent = Intent(this, MainActivity::class.java)
@@ -105,8 +106,11 @@ class LoginActivity : AppCompatActivity() {
         viewModel.login(LoginRequest(username, password))
     }
 
-    private fun saveToken(token: String) {
+    private fun saveToken(token: String, username: String) {
         val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        sharedPref.edit().putString("TOKEN", token).apply()
+        sharedPref.edit()
+            .putString("TOKEN", token)
+            .putString("USERNAME", username)
+            .apply()
     }
 }

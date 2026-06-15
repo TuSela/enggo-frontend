@@ -86,11 +86,36 @@
                         android:progressDrawable="@drawable/custom_progress_bar" />
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                <!-- Chuông + Badge đỏ -->
+                <FrameLayout
+                    android:id="@+id/btn_bell"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="12dp"
-                    android:src="@drawable/ic_bell" />
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_bell" />
+
+                    <!-- Badge đỏ hiện số thông báo chưa đọc -->
+                    <TextView
+                        android:id="@+id/tv_notification_badge"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_badge_red"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+                </FrameLayout>
+
             </LinearLayout>
         </RelativeLayout>
 

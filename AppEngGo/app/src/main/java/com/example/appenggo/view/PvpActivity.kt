@@ -58,7 +58,7 @@ class PvpActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.pvp)
+        setContentView(R.layout.activity_pvp)
 
         initViews()
         setupClickListeners()

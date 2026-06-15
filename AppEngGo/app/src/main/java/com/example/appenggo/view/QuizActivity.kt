@@ -226,17 +226,13 @@ class QuizActivity : AppCompatActivity() {
     ) {
         val selectedId = userAnswers[question.id] as? Int
 
-        // Wrap tất cả card trong 1 LinearLayout với weight để fill đều khoảng trống
-        val optionCount = question.multipleOptions?.size ?: 0
-
         question.multipleOptions?.forEach { option ->
             val isSelected = selectedId == option.id
 
             val card = MaterialCardView(this).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    0,
-                    1f   // weight đều nhau → các card cao bằng nhau và fill hết chỗ trống
+                    ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { setMargins(0, 0, 0, dp(12f)) }
                 radius      = dp(14f).toFloat()
                 strokeWidth = dp(if (isSelected) 2f else 1f)
@@ -248,9 +244,10 @@ class QuizActivity : AppCompatActivity() {
                     orientation = LinearLayout.HORIZONTAL
                     setPadding(dp(20f), dp(22f), dp(20f), dp(22f))
                     gravity = Gravity.CENTER_VERTICAL
+                    minimumHeight = dp(80f)
                     layoutParams = LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
+                        ViewGroup.LayoutParams.WRAP_CONTENT
                     )
                 }
 
@@ -289,9 +286,6 @@ class QuizActivity : AppCompatActivity() {
             }
             containerAnswers.addView(card)
         }
-
-        // Đặt weightSum cho containerAnswers để các card fill đều
-        containerAnswers.weightSum = optionCount.toFloat()
     }
 
     // ── Fill Blank ────────────────────────────────────────────────────────────

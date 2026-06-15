@@ -15,4 +15,6 @@
     <color name="bg_light_gray">#F7F7F7</color>
     <color name="border_gray">#E5E5E5</color>
     <color name="bg_light_blue">#DDF4FF</color>
+    <color name="green">#58CC02</color>
+    <color name="gray">#AAAAAA</color>
 </resources>
