@@ -49,6 +49,16 @@ interface ApiService {
     ): ApiResponse<SubmitExamResponse>
 
     // ===== FRIEND APIs =====
+    @GET("api/users/search")
+    suspend fun searchUsers(
+        @Header("Authorization") token: String,
+        @Query("username") keyword: String
+    ): ApiResponse<List<UserSearchResponse>>
+
+    @GET("api/social/friends/sent-requests")
+    suspend fun getSentRequestIds(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<Int>>
 
     @GET("api/social/friends")
     suspend fun getAllFriends(

@@ -33,6 +33,7 @@
         <activity android:name=".view.QuizResultActivity" />
         <activity android:name=".view.ThemeSelectionActivity" />
         <activity android:name=".view.ChatActivity" />
+        <activity android:name=".view.FindFriendActivity" />
 
     </application>
 

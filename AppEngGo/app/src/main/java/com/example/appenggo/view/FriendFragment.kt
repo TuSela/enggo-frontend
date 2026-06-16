@@ -52,7 +52,7 @@ class FriendFragment : Fragment() {
         etSearch = view.findViewById(R.id.et_search)
 
         view.findViewById<View>(R.id.btn_find_friend)?.setOnClickListener {
-            Toast.makeText(requireContext(), "Tìm bạn mới", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireContext(), FindFriendActivity::class.java))
         }
 
         view.findViewById<View>(R.id.btn_back)?.setOnClickListener {

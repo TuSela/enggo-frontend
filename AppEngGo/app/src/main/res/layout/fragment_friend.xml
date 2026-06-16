@@ -30,7 +30,6 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#333333" />
-
     </RelativeLayout>
 
     <ScrollView
@@ -47,7 +46,7 @@
             android:paddingHorizontal="16dp"
             android:paddingTop="16dp">
 
-            <!-- NÚT TÌM BẠN MỚI -->
+            <!-- NÚT TÌM BẠN MỚI — giữ MaterialCardView vì có viền xanh -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/btn_find_friend"
                 android:layout_width="match_parent"
@@ -63,8 +62,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:gravity="center">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -75,38 +73,34 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Ô TÌM KIẾM -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Ô TÌM KIẾM — dùng bg_rounded_input -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginBottom="20dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="#EFEFEF">
-                <LinearLayout
+                android:background="@drawable/bg_rounded_input"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_search"
+                    android:alpha="0.4" />
+
+                <EditText
+                    android:id="@+id/et_search"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="16dp">
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/ic_search"
-                        android:alpha="0.4" />
-                    <EditText
-                        android:id="@+id/et_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:background="@null"
-                        android:hint="Tìm kiếm bạn bè..."
-                        android:textSize="14sp"
-                        android:inputType="text"
-                        android:imeOptions="actionSearch"
-                        android:singleLine="true" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginStart="8dp"
+                    android:background="@null"
+                    android:hint="Tìm kiếm bạn bè..."
+                    android:textSize="14sp"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true" />
+            </LinearLayout>
 
             <!-- ĐANG HOẠT ĐỘNG -->
             <TextView
