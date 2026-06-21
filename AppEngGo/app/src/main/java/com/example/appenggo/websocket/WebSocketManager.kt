@@ -3,13 +3,15 @@ package com.example.appenggo.websocket
 import android.content.Context
 import android.util.Log
 import com.example.appenggo.model.MessageResponse
+import com.example.appenggo.model.MatchResultResponse
+import com.example.appenggo.model.NotificationPayload
+import com.example.appenggo.model.QuizProgressPayload
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
-import ua.naiksoftware.stomp.dto.StompMessage
 
 object WebSocketManager {
 
@@ -18,12 +20,20 @@ object WebSocketManager {
 
     private var stompClient: StompClient? = null
     private val disposables = CompositeDisposable()
+    private val gson = Gson()
 
-    // Callbacks
+    // ── Callbacks ────────────────────────────────────────────────────────────
     var onNotificationReceived: ((NotificationPayload) -> Unit)? = null
     var onStatusChanged: ((Int, String) -> Unit)? = null
     var onChatMessageReceived: ((ChatMessageEvent) -> Unit)? = null
+    var onPvpEventReceived: ((Map<String, Any>) -> Unit)? = null
+    var onPvpExamReceived: ((Any) -> Unit)? = null
 
+    // PVP realtime callbacks
+    var onPvpProgressReceived: ((QuizProgressPayload) -> Unit)? = null
+    var onPvpResultReceived: ((MatchResultResponse) -> Unit)? = null
+
+    // ── Connect ──────────────────────────────────────────────────────────────
     fun connect(context: Context) {
         val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val token = prefs.getString("TOKEN", null) ?: run {
@@ -60,28 +70,28 @@ object WebSocketManager {
         stompClient!!.connect()
     }
 
+    // ── Subscribe topics mặc định ────────────────────────────────────────────
     private fun subscribeTopics() {
-        // Thông báo cá nhân (friend request...)
+        // Thông báo cá nhân
         disposables.add(
             stompClient!!.topic("/user/queue/notifications")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ msg ->
                     Log.d(TAG, "🔔 Notification: ${msg.payload}")
                     try {
-                        val payload = Gson().fromJson(msg.payload, NotificationPayload::class.java)
+                        val payload = gson.fromJson(msg.payload, NotificationPayload::class.java)
                         onNotificationReceived?.invoke(payload)
                     } catch (e: Exception) { Log.e(TAG, "Parse error: ${e.message}") }
                 }, { Log.e(TAG, "Notification error: ${it.message}") })
         )
 
-        // Tin nhắn chat realtime
+        // Tin nhắn chat
         disposables.add(
             stompClient!!.topic("/user/queue/chat")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ msg ->
-                    Log.d(TAG, "💬 Chat message: ${msg.payload}")
                     try {
-                        val event = Gson().fromJson(msg.payload, ChatMessageEvent::class.java)
+                        val event = gson.fromJson(msg.payload, ChatMessageEvent::class.java)
                         onChatMessageReceived?.invoke(event)
                     } catch (e: Exception) { Log.e(TAG, "Parse chat error: ${e.message}") }
                 }, { Log.e(TAG, "Chat subscribe error: ${it.message}") })
@@ -93,14 +103,114 @@ object WebSocketManager {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ msg ->
                     try {
-                        val payload = Gson().fromJson(msg.payload, StatusPayload::class.java)
+                        val payload = gson.fromJson(msg.payload, StatusPayload::class.java)
                         onStatusChanged?.invoke(payload.userId, payload.status)
                     } catch (e: Exception) { Log.e(TAG, "Parse status error: ${e.message}") }
                 }, { Log.e(TAG, "Status error: ${it.message}") })
         )
+
+        // PVP events cá nhân (invite, accepted, declined, ready, start)
+        disposables.add(
+            stompClient!!.topic("/user/queue/pvp")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ msg ->
+                    Log.d(TAG, "⚔️ PVP event: ${msg.payload}")
+                    try {
+                        val event = gson.fromJson(msg.payload, Map::class.java) as Map<String, Any>
+                        onPvpEventReceived?.invoke(event)
+
+                        if (event["type"] == "PVP_INVITE") {
+                            val payload = NotificationPayload(
+                                type = "PVP_INVITE",
+                                fromUserId = (event["fromUserId"] as? Double)?.toInt() ?: 0,
+                                fromUsername = event["fromUsername"] as? String ?: "",
+                                message = event["message"] as? String ?: "",
+                                requestId = (event["matchId"] as? Double)?.toInt()
+                            )
+                            onNotificationReceived?.invoke(payload)
+                        }
+                    } catch (e: Exception) { Log.e(TAG, "PVP parse error: ${e.message}") }
+                }, { Log.e(TAG, "PVP subscribe error: ${it.message}") })
+        )
     }
 
-    // Gửi tin nhắn qua WebSocket
+    // ── PVP match: join queue + subscribe đề + progress + result ────────────
+    fun joinPvpQueue(matchId: Int) {
+        stompClient?.send("/app/join-queue", matchId.toString())
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(
+                { Log.d(TAG, "✅ Joined PVP queue for match $matchId") },
+                { Log.e(TAG, "❌ Join queue error: ${it.message}") }
+            )
+
+        // Nhận đề thi khi cả 2 đã join
+        disposables.add(
+            stompClient!!.topic("/topic/match/$matchId")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ msg ->
+                    Log.d(TAG, "📝 Match $matchId data: ${msg.payload}")
+                    try {
+                        val data = gson.fromJson(msg.payload, Any::class.java)
+                        onPvpExamReceived?.invoke(data)
+                    } catch (e: Exception) { Log.e(TAG, "Match data parse error: ${e.message}") }
+                }, { Log.e(TAG, "Match subscribe error: ${it.message}") })
+        )
+
+        // Nhận progress realtime của đối thủ
+        disposables.add(
+            stompClient!!.topic("/topic/match/$matchId/progress")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ msg ->
+                    Log.d(TAG, "📊 PVP Progress: ${msg.payload}")
+                    try {
+                        val progress = gson.fromJson(msg.payload, QuizProgressPayload::class.java)
+                        onPvpProgressReceived?.invoke(progress)
+                    } catch (e: Exception) { Log.e(TAG, "Progress parse error: ${e.message}") }
+                }, { Log.e(TAG, "Progress subscribe error: ${it.message}") })
+        )
+
+        // Nhận kết quả khi cả 2 đã nộp bài
+        disposables.add(
+            stompClient!!.topic("/topic/match/$matchId/result")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ msg ->
+                    Log.d(TAG, "🏆 PVP Result: ${msg.payload}")
+                    try {
+                        val result = gson.fromJson(msg.payload, MatchResultResponse::class.java)
+                        onPvpResultReceived?.invoke(result)
+                    } catch (e: Exception) { Log.e(TAG, "Result parse error: ${e.message}") }
+                }, { Log.e(TAG, "Result subscribe error: ${it.message}") })
+        )
+    }
+
+    // ── Gửi progress khi trả lời 1 câu ─────────────────────────────────────
+    fun sendPvpProgress(matchId: Int, questionId: Int, selectedOptionId: Int?,
+                        fillBlanks: Any?, matchings: Any?) {
+        val payload = mapOf(
+            "questionId" to questionId,
+            "selectedOptionId" to selectedOptionId,
+            "fillBlanks" to fillBlanks,
+            "matchings" to matchings
+        )
+        stompClient?.send("/app/match/$matchId/progress", gson.toJson(payload))
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(
+                { Log.d(TAG, "✅ Progress sent q=$questionId") },
+                { Log.e(TAG, "❌ Progress send error: ${it.message}") }
+            )
+    }
+
+    // ── Submit toàn bộ bài PVP qua WebSocket ────────────────────────────────
+    fun submitPvpExam(matchId: Int, answersJson: String) {
+        stompClient?.send("/app/match/$matchId/submit", answersJson)
+            ?.observeOn(AndroidSchedulers.mainThread())
+            ?.subscribe(
+                { Log.d(TAG, "✅ PVP exam submitted for match $matchId") },
+                { Log.e(TAG, "❌ PVP submit error: ${it.message}") }
+            )
+    }
+
+    // ── Gửi chat ─────────────────────────────────────────────────────────────
     fun sendMessage(jsonPayload: String) {
         stompClient?.send("/app/chat.send", jsonPayload)
             ?.observeOn(AndroidSchedulers.mainThread())
@@ -110,6 +220,7 @@ object WebSocketManager {
             )
     }
 
+    // ── Disconnect ───────────────────────────────────────────────────────────
     fun disconnect() {
         disposables.clear()
         stompClient?.disconnect()
@@ -119,19 +230,8 @@ object WebSocketManager {
 
     fun isConnected(): Boolean = stompClient?.isConnected == true
 
-    // Data classes
-    data class NotificationPayload(
-        val type: String,
-        val fromUserId: Int,
-        val fromUsername: String,
-        val message: String,
-        val requestId: Int?
-    )
-
-    data class StatusPayload(
-        val userId: Int,
-        val status: String
-    )
+    // ── Data classes ─────────────────────────────────────────────────────────
+    data class StatusPayload(val userId: Int, val status: String)
 
     data class ChatMessageEvent(
         val conversationId: Int,

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:gravity="center">
+
+    <!-- VS Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="32dp"
+        android:layout_marginBottom="32dp">
+
+        <!-- Player 1 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_avatar_p1"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/ic_default_avatar"
+                android:background="@drawable/bg_circle_border_blue"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/tv_name_p1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Bạn"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333" />
+
+            <!-- Trạng thái sẵn sàng -->
+            <TextView
+                android:id="@+id/tv_ready_p1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Chờ..."
+                android:textSize="12sp"
+                android:textColor="#AAAAAA" />
+        </LinearLayout>
+
+        <!-- VS -->
+        <TextView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_pvp_vs"
+            android:gravity="center"
+            android:text="VS"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold|italic" />
+
+        <!-- Player 2 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_avatar_p2"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/ic_default_avatar"
+                android:background="@drawable/bg_circle_border_blue"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/tv_name_p2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Đối thủ"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333" />
+
+            <TextView
+                android:id="@+id/tv_ready_p2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Chờ..."
+                android:textSize="12sp"
+                android:textColor="#AAAAAA" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Thông tin đề thi -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_pvp_setting_card"
+        android:padding="16dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ĐỀ THI"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#AAAAAA"
+            android:letterSpacing="0.08" />
+
+        <TextView
+            android:id="@+id/tv_exam_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Đang tải..."
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+
+        <!-- Chủ đề đề thi -->
+        <TextView
+            android:id="@+id/tv_exam_topic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Chủ đề: ..."
+            android:textSize="14sp"
+            android:textColor="#555555" />
+
+        <!-- Độ khó -->
+        <TextView
+            android:id="@+id/tv_exam_difficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Độ khó: ..."
+            android:textSize="14sp"
+            android:textColor="#555555" />
+
+        <!-- Số câu hỏi -->
+        <TextView
+            android:id="@+id/tv_exam_question_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Số câu: ..."
+            android:textSize="14sp"
+            android:textColor="#555555" />
+    </LinearLayout>
+
+    <!-- Nút Sẵn sàng (player2) / Bắt đầu (player1) -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_ready_or_start"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/bg_button_green_fancy"
+        android:text="SẴN SÀNG"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:stateListAnimator="@null" />
+
+    <!-- Nút huỷ -->
+    <TextView
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Huỷ"
+        android:textSize="14sp"
+        android:textColor="#AAAAAA"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>

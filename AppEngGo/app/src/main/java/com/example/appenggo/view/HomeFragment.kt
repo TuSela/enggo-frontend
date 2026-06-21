@@ -7,14 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.Fragment // <-- thêm
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
-import com.example.appenggo.viewmodel.MainViewModel
+import com.example.appenggo.viewmodel.MainViewModel // <-- thêm
 import com.example.appenggo.websocket.WebSocketManager
+import com.example.appenggo.model.NotificationRepository
+import com.example.appenggo.model.NotificationPayload          // <-- đã có
+import com.example.appenggo.view.NotificationActivity          // <-- thêm
 
 class HomeFragment : Fragment() {
 
+    // ------------------------------------------------------------------------
+    // ViewModel & data
+    // ------------------------------------------------------------------------
+
+    // ------------------------------------------------------------------------
+    // UI references
+    // ------------------------------------------------------------------------
     private lateinit var viewModel: MainViewModel
     private var tvStreak: TextView? = null
     private var tvLevel: TextView? = null
@@ -22,12 +32,17 @@ class HomeFragment : Fragment() {
     private var btnLearnVocabulary: View? = null
     private var btn_battle: View? = null
 
+
     private var btnBell: View? = null
     private var tvNotificationBadge: TextView? = null
     private var unreadCount = 0
 
+    // ------------------------------------------------------------------------
+    // Lifecycle
+    // ------------------------------------------------------------------------
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
@@ -43,6 +58,9 @@ class HomeFragment : Fragment() {
         listenNotifications()
     }
 
+    // ------------------------------------------------------------------------
+    // UI init
+    // ------------------------------------------------------------------------
     private fun initViews(view: View) {
         tvStreak = view.findViewById(R.id.tv_streak)
         tvLevel = view.findViewById(R.id.tv_level)
@@ -53,6 +71,9 @@ class HomeFragment : Fragment() {
         tvNotificationBadge = view.findViewById(R.id.tv_notification_badge)
     }
 
+    // ------------------------------------------------------------------------
+    // Click listeners
+    // ------------------------------------------------------------------------
     private fun setupClickListeners() {
         btnLearnVocabulary?.setOnClickListener {
             startActivity(Intent(requireContext(), VocabularyActivity::class.java))
@@ -61,33 +82,40 @@ class HomeFragment : Fragment() {
             startActivity(Intent(requireContext(), PvpActivity::class.java))
         }
 
-        // Click chuông → xem danh sách thông báo (reset badge)
+
+        // ------------------- Chuông (notification) -------------------
         btnBell?.setOnClickListener {
+            // Reset badge
             unreadCount = 0
             updateBadge()
-            // TODO: mở màn hình danh sách thông báo nếu có
-            Toast.makeText(requireContext(), "Danh sách thông báo", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireContext(), NotificationActivity::class.java))
         }
     }
 
+    // ------------------------------------------------------------------------
+    // WebSocket listening
+    // ------------------------------------------------------------------------
     private fun listenNotifications() {
-        // Đăng ký callback nhận thông báo từ WebSocket
-        WebSocketManager.onNotificationReceived = { notification ->
+        WebSocketManager.onNotificationReceived = { payload ->
             activity?.runOnUiThread {
+                NotificationRepository.add(payload) // ✅ thay notifVm.add + notifications.add
+
                 unreadCount++
                 updateBadge()
 
-                // Hiện toast khi có thông báo mới
-                val msg = when (notification.type) {
-                    "FRIEND_REQUEST" -> "🔔 ${notification.fromUsername} gửi lời mời kết bạn"
-                    "FRIEND_ACCEPTED" -> "✅ ${notification.fromUsername} đã chấp nhận kết bạn"
-                    else -> notification.message
+                val msg = when (payload.type) {
+                    "FRIEND_REQUEST" -> "🔔 ${payload.fromUsername} gửi lời mời kết bạn"
+                    "FRIEND_ACCEPTED" -> "✅ ${payload.fromUsername} đã chấp nhận kết bạn"
+                    else -> payload.message
                 }
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
             }
         }
     }
 
+    // ------------------------------------------------------------------------
+    // Badge UI
+    // ------------------------------------------------------------------------
     private fun updateBadge() {
         if (unreadCount > 0) {
             tvNotificationBadge?.visibility = View.VISIBLE
@@ -97,6 +125,9 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // ------------------------------------------------------------------------
+    // ViewModel dữ liệu người dùng (streak, level,…)
+    // ------------------------------------------------------------------------
     private fun observeViewModel() {
         viewModel.userStats.observe(viewLifecycleOwner) { stats ->
             tvStreak?.text = " ${stats.streak}"
@@ -105,9 +136,12 @@ class HomeFragment : Fragment() {
         }
     }
 
+    // ------------------------------------------------------------------------
+    // Cleanup
+    // ------------------------------------------------------------------------
     override fun onDestroyView() {
         super.onDestroyView()
-        // Hủy callback khi fragment bị destroy tránh memory leak
+        // Hủy callback khi fragment bị destroy để tránh memory leak
         WebSocketManager.onNotificationReceived = null
     }
 }

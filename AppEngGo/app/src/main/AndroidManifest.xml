@@ -34,7 +34,13 @@
         <activity android:name=".view.ThemeSelectionActivity" />
         <activity android:name=".view.ChatActivity" />
         <activity android:name=".view.FindFriendActivity" />
-
+        <activity
+            android:name=".view.NotificationActivity"
+            android:label="Thông báo"
+            android:exported="true" />
+        <activity android:name=".view.WaitingRoomActivity" />
+        <activity android:name=".view.PvpResultActivity" />
+        <activity android:name=".view.PvpQuizActivity" />
     </application>
 
 </manifest>

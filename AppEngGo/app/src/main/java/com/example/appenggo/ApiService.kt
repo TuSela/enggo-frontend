@@ -127,4 +127,38 @@ interface ApiService {
         @Query("page") page: Int = 0,
         @Query("size") size: Int = 20
     ): ApiResponse<PageResponse<MessageResponse>>
+
+
+    //===========PVP API===============
+
+    @POST("api/gamification/pvp/direct/invite/{friendId}")
+    suspend fun inviteFriendPvp(
+        @Header("Authorization") token: String,
+        @Path("friendId") friendId: Int,
+        @Body request: RandomBlueprintRequest
+    ): ApiResponse<PvpMatchResponse>
+
+    @POST("api/gamification/pvp/direct/accept/{matchId}")
+    suspend fun acceptDirectMatch(
+        @Header("Authorization") token: String,
+        @Path("matchId") matchId: Int
+    ): ApiResponse<Boolean>
+
+    @POST("api/gamification/pvp/direct/{matchId}/ready")
+    suspend fun playerReady(
+        @Header("Authorization") token: String,
+        @Path("matchId") matchId: Int
+    ): ApiResponse<Boolean>
+
+    @POST("api/gamification/pvp/direct/{matchId}/start")
+    suspend fun startDirectMatch(
+        @Header("Authorization") token: String,
+        @Path("matchId") matchId: Int
+    ): ApiResponse<Boolean>
+
+    @DELETE("api/gamification/pvp/direct/decline/{matchId}")
+    suspend fun declineDirectMatch(
+        @Header("Authorization") token: String,
+        @Path("matchId") matchId: Int
+    ): ApiResponse<Boolean>
 }

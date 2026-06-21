@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.appenggo.R
 import com.example.appenggo.websocket.WebSocketManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,11 +26,13 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_learn -> {
-                    // loadFragment(LearnFragment())
+                    val intentLearn = Intent(this, VocabularyActivity::class.java)
+                    startActivity(intentLearn)
                     true
                 }
                 R.id.nav_pvp -> {
-                    // loadFragment(PvpFragment())
+                    val intentPvp = Intent(this, PvpActivity::class.java)
+                    startActivity(intentPvp)
                     true
                 }
                 R.id.nav_friend -> {

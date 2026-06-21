@@ -20,10 +20,10 @@ class DifficultyBottomSheet : BottomSheetDialogFragment() {
     /**
      * Enum định nghĩa các mức độ khó và nhãn hiển thị tương ứng.
      */
-    enum class Difficulty(val label: String) {
-        EASY("Dễ"),
-        MEDIUM("Vừa"),
-        HARD("Khó")
+    enum class Difficulty(val label: String, val value: Byte) {
+        EASY("Dễ", 1),
+        MEDIUM("Vừa", 2),
+        HARD("Khó", 3)
     }
 
     /**

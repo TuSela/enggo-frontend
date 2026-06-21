@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 // --- Response khi bắt đầu thi ---
 data class StartExamResponse(
     @SerializedName("examId")
-    val examId: Int, 
+    val examId: Int,
     @SerializedName("attemptId")
     val attemptId: Int,
     val title: String,
@@ -82,4 +82,47 @@ data class SubmitExamResponse(
     val totalQuestions: Int,
     val totalScore: Double,
     val expGained: Int
+)
+
+
+// Response từ server khi cả 2 join-queue (nhận qua WebSocket /topic/match/{matchId})
+data class ExamPvpDisplayResponse(
+    val matchId: Int,
+    val examId: Int,
+    val attemptId1: Int,
+    val attemptId2: Int,
+    val title: String,
+    val examType: String?,
+    val difficulty: Int?,
+    val totalQuestions: Int,
+    val durationMinutes: Int,
+    val questions: List<ExamQuestionWrapper>
+)
+
+// Progress realtime: mỗi lần trả lời 1 câu, server broadcast điểm
+data class QuizProgressPayload(
+    val userId: Int,
+    val currentScore: Int,
+    @com.google.gson.annotations.SerializedName("correct")
+    val isCorrect: Boolean,
+    val questionId: Int
+)
+
+// Kết quả trận đấu cuối cùng
+data class MatchResultResponse(
+    val matchId: Int,
+    val winnerId: Int?,      // null = hòa
+    val player1Id: Int?,     // thêm để client biết ai là player1
+    val player2Id: Int?,
+    val player1: PlayerResult,
+    val player2: PlayerResult,
+    val status: String
+)
+
+data class PlayerResult(
+    val avatarUrl: String?,
+    val playerScore: Int,
+    val eloChange: Int?,
+    val correctAnswersCount: Int?,
+    val elo: Int?
 )

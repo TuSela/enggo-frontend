@@ -56,7 +56,11 @@ class FriendFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btn_back)?.setOnClickListener {
-            requireActivity().onBackPressed()
+            // Navigate back to Home fragment via BottomNavigationView
+            val activity = requireActivity()
+            val bottomNav = activity.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView
+                    >(R.id.bottomNavigation)
+            bottomNav?.selectedItemId = R.id.nav_home
         }
     }
 
