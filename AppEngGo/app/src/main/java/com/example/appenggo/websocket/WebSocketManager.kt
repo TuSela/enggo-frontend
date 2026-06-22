@@ -138,23 +138,24 @@ object WebSocketManager {
     }
 
     // ── PVP matching ─────────────────────────────────────────────────────────
-    // 1. Sửa hàm lắng nghe trạng thái hàng đợi (Đang tìm trận...)
+    // Lắng nghe trạng thái hàng đợi cá nhân (WAITING, WAITING_FOR_ENEMY_READY...)
+    // Server gửi qua convertAndSendToUser(username, "/queue/queue-status", ...)
+    // -> client subscribe đúng "/user/queue/queue-status".
     private var queueStatusSubscription: Disposable? = null
 
-    fun subscribeToMyMatchTopic(username: String, onQueueStatus: (String) -> Unit) {
+    fun subscribeToMyQueueStatus() {
         // Hủy đăng ký cũ nếu có để tránh trùng lặp luồng dữ liệu
         queueStatusSubscription?.dispose()
 
-        // Đăng ký hộp thư riêng tư của User
         queueStatusSubscription = stompClient!!.topic("/user/queue/queue-status")
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ msg ->
                 // Loại bỏ dấu ngoặc kép dư thừa nếu server trả về chuỗi thuần túy dạng JSON
                 val status = msg.payload.replace("\"", "")
-                Log.d("WebSocketManager", "🎁 Nhận được trạng thái hàng đợi: $status")
-                onQueueStatus.invoke(status)
+                Log.d(TAG, "🎁 Nhận được trạng thái hàng đợi: $status")
+                onQueueStatusReceived?.invoke(status)
             }, { error ->
-                Log.e("WebSocketManager", "❌ Lỗi lắng nghe Queue status: ${error.message}")
+                Log.e(TAG, "❌ Lỗi lắng nghe Queue status: ${error.message}")
             })
 
         disposables.add(queueStatusSubscription!!)
@@ -168,15 +169,24 @@ object WebSocketManager {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ msg ->
                 Log.d(TAG, "⚔️ Match found info received: ${msg.payload}")
-                try {
-                    // Chuyển chuỗi JSON trận đấu thành Map hoặc Object để đẩy ra Activity
-                    val type = object : com.google.gson.reflect.TypeToken<Map<String, Any>>() {}.type
-                    val eventMap: Map<String, Any> = gson.fromJson(msg.payload, type)
+                val payload = msg.payload.trim()
 
-                    // Kích hoạt callback báo về cho PvpMatchingActivity xử lý hiển thị giao diện đối thủ
-                    onPvpEventReceived?.invoke(eventMap)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error parsing match found payload: ${e.message}")
+                // Server có lúc gửi JSON object (thông tin trận đấu),
+                // có lúc gửi chuỗi thuần như MATCH_TIMEOUT/CANCELLED (không phải JSON hợp lệ).
+                // Phải tách 2 trường hợp này, nếu không Gson sẽ throw và callback sẽ không
+                // bao giờ được gọi khi trận bị huỷ.
+                if (payload.startsWith("{")) {
+                    try {
+                        val type = object : com.google.gson.reflect.TypeToken<Map<String, Any>>() {}.type
+                        val eventMap: Map<String, Any> = gson.fromJson(payload, type)
+                        onPvpEventReceived?.invoke(eventMap)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error parsing match found payload: ${e.message}")
+                    }
+                } else {
+                    // Chuỗi trạng thái thuần, ví dụ "MATCH_TIMEOUT" hoặc "CANCELLED"
+                    val status = payload.replace("\"", "")
+                    onPvpEventReceived?.invoke(mapOf("status" to status))
                 }
             }, { Log.e(TAG, "Match found subscribe error: ${it.message}") })
 

@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.appenggo.R
+import com.example.appenggo.model.ExamPvpDisplayResponse
+import com.example.appenggo.model.StartExamResponse
 import com.example.appenggo.websocket.WebSocketManager
 import com.google.gson.Gson
 
@@ -32,25 +34,24 @@ class PvpMatchingActivity : AppCompatActivity() {
 
     private var myId: Int = 0
     private var currentMatchId: Int? = null
+    private var isPlayer1: Boolean = false
+    private var opponentName: String? = null
+
+    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pvp_matching)
 
-        // 1. Lấy thông tin tài khoản của bạn
         myId = intent.getIntExtra("MY_ID", 0)
 
-        // 2. Khởi tạo view TRƯỚC TIÊN — nếu không, mọi lateinit var ở dưới
-        //    sẽ chưa được gán và app sẽ crash ngay khi WebSocket trả dữ liệu về.
         initViews()
         loadMyProfileData()
 
-        // 3. Đăng ký toàn bộ callback xử lý sự kiện WebSocket TRƯỚC khi gửi
-        //    lệnh tìm trận, để không bỏ lỡ sự kiện trả về sớm.
         setupWebSocketListener()
+        WebSocketManager.subscribeToMyQueueStatus()
         WebSocketManager.subscribeToMatchFound(myId)
 
-        // 4. SAU KHI ĐÃ ĐĂNG KÝ HẾT CÁC KÊNH, TIẾN HÀNH BẤM NÚT TÌM TRẬN
         Log.d("PvpMatching", "🚀 Bắt đầu gửi lệnh tìm trận lên Server...")
         tvMatchStatusTop.text = "ĐANG TÌM ĐỐI THỦ..."
         pbLoading.visibility = View.VISIBLE
@@ -79,7 +80,8 @@ class PvpMatchingActivity : AppCompatActivity() {
 
         btnReadyMatch.setOnClickListener {
             currentMatchId?.let { matchId ->
-                WebSocketManager.sendJoinQueue(matchId)
+                // Áp dụng logic từ WaitingRoom: Join queue để sub các topic trận đấu
+                WebSocketManager.joinPvpQueue(matchId)
 
                 btnReadyMatch.isEnabled = false
                 btnReadyMatch.text = "ĐANG CHỜ ĐỐI THỦ..."
@@ -122,6 +124,7 @@ class PvpMatchingActivity : AppCompatActivity() {
             }
         }
 
+        // Lắng nghe thông tin trận đấu (Match Found)
         WebSocketManager.onPvpEventReceived = { eventMap ->
             runOnUiThread {
                 try {
@@ -130,52 +133,74 @@ class PvpMatchingActivity : AppCompatActivity() {
                         Toast.makeText(this, "Trận đấu đã bị hủy hoặc hết thời gian!", Toast.LENGTH_SHORT).show()
                         finish()
                     }
-                    else if (eventMap.containsKey("examTitle") || eventMap.containsKey("questions")) {
-                        val gson = Gson()
-                        val rawJson = gson.toJson(eventMap)
-                        val p1Id = (eventMap["player1Id"] as? Number)?.toInt() ?: 0
-                        val isPlayer1 = (myId == p1Id)
-                        val opponentName = if (isPlayer1) {
-                            eventMap["player2Username"] as? String
-                        } else {
-                            eventMap["player1Username"] as? String
-                        }
+                    else {
+                        // FIX: Kiểm tra cả "id" và "matchId" để lấy đúng ID trận đấu
+                        val matchId = (eventMap["id"] as? Number)?.toInt() ?: (eventMap["matchId"] as? Number)?.toInt()
 
-                        val intent = Intent(this, PvpQuizActivity::class.java).apply {
-                            putExtra(PvpQuizActivity.EXTRA_EXAM_DATA, rawJson)
-                            putExtra(PvpQuizActivity.EXTRA_MATCH_ID, currentMatchId ?: 0)
-                            putExtra(PvpQuizActivity.EXTRA_IS_PLAYER1, isPlayer1)
-                            putExtra(PvpQuizActivity.EXTRA_OPPONENT_NAME, opponentName)
-                        }
-                        startActivity(intent)
-                        finish()
-                    }
-                    else if (eventMap.containsKey("id")) {
-                        val matchId = (eventMap["id"] as? Number)?.toInt()
-                        currentMatchId = matchId
+                        if (matchId != null) {
+                            currentMatchId = matchId
+                            WebSocketManager.subscribeToMatchSession(matchId)
 
-                        matchId?.let { WebSocketManager.subscribeToMatchSession(it) }
+                            val p1Id = (eventMap["player1Id"] as? Number)?.toInt() ?: 0
+                            isPlayer1 = (myId == p1Id)
 
-                        val p1Id = (eventMap["player1Id"] as? Number)?.toInt() ?: 0
-
-                        if (p1Id == myId) {
-                            displayOpponentInfo(
-                                name = eventMap["player2Username"] as? String,
-                                elo = (eventMap["eloP2"] as? Number)?.toInt() ?: 0,
-                                avatarUrl = eventMap["avatarUrlP2"] as? String,
-                                level = (eventMap["levelP2"] as? Number)?.toInt() ?: 0
-                            )
-                        } else {
-                            displayOpponentInfo(
-                                name = eventMap["player1Username"] as? String,
-                                elo = (eventMap["eloP1"] as? Number)?.toInt() ?: 0,
-                                avatarUrl = eventMap["avatarUrlP1"] as? String,
-                                level = (eventMap["levelP1"] as? Number)?.toInt() ?: 0
-                            )
+                            if (isPlayer1) {
+                                opponentName = eventMap["player2Username"] as? String
+                                displayOpponentInfo(
+                                    name = opponentName,
+                                    elo = (eventMap["eloP2"] as? Number)?.toInt() ?: 0,
+                                    avatarUrl = eventMap["avatarUrlP2"] as? String,
+                                    level = (eventMap["levelP2"] as? Number)?.toInt() ?: 0
+                                )
+                            } else {
+                                opponentName = eventMap["player1Username"] as? String
+                                displayOpponentInfo(
+                                    name = opponentName,
+                                    elo = (eventMap["eloP1"] as? Number)?.toInt() ?: 0,
+                                    avatarUrl = eventMap["avatarUrlP1"] as? String,
+                                    level = (eventMap["levelP1"] as? Number)?.toInt() ?: 0
+                                )
+                            }
                         }
                     }
                 } catch (e: Exception) {
                     Log.e("PvpMatching", "Error parsing event: ${e.message}")
+                }
+            }
+        }
+
+        // Lắng nghe đề thi (Chỉ nhận được sau khi cả 2 đã bấm Sẵn sàng/Join Queue)
+        WebSocketManager.onPvpExamReceived = { rawData ->
+            runOnUiThread {
+                try {
+                    val json = gson.toJson(rawData)
+                    val pvpExam = gson.fromJson(json, ExamPvpDisplayResponse::class.java)
+
+                    // Logic chuyển đổi sang StartExamResponse giống WaitingRoomActivity
+                    val myAttemptId = if (isPlayer1) pvpExam.attemptId1 else pvpExam.attemptId2
+
+                    val startExamResponse = StartExamResponse(
+                        examId          = pvpExam.examId,
+                        attemptId       = myAttemptId,
+                        title           = pvpExam.title,
+                        difficulty      = pvpExam.difficulty ?: 2,
+                        durationMinutes = pvpExam.durationMinutes,
+                        totalQuestions  = pvpExam.totalQuestions,
+                        examType        = pvpExam.examType ?: "PVP",
+                        questions       = pvpExam.questions
+                    )
+
+                    val intent = Intent(this, PvpQuizActivity::class.java).apply {
+                        putExtra(PvpQuizActivity.EXTRA_EXAM_DATA,     gson.toJson(startExamResponse))
+                        putExtra(PvpQuizActivity.EXTRA_MATCH_ID,      currentMatchId ?: 0)
+                        putExtra(PvpQuizActivity.EXTRA_IS_PLAYER1,    isPlayer1)
+                        putExtra(PvpQuizActivity.EXTRA_OPPONENT_NAME, opponentName ?: "Đối thủ")
+                    }
+                    startActivity(intent)
+                    finish()
+                } catch (e: Exception) {
+                    Log.e("PvpMatching", "Lỗi xử lý đề thi: ${e.message}")
+                    Toast.makeText(this, "Không thể tải đề thi PVP", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -206,6 +231,9 @@ class PvpMatchingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        WebSocketManager.clearPvpCallbacks()
+        // FIX: Chỉ xóa các callback cục bộ, không dùng clearPvpCallbacks() vì sẽ làm mất listener của QuizActivity
+        WebSocketManager.onQueueStatusReceived = null
+        WebSocketManager.onPvpEventReceived = null
+        WebSocketManager.onPvpExamReceived = null
     }
 }
