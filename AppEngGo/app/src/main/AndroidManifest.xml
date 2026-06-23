@@ -41,7 +41,6 @@
         <activity android:name=".view.WaitingRoomActivity" />
         <activity android:name=".view.PvpResultActivity" />
         <activity android:name=".view.PvpQuizActivity" />
-        <activity android:name=".view.PvpMatchingActivity" />
     </application>
 
 </manifest>

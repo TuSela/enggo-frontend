@@ -9,7 +9,6 @@ import com.example.appenggo.model.QuizProgressPayload
 import com.google.gson.Gson
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
@@ -19,7 +18,7 @@ object WebSocketManager {
     private const val TAG = "WebSocketManager"
     private const val WS_URL = "ws://10.0.2.2:8080/api/ws/websocket"
 
-    var stompClient: StompClient? = null
+    private var stompClient: StompClient? = null
     private val disposables = CompositeDisposable()
     private val gson = Gson()
 
@@ -33,7 +32,6 @@ object WebSocketManager {
     // PVP realtime callbacks
     var onPvpProgressReceived: ((QuizProgressPayload) -> Unit)? = null
     var onPvpResultReceived: ((MatchResultResponse) -> Unit)? = null
-    var onQueueStatusReceived: ((String) -> Unit)? = null
 
     // ── Connect ──────────────────────────────────────────────────────────────
     fun connect(context: Context) {
@@ -118,8 +116,7 @@ object WebSocketManager {
                 .subscribe({ msg ->
                     Log.d(TAG, "⚔️ PVP event: ${msg.payload}")
                     try {
-                        @Suppress("UNCHECKED_CAST")
-                        val event = gson.fromJson(msg.payload, Any::class.java) as Map<String, Any>
+                        val event = gson.fromJson(msg.payload, Map::class.java) as Map<String, Any>
                         onPvpEventReceived?.invoke(event)
 
                         if (event["type"] == "PVP_INVITE") {
@@ -135,102 +132,6 @@ object WebSocketManager {
                     } catch (e: Exception) { Log.e(TAG, "PVP parse error: ${e.message}") }
                 }, { Log.e(TAG, "PVP subscribe error: ${it.message}") })
         )
-    }
-
-    // ── PVP matching ─────────────────────────────────────────────────────────
-    // Lắng nghe trạng thái hàng đợi cá nhân (WAITING, WAITING_FOR_ENEMY_READY...)
-    // Server gửi qua convertAndSendToUser(username, "/queue/queue-status", ...)
-    // -> client subscribe đúng "/user/queue/queue-status".
-    private var queueStatusSubscription: Disposable? = null
-
-    fun subscribeToMyQueueStatus() {
-        // Hủy đăng ký cũ nếu có để tránh trùng lặp luồng dữ liệu
-        queueStatusSubscription?.dispose()
-
-        queueStatusSubscription = stompClient!!.topic("/user/queue/queue-status")
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ msg ->
-                // Loại bỏ dấu ngoặc kép dư thừa nếu server trả về chuỗi thuần túy dạng JSON
-                val status = msg.payload.replace("\"", "")
-                Log.d(TAG, "🎁 Nhận được trạng thái hàng đợi: $status")
-                onQueueStatusReceived?.invoke(status)
-            }, { error ->
-                Log.e(TAG, "❌ Lỗi lắng nghe Queue status: ${error.message}")
-            })
-
-        disposables.add(queueStatusSubscription!!)
-    }
-    private var myMatchSubscription: Disposable? = null
-
-    fun subscribeToMatchFound(myUserId: Int) {
-        myMatchSubscription?.dispose() // Xóa sub cũ nếu có
-
-        myMatchSubscription = stompClient!!.topic("/topic/match/$myUserId")
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ msg ->
-                Log.d(TAG, "⚔️ Match found info received: ${msg.payload}")
-                val payload = msg.payload.trim()
-
-                // Server có lúc gửi JSON object (thông tin trận đấu),
-                // có lúc gửi chuỗi thuần như MATCH_TIMEOUT/CANCELLED (không phải JSON hợp lệ).
-                // Phải tách 2 trường hợp này, nếu không Gson sẽ throw và callback sẽ không
-                // bao giờ được gọi khi trận bị huỷ.
-                if (payload.startsWith("{")) {
-                    try {
-                        val type = object : com.google.gson.reflect.TypeToken<Map<String, Any>>() {}.type
-                        val eventMap: Map<String, Any> = gson.fromJson(payload, type)
-                        onPvpEventReceived?.invoke(eventMap)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "Error parsing match found payload: ${e.message}")
-                    }
-                } else {
-                    // Chuỗi trạng thái thuần, ví dụ "MATCH_TIMEOUT" hoặc "CANCELLED"
-                    val status = payload.replace("\"", "")
-                    onPvpEventReceived?.invoke(mapOf("status" to status))
-                }
-            }, { Log.e(TAG, "Match found subscribe error: ${it.message}") })
-
-        disposables.add(myMatchSubscription!!)
-    }
-    fun sendFindMatch() {
-        stompClient?.send("/app/find-match", "{}")
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({ Log.d(TAG, "✅ Sent find-match") }, { Log.e(TAG, "❌ Find-match error: ${it.message}") })
-    }
-
-    fun sendLeaveQueue(userId: Int) {
-        stompClient?.send("/app/leave-queue", userId.toString())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({ Log.d(TAG, "✅ Sent leave-queue") }, { Log.e(TAG, "❌ Leave-queue error: ${it.message}") })
-    }
-
-    fun sendJoinQueue(matchId: Int) {
-        stompClient?.send("/app/join-queue", matchId.toString())
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({ Log.d(TAG, "✅ Sent join-queue") }, { Log.e(TAG, "❌ Join-queue error: ${it.message}") })
-    }
-
-    fun subscribeToMatchSession(matchId: Int) {
-        disposables.add(
-            stompClient!!.topic("/topic/match/$matchId")
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ msg ->
-                    Log.d(TAG, "📝 Match $matchId session data: ${msg.payload}")
-                    try {
-                        @Suppress("UNCHECKED_CAST")
-                        val event = gson.fromJson(msg.payload, Any::class.java) as Map<String, Any>
-                        onPvpEventReceived?.invoke(event)
-                    } catch (e: Exception) { Log.e(TAG, "Match session parse error: ${e.message}") }
-                }, { Log.e(TAG, "Match session subscribe error: ${it.message}") })
-        )
-    }
-
-    fun clearPvpCallbacks() {
-        onQueueStatusReceived = null
-        onPvpEventReceived = null
-        onPvpProgressReceived = null
-        onPvpResultReceived = null
-        onPvpExamReceived = null
     }
 
     // ── PVP match: join queue + subscribe đề + progress + result ────────────
