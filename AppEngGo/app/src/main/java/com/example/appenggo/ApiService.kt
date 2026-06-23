@@ -161,10 +161,4 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("matchId") matchId: Int
     ): ApiResponse<Boolean>
-
-    // Thêm vào trong interface ApiService
-    @GET("api/users/top-elo")
-    suspend fun getTopElo(
-        @Header("Authorization") token: String
-    ): ApiResponse<TopEloResponse>
 }
