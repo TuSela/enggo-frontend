@@ -120,9 +120,16 @@ data class MatchResultResponse(
 )
 
 data class PlayerResult(
+    val userName: String?,
+    val level: Int?,
     val avatarUrl: String?,
     val playerScore: Int,
     val eloChange: Int?,
     val correctAnswersCount: Int?,
-    val elo: Int?
+    val totalQuestions: Int?,
+    val duration: String?,
+    @SerializedName("WinStreak")
+    val winStreak: Int?,
+    val elo: Int?,
+    val badgeRank: String?
 )

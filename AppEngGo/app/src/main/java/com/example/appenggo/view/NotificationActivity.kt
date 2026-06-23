@@ -1,24 +1,22 @@
 package com.example.appenggo.view
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appenggo.R
 import com.example.appenggo.RetrofitClient
 import com.example.appenggo.adapter.NotificationAdapter
+import com.example.appenggo.model.NotificationPayload
 import com.example.appenggo.model.NotificationRepository
 import kotlinx.coroutines.launch
-import android.content.Intent
-import com.example.appenggo.model.NotificationPayload
-class NotificationActivity : AppCompatActivity() {
 
-    companion object {
-        const val EXTRA_NOTIFICATIONS = "extra_notifications"
-    }
+class NotificationActivity : AppCompatActivity() {
 
     private lateinit var rvNotifications: RecyclerView
     private lateinit var token: String
@@ -26,6 +24,13 @@ class NotificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         token = "Bearer ${
             getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -38,12 +43,15 @@ class NotificationActivity : AppCompatActivity() {
         val adapter = NotificationAdapter(
             NotificationRepository.list.toMutableList(),
             onAccept = { notification ->
+                // Xóa khỏi Repo để khi quay lại không bị hiện lại
+                NotificationRepository.remove(notification)
                 when (notification.type) {
                     "FRIEND_REQUEST" -> acceptFriendRequest(notification.requestId)
                     "PVP_INVITE"     -> acceptPvpInvite(notification)
                 }
             },
             onDecline = { notification ->
+                NotificationRepository.remove(notification)
                 when (notification.type) {
                     "FRIEND_REQUEST" -> declineFriendRequest(notification.requestId)
                     "PVP_INVITE"     -> declinePvpInvite(notification.requestId)
@@ -86,14 +94,12 @@ class NotificationActivity : AppCompatActivity() {
                     putExtra(WaitingRoomActivity.EXTRA_MATCH_ID, matchId)
                     putExtra(WaitingRoomActivity.EXTRA_IS_PLAYER1, false)
                     putExtra(WaitingRoomActivity.EXTRA_OPPONENT_NAME, notification.fromUsername)
-                    // Pass exam metadata – use defaults if server did not include them
                     putExtra(WaitingRoomActivity.EXTRA_EXAM_TITLE, notification.examTitle ?: "PVP Quiz")
                     putExtra(WaitingRoomActivity.EXTRA_EXAM_TOPIC, notification.examTopic ?: "")
                     putExtra(WaitingRoomActivity.EXTRA_DIFFICULTY, notification.difficulty ?: "")
-                    // Convert question count to a readable string (e.g., "10 Câu")
                     val qCountStr = notification.questionCount?.let { "${it} Câu" } ?: ""
                     putExtra(WaitingRoomActivity.EXTRA_QUESTION_COUNT, qCountStr)
-                } // ← đóng apply ở đây
+                }
                 startActivity(intent)
                 finish()
             } catch (e: Exception) {

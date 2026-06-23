@@ -1,321 +1,360 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F8F8"
-    android:fillViewport="true">
+    android:background="#FFFFFF">
 
-    <LinearLayout
+    <!-- Header Section -->
+    <RelativeLayout
+        android:id="@+id/header_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="56dp"
-        android:paddingBottom="32dp">
+        android:layout_height="64dp"
+        android:paddingHorizontal="16dp">
 
-        <!-- ── Outcome banner ───────────────────────────────────────────── -->
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header_container"
+        android:layout_above="@id/bottom_container"
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:gravity="center"
-            android:paddingVertical="32dp"
-            android:background="@drawable/bg_pvp_setting_card"
-            android:layout_marginBottom="20dp">
+            android:paddingHorizontal="24dp">
 
             <TextView
                 android:id="@+id/tv_outcome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🏆 CHIẾN THẮNG!"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                android:textColor="#2979FF" />
+                android:text="CHIẾN THẮNG"
+                android:textColor="#58CC02"
+                android:textSize="36sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_outcome_sub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Xuất sắc! Bạn đã thắng trận này."
+                android:layout_marginTop="4dp"
+                android:text="KẾT QUẢ TRẬN ĐẤU"
+                android:textColor="#AFAFAF"
                 android:textSize="14sp"
-                android:textColor="#888888" />
-        </LinearLayout>
+                android:textStyle="bold" />
 
-        <!-- ── Comparison card ──────────────────────────────────────────── -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="2dp">
-
+            <!-- Comparison Section (Avatars and Scores) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- My Side -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="100dp"
+                        android:layout_height="116dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+                        <ImageView
+                            android:id="@+id/iv_my_avatar"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="top|center_horizontal"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_default_avatar" />
+                        <TextView
+                            android:id="@+id/tv_my_level"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:background="@drawable/bg_pvp_lv_badge"
+                            android:elevation="4dp"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="2dp"
+                            android:text="LV 15"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tv_my_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Tuandb"
+                        android:textColor="#4B4B4B"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_my_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="850"
+                        android:textColor="#4B4B4B"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- VS Badge -->
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginHorizontal="12dp"
+                    android:background="@drawable/bg_pvp_vs"
+                    android:gravity="center"
+                    android:paddingBottom="4dp"
+                    android:text="vs"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold|italic" />
+
+                <!-- Opponent Side -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="100dp"
+                        android:layout_height="116dp"
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+                        <ImageView
+                            android:id="@+id/iv_opp_avatar"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="top|center_horizontal"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_default_avatar" />
+                        <TextView
+                            android:id="@+id/tv_opp_level"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center_horizontal"
+                            android:background="@drawable/bg_pvp_lv_badge"
+                            android:elevation="4dp"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="2dp"
+                            android:text="LV 15"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/tv_opp_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:text="Quốc Cường"
+                        android:textColor="#4B4B4B"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_opp_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="620"
+                        android:textColor="#AFAFAF"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Comparison Stats Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/bg_pvp_setting_card"
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- Header -->
+                <!-- Header Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="16dp">
-
+                    android:paddingBottom="12dp">
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1.2" />
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="BẠN"
-                        android:gravity="center"
-                        android:textColor="#2979FF"
-                        android:textSize="13sp"
+                        android:textColor="#AFAFAF"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="#E0E0E0" />
-
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:text="ĐỐI THỦ"
-                        android:gravity="center"
-                        android:textColor="#888888"
-                        android:textSize="13sp"
+                        android:textColor="#AFAFAF"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- Score row -->
+                <!-- Correct Answers Row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Điểm số"
-                            android:textSize="11sp"
-                            android:textColor="#AAAAAA" />
-
-                        <TextView
-                            android:id="@+id/tv_my_score"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="80 điểm"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:textColor="#1A1A1A" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VS"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#CCCCCC"
-                        android:layout_gravity="center" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Điểm số"
-                            android:textSize="11sp"
-                            android:textColor="#AAAAAA" />
-
-                        <TextView
-                            android:id="@+id/tv_opp_score"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="60 điểm"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:textColor="#1A1A1A" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#F0F0F0"
-                    android:layout_marginVertical="8dp" />
-
-                <!-- Correct count row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Trả lời đúng"
-                            android:textSize="11sp"
-                            android:textColor="#AAAAAA" />
-
-                        <TextView
-                            android:id="@+id/tv_my_correct"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="8 câu đúng"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="#1A1A1A" />
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="#E0E0E0" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Trả lời đúng"
-                            android:textSize="11sp"
-                            android:textColor="#AAAAAA" />
-
-                        <TextView
-                            android:id="@+id/tv_opp_correct"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="6 câu đúng"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="#1A1A1A" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="#F0F0F0"
-                    android:layout_marginVertical="8dp" />
-
-                <!-- ELO row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
+                        android:layout_weight="1.2"
+                        android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_avatar_circle"
+                            android:backgroundTint="#E8F5E9"
+                            android:padding="4dp"
+                            android:src="@drawable/ic_check_circle"
+                            app:tint="#58CC02" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Thay đổi ELO"
-                            android:textSize="11sp"
-                            android:textColor="#AAAAAA" />
-
-                        <TextView
-                            android:id="@+id/tv_my_elo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="+20 ELO"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="#4CAF50" />
+                            android:layout_marginStart="10dp"
+                            android:text="Câu đúng"
+                            android:textColor="#4B4B4B"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="#E0E0E0" />
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/tv_my_correct"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Thay đổi ELO"
-                            android:textSize="11sp"
-                            android:textColor="#AAAAAA" />
-
-                        <TextView
-                            android:id="@+id/tv_opp_elo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-20 ELO"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="#F44336" />
-                    </LinearLayout>
+                        android:gravity="center"
+                        android:text="18/20"
+                        android:textColor="#4B4B4B"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_opp_correct"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="15/20"
+                        android:textColor="#AFAFAF"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="#F0F0F0" />
+
+                <!-- Time Taken Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:gravity="center_vertical">
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:background="@drawable/bg_avatar_circle"
+                            android:backgroundTint="#E3F2FD"
+                            android:padding="4dp"
+                            android:src="@drawable/ic_bolt"
+                            app:tint="@color/primary_blue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Thời gian"
+                            android:textColor="#4B4B4B"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_my_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="10:20"
+                        android:textColor="#4B4B4B"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_opp_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="11:15"
+                        android:textColor="#AFAFAF"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- ── Buttons ───────────────────────────────────────────────────── -->
-        <Button
-            android:id="@+id/btn_play_again"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_button_blue_fancy"
-            android:text="⚔️ ĐẤU LẠI"
-            android:textColor="@android:color/white"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:stateListAnimator="@null" />
+        </LinearLayout>
+    </ScrollView>
 
-        <Button
+    <!-- Bottom Action -->
+    <LinearLayout
+        android:id="@+id/bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FFFFFF"
+        android:padding="24dp"
+        android:elevation="8dp">
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_back_home"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:background="@drawable/bg_pvp_setting_card"
-            android:text="🏠 VỀ TRANG CHỦ"
-            android:textColor="#555555"
-            android:textSize="15sp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_button_green_fancy"
+            android:text="TIẾP TỤC"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:stateListAnimator="@null" />
-
     </LinearLayout>
-</ScrollView>
+
+    <!-- Hidden compatibility views to avoid Activity crash -->
+    <TextView android:id="@+id/tv_my_elo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <TextView android:id="@+id/tv_opp_elo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <Button android:id="@+id/btn_play_again" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+
+</RelativeLayout>

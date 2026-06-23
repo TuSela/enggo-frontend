@@ -6,14 +6,15 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Toolbar (tùy chọn) -->
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:background="?attr/colorPrimary"
-        android:title="Thông báo"
-        android:titleTextColor="@android:color/white"
+        android:background="@color/primary_blue"
+        app:title="Thông báo"
+        app:titleTextColor="@android:color/white"
+        app:navigationIcon="@drawable/ic_arrow_back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
