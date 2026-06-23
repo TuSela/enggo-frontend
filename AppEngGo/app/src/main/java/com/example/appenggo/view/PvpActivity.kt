@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
@@ -21,7 +23,9 @@ import com.example.appenggo.adapter.FriendPvpAdapter
 import com.example.appenggo.model.RandomBlueprintRequest
 import com.example.appenggo.websocket.WebSocketManager
 import kotlinx.coroutines.launch
-import com.example.appenggo.adapter.FriendAdapter
+import com.example.appenggo.adapter.RankingAdapter
+import com.bumptech.glide.Glide
+import com.example.appenggo.model.UserRank
 
 class PvpActivity : AppCompatActivity() {
 
@@ -46,9 +50,60 @@ class PvpActivity : AppCompatActivity() {
     private var currentQuestionCount: Int = 10
     private lateinit var token: String
 
-    private val topicLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
+    private lateinit var rvRanking: RecyclerView
+    private lateinit var rankingAdapter: RankingAdapter
+
+    private lateinit var tvMyRankName: TextView
+    private lateinit var tvMyBadgeName: TextView
+
+    private lateinit var ivMyProfileAvatar: ImageView
+    private lateinit var tvMyProfileLevel: TextView
+    private lateinit var ivMyRankBadgeIcon: ImageView
+    private lateinit var tvMyEloValue: TextView
+    private lateinit var pbMyRankProgress: ProgressBar
+    private var isRankingLoaded = false
+
+    private lateinit var btnStartPvp: Button
+
+    private var currentMyRank: UserRank? = null
+
+    private val rankNamesByPosition by lazy {
+        arrayOf<TextView>(
+            findViewById(R.id.rank_name_1),
+            findViewById(R.id.rank_name_2),
+            findViewById(R.id.rank_name_3),
+            findViewById(R.id.rank_name_4)
+        )
+    }
+
+    private val rankDescsByPosition by lazy {
+        arrayOf<TextView>(
+            findViewById(R.id.rank_desc_1),
+            findViewById(R.id.rank_desc_2),
+            findViewById(R.id.rank_desc_3),
+            findViewById(R.id.rank_desc_4)
+        )
+    }
+
+    private val rankPointsByPosition by lazy {
+        arrayOf<TextView>(
+            findViewById(R.id.rank_points_1),
+            findViewById(R.id.rank_points_2),
+            findViewById(R.id.rank_points_3),
+            findViewById(R.id.rank_points_4)
+        )
+    }
+
+    private val rankAvatarsByPosition by lazy {
+        arrayOf<ImageView>(
+            findViewById(R.id.rank_avt_1),
+            findViewById(R.id.rank_avt_2),
+            findViewById(R.id.rank_avt_3),
+            findViewById(R.id.rank_avt_4)
+        )
+    }
+
+    private val topicLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val themeId = result.data?.getIntExtra(ThemeSelectionActivity.EXTRA_SELECTED_THEME_ID, -1) ?: -1
             val themeName = result.data?.getStringExtra(ThemeSelectionActivity.EXTRA_SELECTED_THEME_NAME)
@@ -64,15 +119,14 @@ class PvpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pvp)
 
-        token = "Bearer ${
-            getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-                .getString("TOKEN", "")
-        }"
+        token = "Bearer ${getSharedPreferences("app_prefs", Context.MODE_PRIVATE).getString("TOKEN", "")}"
 
         initViews()
         setupClickListeners()
         setupFriendList()
+        setupRankingList()
         loadFriends()
+        loadRankingData()
         listenPvpInviteResponse()
         listenOnlineStatus()
 
@@ -94,8 +148,66 @@ class PvpActivity : AppCompatActivity() {
         cardQuestionCount    = findViewById(R.id.card_question_count)
         tvQuestionCountValue = findViewById(R.id.tv_question_count_value)
         rvFriendsPvp         = findViewById(R.id.rv_friends_pvp)
+        rvRanking         = findViewById(R.id.rv_ranking)
 
+        ivMyProfileAvatar   = findViewById(R.id.iv_my_profile_avatar)
+        tvMyProfileLevel    = findViewById(R.id.tv_my_profile_level)
+        tvMyRankName        = findViewById(R.id.tv_my_rank_name)
+        tvMyBadgeName       = findViewById(R.id.tv_my_badge_name)
+        ivMyRankBadgeIcon   = findViewById(R.id.iv_my_rank_badge_icon)
+        tvMyEloValue        = findViewById(R.id.tv_my_elo_value)
+        pbMyRankProgress    = findViewById(R.id.pb_my_rank_progress)
+        btnStartPvp = findViewById(R.id.btn_start_pvp)
         findViewById<ImageView>(R.id.btn_back).setOnClickListener { finish() }
+    }
+
+    private fun setupRankingList() {
+        rankingAdapter = RankingAdapter()
+        rvRanking.layoutManager = LinearLayoutManager(this)
+        rvRanking.adapter = rankingAdapter
+        rvRanking.isNestedScrollingEnabled = false
+    }
+
+    private fun loadRankingData() {
+        lifecycleScope.launch {
+            try {
+                val res = RetrofitClient.api.getTopElo(token)
+                if (res.code == 1000 && res.result != null) {
+                    val rankingResult = res.result
+                    val topUsers = rankingResult.topUsers ?: emptyList()
+                    
+                    rankingResult.myRank?.let { myRank ->
+                        currentMyRank = myRank
+                        tvMyRankName.text = myRank.username
+                        tvMyProfileLevel.text = "LV. ${myRank.level}"
+                        tvMyBadgeName.text = myRank.badgeRank?.description ?: "Chưa xếp hạng"
+
+                        val currentElo = myRank.elo
+                        if (currentElo > 1000) {
+                            tvMyEloValue.text = "$currentElo"
+                            pbMyRankProgress.progress = 100
+                        } else {
+                            tvMyEloValue.text = "${currentElo % 100}/100"
+                            pbMyRankProgress.progress = currentElo % 100
+                        }
+
+                        Glide.with(this@PvpActivity).load(myRank.avatarUrl).circleCrop().placeholder(R.drawable.ic_person).into(ivMyProfileAvatar)
+                        Glide.with(this@PvpActivity).load(myRank.badgeRank?.iconUrl).placeholder(R.drawable.rank4).into(ivMyRankBadgeIcon)
+                    }
+
+                    for (i in 0 until 4) {
+                        if (i < topUsers.size) {
+                            val user = topUsers[i]
+                            rankNamesByPosition[i].text = user.username
+                            rankDescsByPosition[i].text = user.badgeRank?.description ?: "Chưa xếp hạng"
+                            rankPointsByPosition[i].text = String.format("%,d", user.elo)
+                            Glide.with(this@PvpActivity).load(user.avatarUrl).circleCrop().placeholder(R.drawable.ic_person).into(rankAvatarsByPosition[i])
+                        }
+                    }
+                    isRankingLoaded = true
+                }
+            } catch (e: Exception) {}
+        }
     }
 
     private fun setupFriendList() {
@@ -124,7 +236,6 @@ class PvpActivity : AppCompatActivity() {
         }
     }
 
-    // Lắng nghe thay đổi trạng thái online/offline từ WebSocket và cập nhật UI
     private fun listenOnlineStatus() {
         WebSocketManager.onStatusChanged = { userId, status ->
             runOnUiThread {
@@ -133,7 +244,6 @@ class PvpActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun inviteFriend(friendId: Int, friendUsername: String) {
         lifecycleScope.launch {
@@ -159,7 +269,6 @@ class PvpActivity : AppCompatActivity() {
         }
     }
 
-    // Lắng nghe bạn chấp nhận lời mời → mở WaitingRoomActivity
     private fun listenPvpInviteResponse() {
         WebSocketManager.onPvpEventReceived = { event ->
             runOnUiThread {
@@ -196,6 +305,24 @@ class PvpActivity : AppCompatActivity() {
         cardTopic.setOnClickListener  { updateSettingCardSelection(cardTopic); openTopicSelection() }
         cardDifficulty.setOnClickListener { updateSettingCardSelection(cardDifficulty); openDifficultySelection() }
         cardQuestionCount.setOnClickListener { updateSettingCardSelection(cardQuestionCount); openQuestionCountSelection() }
+
+        btnStartPvp.setOnClickListener {
+            currentMyRank?.let { myRank ->
+                val intent = Intent(this@PvpActivity, PvpMatchingActivity::class.java).apply {
+                    putExtra("MY_ID", myRank.id)
+                    putExtra("MY_NAME", myRank.username)
+                    putExtra("MY_LEVEL", myRank.level)
+                    putExtra("MY_AVATAR_URL", myRank.avatarUrl)
+                    putExtra("MY_ELO", myRank.elo)
+                    putExtra("MY_BADGE_DESC", myRank.badgeRank?.description)
+                    putExtra("MY_BADGE_ICON_URL", myRank.badgeRank?.iconUrl)
+                }
+                startActivity(intent)
+            } ?: run {
+                Toast.makeText(this, "Vui lòng đợi tải dữ liệu...", Toast.LENGTH_SHORT).show()
+                loadRankingData()
+            }
+        }
     }
 
     private fun showRankingTab() {
@@ -205,6 +332,7 @@ class PvpActivity : AppCompatActivity() {
         tabRanking.setTextColor(ContextCompat.getColor(this, R.color.primary_blue))
         tabInvite.background = null
         tabInvite.setTextColor(ContextCompat.getColor(this, R.color.gray_text))
+        if (!isRankingLoaded) loadRankingData()
     }
 
     private fun showInviteTab() {
@@ -217,27 +345,14 @@ class PvpActivity : AppCompatActivity() {
     }
 
     private fun openTopicSelection() {
-        val intent = Intent(this, ThemeSelectionActivity::class.java).apply {
-            putExtra(ThemeSelectionActivity.EXTRA_SELECTED_THEME_ID, currentTopicId)
-        }
+        val intent = Intent(this, ThemeSelectionActivity::class.java).apply { putExtra(ThemeSelectionActivity.EXTRA_SELECTED_THEME_ID, currentTopicId) }
         topicLauncher.launch(intent)
     }
 
     private fun openQuestionCountSelection() {
-        val sheet = QuestionCountBottomSheet.newInstance(currentQuestionCount)
-        sheet.onCountSelected = { count ->
-            currentQuestionCount = count
-            tvQuestionCountValue.text = "$count Câu"
-        }
-        sheet.show(supportFragmentManager, QuestionCountBottomSheet.TAG)
-    }
-
-    private fun updateSettingCardSelection(selected: LinearLayout) {
-        val selectedBg = ContextCompat.getDrawable(this, R.drawable.bg_pvp_setting_card_selected)
-        val normalBg   = ContextCompat.getDrawable(this, R.drawable.bg_pvp_setting_card)
-        cardTopic.background         = if (selected == cardTopic)         selectedBg else normalBg
-        cardDifficulty.background    = if (selected == cardDifficulty)    selectedBg else normalBg
-        cardQuestionCount.background = if (selected == cardQuestionCount) selectedBg else normalBg
+        QuestionCountBottomSheet.newInstance(currentQuestionCount).apply {
+            onCountSelected = { count -> currentQuestionCount = count; tvQuestionCountValue.text = "$count Câu" }
+        }.show(supportFragmentManager, QuestionCountBottomSheet.TAG)
     }
 
     private fun openDifficultySelection() {
@@ -253,6 +368,14 @@ class PvpActivity : AppCompatActivity() {
             ivDifficultyIcon.setImageResource(iconRes)
         }
         bottomSheet.show(supportFragmentManager, DifficultyBottomSheet.TAG)
+    }
+
+    private fun updateSettingCardSelection(selected: LinearLayout) {
+        val sel = ContextCompat.getDrawable(this, R.drawable.bg_pvp_setting_card_selected)
+        val nor = ContextCompat.getDrawable(this, R.drawable.bg_pvp_setting_card)
+        cardTopic.background = if (selected == cardTopic) sel else nor
+        cardDifficulty.background = if (selected == cardDifficulty) sel else nor
+        cardQuestionCount.background = if (selected == cardQuestionCount) sel else nor
     }
 
     override fun onDestroy() {
