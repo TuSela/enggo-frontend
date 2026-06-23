@@ -58,8 +58,7 @@ class PvpResultActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tv_my_score).text = "${myResult.playerScore}"
         findViewById<TextView>(R.id.tv_my_correct).text =
             "${myResult.correctAnswersCount ?: 0}/${myResult.totalQuestions ?: 0}"
-        // Hiển thị thời gian đã format mm:ss
-        findViewById<TextView>(R.id.tv_my_time).text = formatDuration(oppResult.duration)
+        findViewById<TextView>(R.id.tv_my_time).text = formatDuration(myResult.duration)
 
         val ivMyAvatar = findViewById<ImageView>(R.id.iv_my_avatar)
         Glide.with(this)
@@ -82,7 +81,6 @@ class PvpResultActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tv_opp_score).text = "${oppResult.playerScore}"
         findViewById<TextView>(R.id.tv_opp_correct).text =
             "${oppResult.correctAnswersCount ?: 0}/${oppResult.totalQuestions ?: 0}"
-        // Hiển thị thời gian đã format mm:ss
         findViewById<TextView>(R.id.tv_opp_time).text = formatDuration(oppResult.duration)
 
         val ivOppAvatar = findViewById<ImageView>(R.id.iv_opp_avatar)
@@ -108,6 +106,7 @@ class PvpResultActivity : AppCompatActivity() {
             finish()
         }
     }
+
     private fun formatDuration(durationStr: String?): String {
         if (durationStr.isNullOrBlank()) return "00:00"
         return try {
