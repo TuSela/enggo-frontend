@@ -3,10 +3,13 @@ package com.example.appenggo.view
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Base64
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +30,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var edPassword: EditText
     private lateinit var btnLogin: Button
     private lateinit var txtRegister: TextView
+    private lateinit var imgEye: ImageView
+    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,11 +52,24 @@ class LoginActivity : AppCompatActivity() {
         edPassword = findViewById(R.id.edtPassword)
         btnLogin   = findViewById(R.id.btnLogin)
         txtRegister = findViewById(R.id.txtRegister)
+        imgEye = findViewById(R.id.imgEye)
 
         txtRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
         btnLogin.setOnClickListener { handleLogin() }
+
+        imgEye.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            if (isPasswordVisible) {
+                edPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+                imgEye.setImageResource(R.drawable.ic_eye)
+            } else {
+                edPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+                imgEye.setImageResource(R.drawable.ic_uneye)
+            }
+            edPassword.setSelection(edPassword.text.length)
+        }
     }
 
     private fun observeViewModel() {

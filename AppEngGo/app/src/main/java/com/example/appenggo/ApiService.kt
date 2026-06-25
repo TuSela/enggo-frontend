@@ -16,6 +16,11 @@ interface ApiService {
         @Body request: LoginRequest
     ): Response<LoginResponse>
 
+    @POST("api/auth/logout")
+    suspend fun logout(
+        @Body request: LogoutRequest
+    ): Response<ApiResponse<Void>>
+
     @GET("api/themes/all")
     suspend fun getAllThemesGroupedByCategory(
         @Header("Authorization") token: String
@@ -161,4 +166,18 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("matchId") matchId: Int
     ): ApiResponse<Boolean>
+
+    // Thêm vào trong interface ApiService
+    @GET("api/users/top-elo")
+    suspend fun getTopElo(
+        @Header("Authorization") token: String
+    ): ApiResponse<TopEloResponse>
+
+    @GET("api/users/leader_board")
+    suspend fun getLeaderBoard(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ): ApiResponse<PageResponse<UserResponse>>
+
 }

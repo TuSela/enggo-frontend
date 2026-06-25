@@ -17,4 +17,5 @@
     <color name="bg_light_blue">#DDF4FF</color>
     <color name="green">#58CC02</color>
     <color name="gray">#AAAAAA</color>
+    <color name="gray_400">#BDBDBD</color>
 </resources>

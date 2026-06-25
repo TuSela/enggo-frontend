@@ -2,8 +2,11 @@ package com.example.appenggo.view
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +29,12 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var edConfirmPassword: EditText
     private lateinit var btnRegister: Button
     private lateinit var txtLogin: TextView
+    
+    private lateinit var btnTogglePassword: ImageView
+    private lateinit var btnToggleConfirmPassword: ImageView
+    
+    private var isPasswordVisible = false
+    private var isConfirmPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +58,9 @@ class RegisterActivity : AppCompatActivity() {
         edConfirmPassword = findViewById(R.id.edtConfirmPassword)
         btnRegister = findViewById(R.id.btnRegister)
         txtLogin = findViewById(R.id.txtLogin)
+        
+        btnTogglePassword = findViewById(R.id.btnTogglePassword)
+        btnToggleConfirmPassword = findViewById(R.id.btnToggleConfirmPassword)
 
         btnRegister.setOnClickListener {
             handleRegister()
@@ -57,6 +69,27 @@ class RegisterActivity : AppCompatActivity() {
         txtLogin.setOnClickListener {
             finish()
         }
+
+        btnTogglePassword.setOnClickListener {
+            isPasswordVisible = !isPasswordVisible
+            togglePassword(edPassword, btnTogglePassword, isPasswordVisible)
+        }
+
+        btnToggleConfirmPassword.setOnClickListener {
+            isConfirmPasswordVisible = !isConfirmPasswordVisible
+            togglePassword(edConfirmPassword, btnToggleConfirmPassword, isConfirmPasswordVisible)
+        }
+    }
+
+    private fun togglePassword(editText: EditText, imageView: ImageView, isVisible: Boolean) {
+        if (isVisible) {
+            editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            imageView.setImageResource(R.drawable.ic_eye)
+        } else {
+            editText.transformationMethod = PasswordTransformationMethod.getInstance()
+            imageView.setImageResource(R.drawable.ic_uneye)
+        }
+        editText.setSelection(editText.text.length)
     }
 
     private fun observeViewModel() {

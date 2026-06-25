@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appenggo.model.LoginRequest
 import com.example.appenggo.model.LoginResponse
+import com.example.appenggo.model.LogoutRequest
 import com.example.appenggo.model.SignupRequest
 import com.example.appenggo.repository.AuthRepository
 import kotlinx.coroutines.launch
@@ -23,6 +24,9 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
 
     private val _signupResult = MutableLiveData<AuthResult<Void>>()
     val signupResult: LiveData<AuthResult<Void>> = _signupResult
+
+    private val _logoutResult = MutableLiveData<AuthResult<Void>>()
+    val logoutResult: LiveData<AuthResult<Void>> = _logoutResult
 
     fun login(request: LoginRequest) {
         _loginResult.value = AuthResult.Loading
@@ -52,6 +56,22 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
                 }
             } catch (e: Exception) {
                 _signupResult.value = AuthResult.Error("Lỗi kết nối!")
+            }
+        }
+    }
+
+    fun logout(token: String) {
+        _logoutResult.value = AuthResult.Loading
+        viewModelScope.launch {
+            try {
+                val response = repository.logout(LogoutRequest(token))
+                if (response.isSuccessful) {
+                    _logoutResult.value = AuthResult.Success(null)
+                } else {
+                    _logoutResult.value = AuthResult.Error("Đăng xuất thất bại!")
+                }
+            } catch (e: Exception) {
+                _logoutResult.value = AuthResult.Error("Lỗi kết nối!")
             }
         }
     }

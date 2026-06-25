@@ -222,6 +222,19 @@
                         android:layout_height="56dp"
                         android:background="@drawable/bg_pvp_setting_card"
                         android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:paddingHorizontal="12dp">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_check_circle" />
+                    </LinearLayout>
+                    <!-- Mission item 3 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_pvp_setting_card"
+                        android:gravity="center_vertical"
                         android:paddingHorizontal="12dp">
                         <ImageView
                             android:layout_width="20dp"
@@ -368,81 +381,6 @@
                         android:scaleType="fitCenter" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- ===== LEADERBOARD + FRIEND ===== -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btn_group"
-                    android:layout_width="0dp"
-                    android:layout_height="130dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:strokeColor="#33FFD940"
-                    app:strokeWidth="2dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:src="@drawable/ic_leaderboard" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Leaderboard"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp"
-                            android:textColor="#4B4B4B"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/btn_friends"
-                    android:layout_width="0dp"
-                    android:layout_height="130dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:strokeColor="#334CAF50"
-                    app:strokeWidth="2dp">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
-                        <ImageView
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:src="@drawable/ic_friend" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Friend"
-                            android:textStyle="bold"
-                            android:layout_marginTop="8dp"
-                            android:textColor="#4B4B4B"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
-
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

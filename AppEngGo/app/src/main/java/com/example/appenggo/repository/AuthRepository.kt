@@ -1,8 +1,10 @@
 package com.example.appenggo.repository
 
 import com.example.appenggo.ApiService
+import com.example.appenggo.model.ApiResponse
 import com.example.appenggo.model.LoginRequest
 import com.example.appenggo.model.LoginResponse
+import com.example.appenggo.model.LogoutRequest
 import com.example.appenggo.model.SignupRequest
 import retrofit2.Response
 
@@ -13,5 +15,9 @@ class AuthRepository(private val apiService: ApiService) {
 
     suspend fun signup(request: SignupRequest): Response<Void> {
         return apiService.signup(request)
+    }
+
+    suspend fun logout(request: LogoutRequest): Response<ApiResponse<Void>> {
+        return apiService.logout(request)
     }
 }
