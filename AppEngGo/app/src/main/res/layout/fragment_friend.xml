@@ -29,7 +29,8 @@
             android:text="Bạn bè"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333" />
+            android:textColor="#333333"
+            android:fontFamily="@font/nunito_black"/>
     </RelativeLayout>
 
     <ScrollView
@@ -68,7 +69,8 @@
                         android:layout_height="wrap_content"
                         android:text="+ Tìm thêm bạn mới"
                         android:textColor="#1CB0F6"
-                        android:textSize="15sp"
+                        android:fontFamily="@font/nunito_black"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -86,8 +88,7 @@
                 <ImageView
                     android:layout_width="18dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/ic_search"
-                    android:alpha="0.4" />
+                    android:src="@drawable/ic_search" />
 
                 <EditText
                     android:id="@+id/et_search"
@@ -96,6 +97,9 @@
                     android:layout_marginStart="8dp"
                     android:background="@null"
                     android:hint="Tìm kiếm bạn bè..."
+                    android:textColorHint="#777777"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/nunito_bold"
                     android:textSize="14sp"
                     android:inputType="text"
                     android:imeOptions="actionSearch"
@@ -107,10 +111,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ĐANG HOẠT ĐỘNG"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#AFAFAF"
-                android:letterSpacing="0.08"
+                android:textColor="#777777"
+                android:fontFamily="@font/nunito_black"
                 android:layout_marginBottom="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -127,10 +131,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TẤT CẢ BẠN BÈ"
-                android:textSize="11sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:textColor="#AFAFAF"
-                android:letterSpacing="0.08"
+                android:textColor="#777777"
+                android:fontFamily="@font/nunito_black"
                 android:layout_marginBottom="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView

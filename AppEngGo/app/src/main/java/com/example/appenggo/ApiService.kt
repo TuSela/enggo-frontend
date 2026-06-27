@@ -21,6 +21,22 @@ interface ApiService {
         @Body request: LogoutRequest
     ): Response<ApiResponse<Void>>
 
+    @GET("api/users/me")
+    suspend fun getMyInfo(
+        @Header("Authorization") token: String
+    ): ApiResponse<UserResponse>
+
+    @PUT("api/users/updatePassword")
+    suspend fun updateUserPassword(
+        @Header("Authorization") token: String,
+        @Body request: UpdatePasswordRequest
+    ): ApiResponse<String>
+
+    @GET("api/gamification/user-badges/my-badges")
+    suspend fun getMyBadges(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<UserBadge>>
+
     @GET("api/themes/all")
     suspend fun getAllThemesGroupedByCategory(
         @Header("Authorization") token: String

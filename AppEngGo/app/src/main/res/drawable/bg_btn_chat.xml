@@ -1,6 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Nền nút chat màu xanh nhạt -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="#E8F4FD" />
-</shape>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="37dp"
+    android:height="42dp"
+    android:viewportWidth="37"
+    android:viewportHeight="42">
+    <path
+        android:pathData="M12,0L24.11,0A12,12 0,0 1,36.11 12L36.11,28A12,12 0,0 1,24.11 40L12,40A12,12 0,0 1,0 28L0,12A12,12 0,0 1,12 0z"
+        android:fillColor="#EFF6FF"/>
+    <path
+        android:pathData="M12,1L24.11,1A11,11 0,0 1,35.11 12L35.11,28A11,11 0,0 1,24.11 39L12,39A11,11 0,0 1,1 28L1,12A11,11 0,0 1,12 1z"
+        android:strokeAlpha="0.2"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#1CB0F6"/>
+</vector>

@@ -8,9 +8,14 @@ data class UserResponse(
     @SerializedName("email") val email: String?,
     @SerializedName("exp") val exp: Int,
     @SerializedName("level") val level: Int,
-    @SerializedName("avatarUrl") val avatarUrl: String?,
-    @SerializedName("elo") val elo: Int,
-    @SerializedName("badgeRank") val badgeRank: BadgeRank?,
+    @SerializedName("streakDays") val streakDays: Int,
+    @SerializedName("completedTasks") val completedTasks: Int,
     @SerializedName("pvpWins") val pvpWins: Int,
-    @SerializedName("winStreak") val winStreak: Int
+    @SerializedName("avatarUrl") val avatarUrl: String?,
+    @SerializedName("status") val status: String?,
+    @SerializedName("bio") val bio: String?,
+    @SerializedName("elo") val elo: Int,
+    @SerializedName("winStreak") val winStreak: Int,
+    @SerializedName("badgeRank") val badgeRank: BadgeRank?,
+    @SerializedName("leaderboardRank") val leaderboardRank: Int
 )

@@ -59,7 +59,7 @@
                     android:id="@+id/img_avatar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:padding="2dp"
+                    android:padding="5dp"
                     android:src="@drawable/ic_default_avatar"
                     android:background="@drawable/bg_circle_border_blue" />
 
@@ -96,7 +96,6 @@
                 android:letterSpacing="0.05"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Email Input -->
             <EditText
                 android:id="@+id/edt_full_name"
                 android:layout_width="match_parent"

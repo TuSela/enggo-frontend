@@ -56,7 +56,6 @@ class FriendFragment : Fragment() {
         }
 
         view.findViewById<View>(R.id.btn_back)?.setOnClickListener {
-            // Navigate back to Home fragment via BottomNavigationView
             val activity = requireActivity()
             val bottomNav = activity.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView
                     >(R.id.bottomNavigation)
@@ -65,7 +64,7 @@ class FriendFragment : Fragment() {
     }
 
     private fun setupAdapters() {
-        // Click avatar người online → mở chat
+        // Adapter cho danh sách ngang
         onlineAdapter = OnlineFriendAdapter { friend ->
             openChat(friend)
         }
@@ -73,7 +72,7 @@ class FriendFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvOnlineFriends?.adapter = onlineAdapter
 
-        // Click nút chat → mở ChatActivity
+        // Adapter cho danh sách dọc bên dưới
         allFriendAdapter = FriendAdapter { friend ->
             openChat(friend)
         }
@@ -86,7 +85,6 @@ class FriendFragment : Fragment() {
             .getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
             .getString("TOKEN", null) ?: return
 
-        // Tạo/lấy conversation rồi mở ChatActivity
         lifecycleScope.launch {
             try {
                 val res = RetrofitClient.api.openPrivateChat("Bearer $token", friend.userId)
@@ -114,12 +112,10 @@ class FriendFragment : Fragment() {
             try {
                 val allRes = RetrofitClient.api.getAllFriends("Bearer $token")
                 if (allRes.code == 1000) {
-                    allFriendAdapter.submitList(allRes.result ?: emptyList())
-                }
-
-                val onlineRes = RetrofitClient.api.getOnlineFriends("Bearer $token")
-                if (onlineRes.code == 1000) {
-                    onlineAdapter.submitList(onlineRes.result ?: emptyList())
+                    val friends = allRes.result ?: emptyList()
+                    // Cả 2 RecyclerView đều dùng chung danh sách tất cả bạn bè
+                    allFriendAdapter.submitList(friends)
+                    onlineAdapter.submitList(friends) 
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Lỗi tải danh sách bạn bè", Toast.LENGTH_SHORT).show()
@@ -141,10 +137,16 @@ class FriendFragment : Fragment() {
                     try {
                         if (keyword.isEmpty()) {
                             val res = RetrofitClient.api.getAllFriends("Bearer $token")
-                            if (res.code == 1000) allFriendAdapter.submitList(res.result ?: emptyList())
+                            if (res.code == 1000) {
+                                allFriendAdapter.submitList(res.result ?: emptyList())
+                                onlineAdapter.submitList(res.result ?: emptyList())
+                            }
                         } else {
                             val res = RetrofitClient.api.searchFriends("Bearer $token", keyword)
-                            if (res.code == 1000) allFriendAdapter.submitList(res.result ?: emptyList())
+                            if (res.code == 1000) {
+                                allFriendAdapter.submitList(res.result ?: emptyList())
+                                onlineAdapter.submitList(res.result ?: emptyList())
+                            }
                         }
                     } catch (e: Exception) { }
                 }
@@ -157,6 +159,7 @@ class FriendFragment : Fragment() {
             activity?.runOnUiThread {
                 val isOnline = status == "ONLINE"
                 allFriendAdapter.updateOnlineStatus(userId, isOnline)
+                // Cập nhật cả adapter ngang
                 loadFriends()
             }
         }

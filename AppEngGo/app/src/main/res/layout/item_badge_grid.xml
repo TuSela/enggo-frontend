@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <ImageView
+        android:id="@+id/img_badge_icon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_themes" />
+
+    <TextView
+        android:id="@+id/tv_badge_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Thợ săn"
+        android:textColor="#4B4B4B"
+        android:fontFamily="@font/nunito_black"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+</LinearLayout>

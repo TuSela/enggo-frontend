@@ -42,6 +42,9 @@
         <activity android:name=".view.PvpResultActivity" />
         <activity android:name=".view.PvpQuizActivity" />
         <activity android:name=".view.PvpMatchingActivity" />
+        <activity android:name=".view.AllBadgesActivity" />
+        <activity android:name=".view.ProfileInfoActivity" />
+        <activity android:name=".view.ChangePasswordActivity" />
     </application>
 
 </manifest>

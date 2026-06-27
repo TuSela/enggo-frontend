@@ -32,6 +32,7 @@
                 android:layout_centerInParent="true"
                 android:text="THÁCH ĐẤU PVP"
                 android:textColor="#4B4B4B"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -61,6 +62,7 @@
                 android:paddingVertical="12dp"
                 android:text="MỜI BẠN"
                 android:textColor="@color/primary_blue"
+                android:fontFamily="@font/nunito_extrabold"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -74,6 +76,7 @@
                 android:paddingVertical="12dp"
                 android:text="XẾP HẠNG"
                 android:textColor="#AFAFAF"
+                android:fontFamily="@font/nunito_extrabold"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -142,6 +145,7 @@
                                 android:paddingVertical="4dp"
                                 android:text="LV 1"
                                 android:textColor="@color/white"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="15sp"
                                 android:textStyle="bold"
                                 android:elevation="4dp"/>
@@ -153,6 +157,7 @@
                             android:layout_marginTop="28dp"
                             android:text="..."
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_extrabold"
                             android:textSize="24sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -168,6 +173,7 @@
                         android:paddingBottom="10dp"
                         android:text="vs"
                         android:textColor="@color/white"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="36sp"
                         android:textStyle="bold|italic" />
 
@@ -188,7 +194,7 @@
                                 android:layout_gravity="center"
                                 android:text="+"
                                 android:textColor="#DCDCDC"
-                                android:textSize="70sp" />
+                                android:textSize="40sp" />
                         </FrameLayout>
                         <TextView
                             android:layout_width="wrap_content"
@@ -225,6 +231,7 @@
                             android:layout_marginTop="8dp"
                             android:text="CHỦ ĐỀ"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="10sp"
                             android:textStyle="bold" />
                         <TextView
@@ -233,7 +240,8 @@
                             android:layout_height="wrap_content"
                             android:text="Từ vựng"
                             android:textColor="#4B4B4B"
-                            android:textSize="13sp"
+                            android:fontFamily="@font/nunito_bold"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -257,6 +265,7 @@
                             android:layout_marginTop="8dp"
                             android:text="ĐỘ KHÓ"
                             android:textColor="@color/primary_orange"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="10sp"
                             android:textStyle="bold" />
                         <TextView
@@ -265,7 +274,8 @@
                             android:layout_height="wrap_content"
                             android:text="Vừa"
                             android:textColor="#4B4B4B"
-                            android:textSize="13sp"
+                            android:fontFamily="@font/nunito_bold"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
 
@@ -287,6 +297,7 @@
                             android:layout_marginTop="8dp"
                             android:text="SỐ CÂU"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="10sp"
                             android:textStyle="bold" />
                         <TextView
@@ -295,7 +306,8 @@
                             android:layout_height="wrap_content"
                             android:text="10 Câu"
                             android:textColor="#4B4B4B"
-                            android:textSize="13sp"
+                            android:fontFamily="@font/nunito_bold"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
@@ -311,6 +323,7 @@
                         android:layout_height="wrap_content"
                         android:text="Bạn bè"
                         android:textColor="#4B4B4B"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                     <TextView
@@ -320,6 +333,7 @@
                         android:layout_centerVertical="true"
                         android:text="XEM TẤT CẢ"
                         android:textColor="@color/primary_blue"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -386,6 +400,7 @@
                                 android:paddingVertical="2dp"
                                 android:text="LV. 0"
                                 android:textColor="@color/white"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="12sp"
                                 android:textStyle="bold"
                                 android:elevation="4dp"/>
@@ -403,6 +418,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="Tên của bạn"
                                 android:textColor="#4B4B4B"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="26sp"
                                 android:textStyle="bold" />
                             <TextView
@@ -415,6 +431,7 @@
                                 android:paddingVertical="4dp"
                                 android:text="Chưa xếp hạng"
                                 android:textColor="@color/primary_blue"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -450,6 +467,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="RANK POINTS"
                                     android:textColor="#AFAFAF"
+                                    android:fontFamily="@font/nunito_black"
                                     android:textSize="12sp"
                                     android:textStyle="bold"/>
                                 <TextView
@@ -459,6 +477,7 @@
                                     android:layout_alignParentEnd="true"
                                     android:text="0/100"
                                     android:textColor="#4B4B4B"
+                                    android:fontFamily="@font/nunito_black"
                                     android:textSize="16sp"
                                     android:textStyle="bold"/>
                             </RelativeLayout>
@@ -485,16 +504,9 @@
                         android:layout_height="wrap_content"
                         android:text="BẢNG XẾP HẠNG"
                         android:textColor="#4B4B4B"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="18sp"
                         android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="Làm mới trong: 14h"
-                        android:textColor="@color/primary_blue"
-                        android:textSize="12sp" />
                 </RelativeLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -537,6 +549,7 @@
                             android:layout_height="wrap_content"
                             android:text="Player"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -545,6 +558,7 @@
                             android:layout_height="wrap_content"
                             android:text="Chưa có xếp hạng"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="12sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -560,6 +574,7 @@
                             android:layout_height="wrap_content"
                             android:text="2,450"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -567,6 +582,7 @@
                             android:layout_height="wrap_content"
                             android:text="POINTS"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="10sp" />
                     </LinearLayout>
                 </RelativeLayout>
@@ -585,6 +601,7 @@
                         android:gravity="center"
                         android:text="2"
                         android:textColor="@color/primary_blue"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                     <ImageView
@@ -609,6 +626,7 @@
                             android:layout_height="wrap_content"
                             android:text="Player"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -617,6 +635,7 @@
                             android:layout_height="wrap_content"
                             android:text="Chưa có xếp hạng"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="12sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -632,6 +651,7 @@
                             android:layout_height="wrap_content"
                             android:text="2,120"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -639,6 +659,7 @@
                             android:layout_height="wrap_content"
                             android:text="POINTS"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="10sp" />
                     </LinearLayout>
                 </RelativeLayout>
@@ -657,6 +678,7 @@
                         android:gravity="center"
                         android:text="3"
                         android:textColor="#D35400"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                     <ImageView
@@ -681,6 +703,7 @@
                             android:layout_height="wrap_content"
                             android:text="Player"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -689,6 +712,7 @@
                             android:layout_height="wrap_content"
                             android:text="Chưa có xếp hạng"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="12sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -704,6 +728,7 @@
                             android:layout_height="wrap_content"
                             android:text="1,890"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -711,6 +736,7 @@
                             android:layout_height="wrap_content"
                             android:text="POINTS"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="10sp" />
                     </LinearLayout>
                 </RelativeLayout>
@@ -729,6 +755,7 @@
                         android:gravity="center"
                         android:text="4"
                         android:textColor="#AFAFAF"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                     <ImageView
@@ -751,6 +778,7 @@
                             android:layout_height="wrap_content"
                             android:text="Player"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -759,6 +787,7 @@
                             android:layout_height="wrap_content"
                             android:text="Chưa có xếp hạng"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="12sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -774,6 +803,7 @@
                             android:layout_height="wrap_content"
                             android:text="1,450"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                         <TextView
@@ -781,6 +811,7 @@
                             android:layout_height="wrap_content"
                             android:text="POINTS"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_bold"
                             android:textSize="10sp" />
                     </LinearLayout>
                 </RelativeLayout>

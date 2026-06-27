@@ -26,6 +26,7 @@
             android:layout_centerInParent="true"
             android:text="Cài đặt"
             android:textColor="#4B4B4B"
+            android:fontFamily="@font/nunito_black"
             android:textSize="18sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -54,6 +55,7 @@
                 android:layout_marginBottom="12dp"
                 android:text="TÀI KHOẢN"
                 android:textColor="#AFAFAF"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05" />
@@ -80,8 +82,9 @@
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
                     android:text="Thông tin cá nhân"
+                    android:fontFamily="@font/nunito_bold"
                     android:textColor="#4B4B4B"
-                    android:textSize="15sp"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -114,7 +117,8 @@
                     android:layout_weight="1"
                     android:text="Đổi mật khẩu"
                     android:textColor="#4B4B4B"
-                    android:textSize="15sp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -131,6 +135,7 @@
                 android:layout_marginBottom="12dp"
                 android:text="TÙY CHỌN"
                 android:textColor="#AFAFAF"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05" />
@@ -157,7 +162,8 @@
                     android:layout_weight="1"
                     android:text="Thông báo"
                     android:textColor="#4B4B4B"
-                    android:textSize="15sp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -190,7 +196,8 @@
                     android:layout_weight="1"
                     android:text="Ngôn ngữ"
                     android:textColor="#4B4B4B"
-                    android:textSize="15sp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -199,7 +206,8 @@
                     android:layout_marginEnd="8dp"
                     android:text="Tiếng Việt"
                     android:textColor="#AFAFAF"
-                    android:textSize="14sp" />
+                    android:fontFamily="@font/nunito_bold"
+                    android:textSize="16sp" />
 
                 <ImageView
                     android:layout_width="20dp"
@@ -215,6 +223,7 @@
                 android:layout_marginBottom="12dp"
                 android:text="HỖ TRỢ"
                 android:textColor="#AFAFAF"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05" />
@@ -242,7 +251,8 @@
                     android:layout_weight="1"
                     android:text="Trung tâm trợ giúp"
                     android:textColor="#4B4B4B"
-                    android:textSize="15sp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -275,7 +285,8 @@
                     android:layout_weight="1"
                     android:text="Điều khoản &amp; Chính sách"
                     android:textColor="#4B4B4B"
-                    android:textSize="15sp"
+                    android:fontFamily="@font/nunito_bold"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -294,6 +305,7 @@
                 android:layout_marginBottom="24dp"
                 android:text="ĐĂNG XUẤT"
                 android:textColor="#FF4B4B"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="16dp"

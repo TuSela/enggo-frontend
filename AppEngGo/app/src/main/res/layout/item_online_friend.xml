@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Item vòng tròn avatar trong phần ĐANG HOẠT ĐỘNG -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="70dp"
     android:layout_height="wrap_content"
@@ -11,22 +10,23 @@
         android:layout_width="56dp"
         android:layout_height="56dp">
 
-        <!-- Avatar với viền xanh lá nếu online -->
+        <!-- Avatar - Viền sẽ được set trong Code -->
         <ImageView
             android:id="@+id/iv_avatar"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:src="@drawable/ic_default_avatar"
             android:scaleType="centerCrop"
-            android:background="@drawable/bg_avatar_circle_online" />
+            android:padding="3dp" />
 
-        <!-- Chấm xanh online -->
+        <!-- Chấm xanh online - Mặc định ẩn -->
         <View
             android:id="@+id/dot_online"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_gravity="bottom|end"
-            android:background="@drawable/bg_dot_online" />
+            android:background="@drawable/bg_dot_online"
+            android:visibility="gone" />
     </FrameLayout>
 
     <TextView
@@ -35,7 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:text="Linh"
-        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textSize="13sp"
         android:textColor="#333333"
         android:maxLines="1"
         android:ellipsize="end"

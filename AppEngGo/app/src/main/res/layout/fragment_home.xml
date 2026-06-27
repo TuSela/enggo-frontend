@@ -276,6 +276,7 @@
                             android:layout_height="wrap_content"
                             android:text="Học Ngay!"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="22sp"
                             android:textStyle="bold" />
                         <TextView
@@ -283,6 +284,7 @@
                             android:layout_height="wrap_content"
                             android:text="START LEARNING"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="11sp"
                             android:textStyle="bold"
                             android:letterSpacing="0.05"
@@ -299,6 +301,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="LUYỆN TẬP"
                                 android:textColor="#FFFFFF"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -345,6 +348,7 @@
                             android:layout_height="wrap_content"
                             android:text="Thách Đấu"
                             android:textColor="#4B4B4B"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="22sp"
                             android:textStyle="bold" />
                         <TextView
@@ -352,6 +356,7 @@
                             android:layout_height="wrap_content"
                             android:text="PVP BATTLE"
                             android:textColor="#AFAFAF"
+                            android:fontFamily="@font/nunito_black"
                             android:textSize="11sp"
                             android:textStyle="bold"
                             android:letterSpacing="0.05"
@@ -368,6 +373,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="CHIẾN ĐẤU"
                                 android:textColor="#FFFFFF"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                         </LinearLayout>

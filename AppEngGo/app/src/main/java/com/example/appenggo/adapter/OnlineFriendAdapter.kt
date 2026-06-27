@@ -18,6 +18,7 @@ class OnlineFriendAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val ivAvatar: ImageView = view.findViewById(R.id.iv_avatar)
         val tvUsername: TextView = view.findViewById(R.id.tv_username)
+        val dotOnline: View = view.findViewById(R.id.dot_online)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,6 +39,15 @@ class OnlineFriendAdapter(
                 .into(holder.ivAvatar)
         } else {
             holder.ivAvatar.setImageResource(R.drawable.ic_default_avatar)
+        }
+
+        // Xử lý hiển thị online/offline
+        if (friend.online) {
+            holder.ivAvatar.setBackgroundResource(R.drawable.bg_avatar_circle_online)
+            holder.dotOnline.visibility = View.VISIBLE
+        } else {
+            holder.ivAvatar.background = null
+            holder.dotOnline.visibility = View.GONE
         }
 
         holder.itemView.setOnClickListener { onClick(friend) }

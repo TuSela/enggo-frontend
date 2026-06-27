@@ -28,4 +28,9 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">11sp</item>
     </style>
+
+    <!-- Style cho hình tròn -->
+    <style name="CircleAppearance">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

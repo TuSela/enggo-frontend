@@ -37,18 +37,14 @@ class SettingFragment : Fragment() {
         
         val btnProfile = view.findViewById<View>(R.id.btn_profile_info)
         btnProfile.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, ProfileInfoFragment())
-                .addToBackStack(null)
-                .commit()
+            val intent = Intent(requireContext(), ProfileInfoActivity::class.java)
+            startActivity(intent)
         }
 
         val btnChangePassword = view.findViewById<View>(R.id.btn_change_password)
         btnChangePassword.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, ChangePasswordFragment())
-                .addToBackStack(null)
-                .commit()
+            val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
+            startActivity(intent)
         }
 
         setupViewModel()
