@@ -223,6 +223,7 @@ class WaitingRoomActivity : AppCompatActivity() {
                         putExtra(PvpQuizActivity.EXTRA_MATCH_ID,      matchId)
                         putExtra(PvpQuizActivity.EXTRA_IS_PLAYER1,    isPlayer1)
                         putExtra(PvpQuizActivity.EXTRA_OPPONENT_NAME, intent.getStringExtra(EXTRA_OPPONENT_NAME) ?: "")
+                        putExtra(PvpQuizActivity.EXTRA_IS_RANKED,      false)
                     }
                     startActivity(intent)
                     finish()

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.appenggo.R
@@ -104,6 +106,38 @@ class PvpResultActivity : AppCompatActivity() {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             })
             finish()
+        }
+        // ── Rank section ──────────────────────────────────────────────────────
+        val isRanked = intent.getBooleanExtra("IS_RANKED_MATCH", false)
+        val layoutRankSection = findViewById<View>(R.id.layout_rank_section)
+
+        if (isRanked) {
+            layoutRankSection.visibility = View.VISIBLE
+
+            // Badge icon
+            val ivBadge = findViewById<ImageView>(R.id.iv_my_badge_rank)
+            val badge = myResult.badgeRank
+            if (badge?.iconUrl != null) {
+                Glide.with(this).load(badge.iconUrl).into(ivBadge)
+            }
+
+            // ELO progress bar (dùng elo hiện tại % 100 để giả lập thanh tiến trình)
+            val currentElo = myResult.elo ?: 0
+            val pbElo = findViewById<ProgressBar>(R.id.pb_elo)
+            pbElo.progress = currentElo % 100
+
+            findViewById<TextView>(R.id.tv_elo_value).text = "${currentElo % 100}/100"
+
+            // ELO change
+            val eloChg = myResult.eloChange ?: 0
+            val tvEloChange = findViewById<TextView>(R.id.tv_elo_change)
+            tvEloChange.text = if (eloChg >= 0) "+$eloChg RP" else "$eloChg RP"
+            tvEloChange.setTextColor(
+                if (eloChg >= 0) getColor(R.color.green)
+                else getColor(android.R.color.holo_red_light)
+            )
+        } else {
+            layoutRankSection.visibility = View.GONE
         }
     }
 

@@ -196,4 +196,15 @@ interface ApiService {
         @Query("size") size: Int
     ): ApiResponse<PageResponse<UserResponse>>
 
+    //===========Mission API===============
+    @GET("api/gamification/missions/today")
+    suspend fun getTodayMissions(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<MissionProgressResponse>>
+
+    @POST("api/gamification/missions/{missionId}/claim")
+    suspend fun claimMissionReward(
+        @Header("Authorization") token: String,
+        @Path("missionId") missionId: Int
+    ): ApiResponse<ClaimRewardResponse>
 }

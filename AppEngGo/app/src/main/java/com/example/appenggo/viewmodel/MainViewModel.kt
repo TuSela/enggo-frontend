@@ -1,34 +1,39 @@
 package com.example.appenggo.viewmodel
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.appenggo.model.UserStats
+import androidx.lifecycle.viewModelScope
+import com.example.appenggo.RetrofitClient
+import com.example.appenggo.model.UserResponse
+import com.example.appenggo.repository.UserRepository
+import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _userStats = MutableLiveData<UserStats>()
-    val userStats: LiveData<UserStats> = _userStats
+    private val repo = UserRepository(RetrofitClient.api)
 
-    init {
-        // Đảm bảo dữ liệu được khởi tạo ngay lập tức
-        _userStats.value = UserStats(
-            streak = 0,
-            level = 1,
-            currentProgress = 0,
-            totalProgress = 1
-        )
-        loadUserStats()
+    private val _userInfo = MutableLiveData<UserResponse>()
+    val userInfo: LiveData<UserResponse> = _userInfo
+
+    private fun getToken(): String {
+        return getApplication<Application>()
+            .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            .getString("TOKEN", "") ?: ""
     }
 
-    private fun loadUserStats() {
-        // Dữ liệu mẫu thực tế
-        val stats = UserStats(
-            streak = 59,
-            level = 15,
-            currentProgress = 1,
-            totalProgress = 3
-        )
-        _userStats.value = stats
+    fun loadMyInfo() {
+        viewModelScope.launch {
+            try {
+                val response = repo.getMyInfo(getToken())
+                if (response.code == 1000) {
+                    _userInfo.value = response.result
+                }
+            } catch (e: Exception) {
+                // xử lý lỗi nếu cần
+            }
+        }
     }
 }

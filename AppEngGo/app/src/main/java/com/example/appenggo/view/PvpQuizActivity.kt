@@ -32,6 +32,7 @@ class PvpQuizActivity : AppCompatActivity() {
         const val EXTRA_MATCH_ID       = "PVP_MATCH_ID"
         const val EXTRA_IS_PLAYER1     = "IS_PLAYER1"
         const val EXTRA_OPPONENT_NAME  = "OPPONENT_NAME"
+        const val EXTRA_IS_RANKED = "IS_RANKED_MATCH"
     }
 
     private lateinit var viewModel: QuizViewModel
@@ -533,6 +534,7 @@ class PvpQuizActivity : AppCompatActivity() {
                     putExtra("RESULT_JSON", Gson().toJson(result))
                     putExtra("MY_USER_ID",  myUserId)
                     putExtra("IS_PLAYER1",  isPlayer1)
+                    putExtra("IS_RANKED_MATCH",  intent.getBooleanExtra(EXTRA_IS_RANKED, false))
                 }
                 startActivity(intent)
                 finish()

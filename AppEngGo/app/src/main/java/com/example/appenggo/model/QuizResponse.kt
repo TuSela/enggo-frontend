@@ -131,5 +131,5 @@ data class PlayerResult(
     @SerializedName("WinStreak")
     val winStreak: Int?,
     val elo: Int?,
-    val badgeRank: String?
+    val badgeRank: BadgeRank?
 )

@@ -195,6 +195,7 @@ class PvpMatchingActivity : AppCompatActivity() {
                         putExtra(PvpQuizActivity.EXTRA_MATCH_ID,      currentMatchId ?: 0)
                         putExtra(PvpQuizActivity.EXTRA_IS_PLAYER1,    isPlayer1)
                         putExtra(PvpQuizActivity.EXTRA_OPPONENT_NAME, opponentName ?: "Đối thủ")
+                        putExtra(PvpQuizActivity.EXTRA_IS_RANKED,      true)
                     }
                     startActivity(intent)
                     finish()
