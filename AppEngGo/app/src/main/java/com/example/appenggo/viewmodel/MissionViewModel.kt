@@ -25,6 +25,9 @@ class MissionViewModel(application: Application) : AndroidViewModel(application)
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     private fun getToken(): String {
         val prefs = getApplication<Application>()
             .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -32,17 +35,21 @@ class MissionViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun loadTodayMissions() {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val result = repo.getTodayMissions(getToken())
                 _missions.value = result
             } catch (e: Exception) {
                 _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
     fun claimReward(missionId: Int) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val result = repo.claimReward(getToken(), missionId)
@@ -51,6 +58,8 @@ class MissionViewModel(application: Application) : AndroidViewModel(application)
                 loadTodayMissions()
             } catch (e: Exception) {
                 _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
         }
     }

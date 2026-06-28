@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.appenggo.model.ApiResponse
 import com.example.appenggo.model.UpdatePasswordRequest
 import com.example.appenggo.model.UserBadge
 import com.example.appenggo.model.UserResponse
@@ -28,10 +27,11 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
     private val _updatePasswordResult = MutableLiveData<ProfileResult<String>>()
     val updatePasswordResult: LiveData<ProfileResult<String>> = _updatePasswordResult
 
-    fun fetchProfileData(token: String) {
-        _userInfo.value = ProfileResult.Loading
-        _userBadges.value = ProfileResult.Loading
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
+    fun fetchProfileData(token: String) {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val userResponse = repository.getMyInfo(token)
@@ -50,12 +50,14 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
             } catch (e: Exception) {
                 _userInfo.value = ProfileResult.Error(e.message ?: "Unknown error")
                 _userBadges.value = ProfileResult.Error(e.message ?: "Unknown error")
+            } finally {
+                _isLoading.value = false
             }
         }
     }
 
     fun updatePassword(token: String, request: UpdatePasswordRequest) {
-        _updatePasswordResult.value = ProfileResult.Loading
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val response = repository.updatePassword(token, request)
@@ -66,6 +68,8 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
                 }
             } catch (e: Exception) {
                 _updatePasswordResult.value = ProfileResult.Error("Lỗi kết nối mạng")
+            } finally {
+                _isLoading.value = false
             }
         }
     }

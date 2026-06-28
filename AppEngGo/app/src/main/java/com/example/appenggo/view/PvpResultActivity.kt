@@ -102,9 +102,11 @@ class PvpResultActivity : AppCompatActivity() {
 
         // ── Buttons ───────────────────────────────────────────────────────────
         findViewById<Button>(R.id.btn_back_home).setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java).apply {
+            val intent = Intent(this, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            })
+                putExtra("RELOAD_HOME", true)
+            }
+            startActivity(intent)
             finish()
         }
         // ── Rank section ──────────────────────────────────────────────────────

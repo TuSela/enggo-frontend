@@ -12,7 +12,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +26,7 @@ import com.example.appenggo.adapter.RankingAdapter
 import com.bumptech.glide.Glide
 import com.example.appenggo.model.UserRank
 
-class PvpActivity : AppCompatActivity() {
+class PvpActivity : BaseActivity() {
 
     private lateinit var tabRanking: TextView
     private lateinit var tabInvite: TextView
@@ -184,6 +183,7 @@ class PvpActivity : AppCompatActivity() {
     }
 
     private fun loadRankingData() {
+        showLoading("Đang tải dữ liệu xếp hạng...")
         lifecycleScope.launch {
             try {
                 val res = RetrofitClient.api.getTopElo(token)
@@ -194,7 +194,6 @@ class PvpActivity : AppCompatActivity() {
                     rankingResult.myRank?.let { myRank ->
                         currentMyRank = myRank
                         
-                        // Update UI Ranking Tab
                         tvMyRankName.text = myRank.username
                         tvMyProfileLevel.text = "LV. ${myRank.level}"
                         tvMyBadgeName.text = myRank.badgeRank?.description ?: "Chưa xếp hạng"
@@ -217,7 +216,6 @@ class PvpActivity : AppCompatActivity() {
 
                         Glide.with(this@PvpActivity).load(myRank.badgeRank?.iconUrl).placeholder(R.drawable.rank4).into(ivMyRankBadgeIcon)
 
-                        // Update UI Invite Tab (Fix for the issue)
                         tvInviteMyName.text = myRank.username
                         tvInviteMyLevel.text = "LV ${myRank.level}"
                         Glide.with(this@PvpActivity)
@@ -245,7 +243,10 @@ class PvpActivity : AppCompatActivity() {
                     }
                     isRankingLoaded = true
                 }
-            } catch (e: Exception) {}
+            } catch (e: Exception) {
+            } finally {
+                hideLoading()
+            }
         }
     }
 
@@ -283,6 +284,7 @@ class PvpActivity : AppCompatActivity() {
     }
 
     private fun inviteFriend(friendId: Int, friendUsername: String) {
+        showLoading("Đang mời $friendUsername...")
         lifecycleScope.launch {
             try {
                 val request = RandomBlueprintRequest(
@@ -302,6 +304,8 @@ class PvpActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@PvpActivity, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                hideLoading()
             }
         }
     }

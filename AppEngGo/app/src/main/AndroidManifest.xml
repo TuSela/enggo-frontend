@@ -45,6 +45,9 @@
         <activity android:name=".view.AllBadgesActivity" />
         <activity android:name=".view.ProfileInfoActivity" />
         <activity android:name=".view.ChangePasswordActivity" />
+
+
+
     </application>
 
 </manifest>

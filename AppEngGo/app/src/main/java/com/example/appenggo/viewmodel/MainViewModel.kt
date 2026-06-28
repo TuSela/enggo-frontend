@@ -18,6 +18,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _userInfo = MutableLiveData<UserResponse>()
     val userInfo: LiveData<UserResponse> = _userInfo
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
     private fun getToken(): String {
         return getApplication<Application>()
             .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
@@ -25,6 +28,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadMyInfo() {
+        _isLoading.value = true
         viewModelScope.launch {
             try {
                 val response = repo.getMyInfo(getToken())
@@ -33,6 +37,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } catch (e: Exception) {
                 // xử lý lỗi nếu cần
+            } finally {
+                _isLoading.value = false
             }
         }
     }

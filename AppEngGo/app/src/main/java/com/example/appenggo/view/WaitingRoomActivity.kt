@@ -7,20 +7,17 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.appenggo.R
 import com.example.appenggo.RetrofitClient
 import com.example.appenggo.model.ExamPvpDisplayResponse
-import com.example.appenggo.model.ExamQuestionWrapper
 import com.example.appenggo.model.StartExamResponse
 import com.example.appenggo.websocket.WebSocketManager
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
-class WaitingRoomActivity : AppCompatActivity() {
+class WaitingRoomActivity : BaseActivity() {
 
     companion object {
         const val EXTRA_MATCH_ID       = "match_id"
@@ -127,37 +124,51 @@ class WaitingRoomActivity : AppCompatActivity() {
                 startMatch()
             } else {
                 playerReady()
-                btnReadyOrStart.isEnabled = false
-                btnReadyOrStart.text = "Đã sẵn sàng ✓"
-                tvReadyP2.text = "✅ Sẵn sàng"
-                tvReadyP2.setTextColor(getColor(R.color.green))
             }
         }
 
         btnCancel.setOnClickListener {
             lifecycleScope.launch {
-                try { RetrofitClient.api.declineDirectMatch(token, matchId) } catch (e: Exception) {}
-                finish()
+                try { 
+                    showLoading("Đang hủy trận đấu...")
+                    RetrofitClient.api.declineDirectMatch(token, matchId) 
+                } catch (e: Exception) {
+                } finally {
+                    hideLoading()
+                    finish()
+                }
             }
         }
     }
 
     private fun playerReady() {
+        showLoading("Đang gửi trạng thái sẵn sàng...")
         lifecycleScope.launch {
             try {
                 RetrofitClient.api.playerReady(token, matchId)
+                runOnUiThread {
+                    btnReadyOrStart.isEnabled = false
+                    btnReadyOrStart.text = "Đã sẵn sàng ✓"
+                    tvReadyP2.text = "✅ Sẵn sàng"
+                    tvReadyP2.setTextColor(getColor(R.color.green))
+                }
             } catch (e: Exception) {
                 Toast.makeText(this@WaitingRoomActivity, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                hideLoading()
             }
         }
     }
 
     private fun startMatch() {
+        showLoading("Đang khởi tạo trận đấu...")
         lifecycleScope.launch {
             try {
                 RetrofitClient.api.startDirectMatch(token, matchId)
             } catch (e: Exception) {
                 Toast.makeText(this@WaitingRoomActivity, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                hideLoading()
             }
         }
     }
@@ -193,20 +204,17 @@ class WaitingRoomActivity : AppCompatActivity() {
     }
 
     private fun openQuiz(matchId: Int) {
-        // Join queue → server gửi ExamPvpDisplayResponse qua /topic/match/{matchId}
+        showLoading("Đang tải đề thi...")
         WebSocketManager.joinPvpQueue(matchId)
 
         WebSocketManager.onPvpExamReceived = { rawData ->
             runOnUiThread {
                 try {
-                    // Parse ExamPvpDisplayResponse
                     val json = gson.toJson(rawData)
                     val pvpExam = gson.fromJson(json, ExamPvpDisplayResponse::class.java)
 
-                    // Xác định attemptId của mình: player1 dùng attemptId1, player2 dùng attemptId2
                     val myAttemptId = if (isPlayer1) pvpExam.attemptId1 else pvpExam.attemptId2
 
-                    // Convert sang StartExamResponse để QuizActivity dùng lại
                     val startExamResponse = StartExamResponse(
                         examId          = pvpExam.examId,
                         attemptId       = myAttemptId,
@@ -225,10 +233,12 @@ class WaitingRoomActivity : AppCompatActivity() {
                         putExtra(PvpQuizActivity.EXTRA_OPPONENT_NAME, intent.getStringExtra(EXTRA_OPPONENT_NAME) ?: "")
                         putExtra(PvpQuizActivity.EXTRA_IS_RANKED,      false)
                     }
+                    hideLoading()
                     startActivity(intent)
                     finish()
 
                 } catch (e: Exception) {
+                    hideLoading()
                     Toast.makeText(this, "Lỗi tải đề thi: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }

@@ -12,7 +12,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.RetrofitClient
@@ -23,7 +22,7 @@ import com.example.appenggo.viewmodel.AuthViewModel
 import com.example.appenggo.viewmodel.AuthViewModelFactory
 import org.json.JSONObject
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var viewModel: AuthViewModel
     private lateinit var edUsername: EditText
@@ -76,11 +75,10 @@ class LoginActivity : AppCompatActivity() {
         viewModel.loginResult.observe(this) { result ->
             when (result) {
                 is AuthResult.Loading -> {
-                    btnLogin.isEnabled = false
-                    Log.d("LoginActivity", "Đang xử lý đăng nhập...")
+                    showLoading("Đang đăng nhập...")
                 }
                 is AuthResult.Success -> {
-                    btnLogin.isEnabled = true
+                    hideLoading()
                     val loginData = result.data
                     if (loginData != null && loginData.result.authenticated) {
                         val username = edUsername.text.toString().trim()
@@ -93,7 +91,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 is AuthResult.Error -> {
-                    btnLogin.isEnabled = true
+                    hideLoading()
                     Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -115,19 +113,14 @@ class LoginActivity : AppCompatActivity() {
         getSharedPreferences("app_prefs", MODE_PRIVATE).edit()
             .putString("TOKEN", token)
             .putString("USERNAME", username)
-            .putInt("USER_ID", userId)   // ← lưu userId để PVP dùng
+            .putInt("USER_ID", userId)
             .apply()
     }
 
-    /**
-     * Decode phần payload của JWT (không cần verify signature)
-     * để lấy claim "userId" mà backend đã nhúng vào.
-     */
     private fun decodeUserIdFromJwt(token: String): Int {
         return try {
             val parts   = token.split(".")
             if (parts.size < 2) return -1
-            // Base64URL decode phần payload
             val payload = String(Base64.decode(parts[1], Base64.URL_SAFE or Base64.NO_PADDING))
             val json    = JSONObject(payload)
             json.getInt("userId")

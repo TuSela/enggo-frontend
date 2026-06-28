@@ -43,9 +43,9 @@ class MissionAdapter(
 
         fun bind(mission: MissionProgressResponse) {
             val info = mission.missionResponse
-            tvName.text = info.name
+            tvName.text = info.title
             tvDesc.text = info.description
-            tvExp.text = "+${info.expReward} XP"
+            tvExp.text = "+${info.rewardExp} XP"
 
             val current = mission.currentValue
             val target = info.targetValue

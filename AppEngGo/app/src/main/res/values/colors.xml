@@ -10,6 +10,7 @@
     <color name="primary_orange">#FF9600</color>
     <color name="primary_orange_dark">#E68600</color>
     <color name="primary_orange_light">#FFF3E0</color>
+    <color name="orange">#FF9600</color>
     <color name="gray_text">#AFAFAF</color>
     <color name="gray_text_dark">#4B4B4B</color>
     <color name="bg_light_gray">#F7F7F7</color>

@@ -9,7 +9,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.RetrofitClient
@@ -19,7 +18,7 @@ import com.example.appenggo.viewmodel.AuthResult
 import com.example.appenggo.viewmodel.AuthViewModel
 import com.example.appenggo.viewmodel.AuthViewModelFactory
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : BaseActivity() {
 
     private lateinit var viewModel: AuthViewModel
     
@@ -96,15 +95,15 @@ class RegisterActivity : AppCompatActivity() {
         viewModel.signupResult.observe(this) { result ->
             when (result) {
                 is AuthResult.Loading -> {
-                    btnRegister.isEnabled = false
+                    showLoading("Đang tạo tài khoản...")
                 }
                 is AuthResult.Success -> {
-                    btnRegister.isEnabled = true
+                    hideLoading()
                     Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
                     finish()
                 }
                 is AuthResult.Error -> {
-                    btnRegister.isEnabled = true
+                    hideLoading()
                     Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
                 }
             }

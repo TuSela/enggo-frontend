@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: enggo-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://13.158.23.199:3306/tienganh_app}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  # 🎯 BỔ SUNG1: Cấu hình kết nối Redis cho tính năng Matchmaking
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:13.158.23.199}
+      port: ${SPRING_REDIS_PORT:6379}
+      # password: ${SPRING_REDIS_PASSWORD:} # Mở ra nếu Redis của bạn đặt mật khẩu
+
+  servlet:
+    multipart:
+      max-file-size: 5MB        # Giới hạn cho 1 file duy nhất
+      max-request-size: 5MB     # Giới hạn tổng dung lượng request
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  signer-key: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 # 1 giờ
+  refreshable-duration: 36000 # 10 giờ
+
+cloudinary:
+  cloud-name: dsqdpp6f2
+  api-key: 417138881551446
+  api-secret: 5Dm3K3UYb42uK-HghID9Hn452mw
+
+app:
+  upload:
+    max-size: 5242880 # 5MB
+    allowed-types:
+      - image/jpeg
+      - image/png
+
+game:
+  levels:
+    - { level: 1,  reqExp: 0 }
+    - { level: 2,  reqExp: 100 }
+    - { level: 3,  reqExp: 250 }
+    - { level: 4,  reqExp: 450 }
+    - { level: 5,  reqExp: 700 }
+    - { level: 6,  reqExp: 1000 }
+    - { level: 7,  reqExp: 1350 }
+    - { level: 8,  reqExp: 1750 }
+    - { level: 9,  reqExp: 2200 }
+    - { level: 10, reqExp: 2700 }
+    - { level: 11, reqExp: 3300 }
+    - { level: 12, reqExp: 4000 }
+    - { level: 13, reqExp: 4800 }
+    - { level: 14, reqExp: 5700 }
+    - { level: 15, reqExp: 6700 }
+    - { level: 16, reqExp: 7900 }
+    - { level: 17, reqExp: 9300 }
+    - { level: 18, reqExp: 10900 }
+    - { level: 19, reqExp: 12700 }
+    - { level: 20, reqExp: 14700 }
+    - { level: 21, reqExp: 17000 }
+    - { level: 22, reqExp: 19600 }
+    - { level: 23, reqExp: 22500 }
+    - { level: 24, reqExp: 25700 }
+    - { level: 25, reqExp: 29300 }
+    - { level: 26, reqExp: 33300 }
+    - { level: 27, reqExp: 37800 }
+    - { level: 28, reqExp: 42800 }
+    - { level: 29, reqExp: 48400 }
+    - { level: 30, reqExp: 55000 }

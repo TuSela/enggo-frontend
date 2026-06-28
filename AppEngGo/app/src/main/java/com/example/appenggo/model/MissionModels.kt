@@ -4,11 +4,11 @@ import com.google.gson.annotations.SerializedName
 
 data class MissionResponse(
     @SerializedName("id") val id: Int,
-    @SerializedName("name") val name: String,
+    @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("targetValue") val targetValue: Int,
-    @SerializedName("expReward") val expReward: Int,
-    @SerializedName("type") val type: String  // e.g. "QUIZ", "VOCABULARY", "PVP"
+    @SerializedName("rewardExp") val rewardExp: Int,
+    @SerializedName("missionType") val missionType: String
 )
 
 data class MissionProgressResponse(

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,13 +17,11 @@ import com.example.appenggo.viewmodel.MissionViewModel
 import com.example.appenggo.websocket.WebSocketManager
 import com.example.appenggo.model.NotificationRepository
 
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
 
-    // ViewModels
     private lateinit var viewModel: MainViewModel
     private lateinit var missionViewModel: MissionViewModel
 
-    // UI references
     private var tvStreak: TextView? = null
     private var tvLevel: TextView? = null
     private var tvProgress: TextView? = null
@@ -35,8 +32,6 @@ class HomeFragment : Fragment() {
     private var rvMissions: RecyclerView? = null
 
     private var unreadCount = 0
-
-    // Adapter
     private lateinit var missionAdapter: MissionAdapter
 
     override fun onCreateView(
@@ -53,16 +48,15 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Sử dụng requireActivity() để dùng chung ViewModel với MainActivity
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         missionViewModel = ViewModelProvider(requireActivity())[MissionViewModel::class.java]
 
         observeViewModel()
         observeMissions()
         listenNotifications()
-        viewModel.loadMyInfo()
-
-        // Load missions khi fragment được tạo
-        missionViewModel.loadTodayMissions()
+        
+        // KHÔNG gọi loadMyInfo() ở đây nữa để tránh load lại khi chuyển tab
     }
 
     private fun initViews(view: View) {
@@ -83,7 +77,7 @@ class HomeFragment : Fragment() {
         rvMissions?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = missionAdapter
-            isNestedScrollingEnabled = false  // Quan trọng: nằm trong ScrollView
+            isNestedScrollingEnabled = false
         }
     }
 
@@ -106,18 +100,18 @@ class HomeFragment : Fragment() {
             tvStreak?.text = " ${user.streakDays}"
             tvLevel?.text = "LV. ${user.level}"
         }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) showLoading("Đang tải thông tin...") else hideLoading()
+        }
     }
 
     private fun observeMissions() {
         missionViewModel.missions.observe(viewLifecycleOwner) { missions ->
             missionAdapter.submitList(missions)
-
-            // Cập nhật progress header: số mission COMPLETED hoặc CLAIMED / tổng
             val completed = missions.count { it.status == "COMPLETED" || it.status == "CLAIMED" }
             val total = missions.size
             tvProgress?.text = "$completed/$total"
-
-            // Cập nhật progress bar tổng (nếu có)
             val pbDaily = view?.findViewById<android.widget.ProgressBar>(R.id.pb_daily_mission)
             if (total > 0) {
                 pbDaily?.max = total
@@ -140,6 +134,10 @@ class HomeFragment : Fragment() {
         missionViewModel.error.observe(viewLifecycleOwner) { err ->
             err ?: return@observe
             Toast.makeText(requireContext(), "Lỗi: $err", Toast.LENGTH_SHORT).show()
+        }
+
+        missionViewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) showLoading("Đang xử lý nhiệm vụ...") else hideLoading()
         }
     }
 

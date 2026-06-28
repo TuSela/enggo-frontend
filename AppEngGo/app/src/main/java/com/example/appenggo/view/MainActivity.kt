@@ -1,19 +1,27 @@
 package com.example.appenggo.view
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
+import com.example.appenggo.viewmodel.MainViewModel
+import com.example.appenggo.viewmodel.MissionViewModel
 import com.example.appenggo.websocket.WebSocketManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var missionViewModel: MissionViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Kết nối WebSocket ngay khi vào MainActivity → server sẽ set status = ONLINE
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        missionViewModel = ViewModelProvider(this)[MissionViewModel::class.java]
+
         WebSocketManager.connect(this)
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
@@ -46,12 +54,33 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             bottomNav.selectedItemId = R.id.nav_home
+            // Tải dữ liệu lần đầu khi app mở
+            mainViewModel.loadMyInfo()
+            missionViewModel.loadTodayMissions()
+        }
+
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        // Chỉ reload khi có cờ RELOAD_HOME từ màn hình kết quả Quiz/PVP
+        if (intent?.getBooleanExtra("RELOAD_HOME", false) == true) {
+            mainViewModel.loadMyInfo()
+            missionViewModel.loadTodayMissions()
+            
+            // Xóa cờ sau khi đã xử lý để tránh reload lặp lại nếu onNewIntent gọi lại
+            intent.putExtra("RELOAD_HOME", false)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        // Ngắt kết nối WebSocket khi đóng app → server sẽ set status = OFFLINE
         WebSocketManager.disconnect()
     }
 

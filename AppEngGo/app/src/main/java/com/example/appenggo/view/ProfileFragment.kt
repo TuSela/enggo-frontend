@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,7 +23,7 @@ import com.example.appenggo.viewmodel.ProfileResult
 import com.example.appenggo.viewmodel.ProfileViewModel
 import com.example.appenggo.viewmodel.ProfileViewModelFactory
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : BaseFragment() {
 
     private lateinit var viewModel: ProfileViewModel
     private lateinit var badgeAdapter: BadgeAdapter
@@ -120,6 +119,10 @@ class ProfileFragment : Fragment() {
                 }
                 badgeAdapter.notifyDataSetChanged()
             }
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) showLoading("Đang tải thông tin cá nhân...") else hideLoading()
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.appenggo.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ProgressBar
@@ -45,7 +46,22 @@ class QuizResultActivity : AppCompatActivity() {
         tvXpGained.text    = "+$expGained XP"
 
         // ── Nút ───────────────────────────────────────────────────────────────
-        btnFinish.setOnClickListener { finish() }
-        findViewById<android.widget.ImageButton?>(R.id.btn_back)?.setOnClickListener { finish() }
+        btnFinish.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("RELOAD_HOME", true)
+            }
+            startActivity(intent)
+            finish()
+        }
+        
+        findViewById<android.widget.ImageButton?>(R.id.btn_back)?.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("RELOAD_HOME", true)
+            }
+            startActivity(intent)
+            finish()
+        }
     }
 }

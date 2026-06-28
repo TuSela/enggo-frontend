@@ -10,7 +10,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +18,7 @@ import com.example.appenggo.RetrofitClient
 import com.example.appenggo.adapter.RankingAdapter
 import kotlinx.coroutines.launch
 
-class LeaderboardFragment : Fragment() {
+class LeaderboardFragment : BaseFragment() {
 
     private lateinit var rvLeaderboard: RecyclerView
     private lateinit var rankingAdapter: RankingAdapter
@@ -82,6 +81,7 @@ class LeaderboardFragment : Fragment() {
             .getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
             .getString("TOKEN", null) ?: return
 
+        showLoading("Đang tải bảng xếp hạng...")
         lifecycleScope.launch {
             try {
                 val response = RetrofitClient.api.getLeaderBoard("Bearer $token", page, pageSize)
@@ -97,6 +97,8 @@ class LeaderboardFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e("LeaderboardError", "Chi tiết lỗi kết nối server: ", e)
                 Toast.makeText(requireContext(), "Lỗi kết nối server: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            } finally {
+                hideLoading()
             }
         }
     }

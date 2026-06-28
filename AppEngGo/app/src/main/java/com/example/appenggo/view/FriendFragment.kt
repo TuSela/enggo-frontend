@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +20,7 @@ import com.example.appenggo.model.FriendResponse
 import com.example.appenggo.websocket.WebSocketManager
 import kotlinx.coroutines.launch
 
-class FriendFragment : Fragment() {
+class FriendFragment : BaseFragment() {
 
     private var rvOnlineFriends: RecyclerView? = null
     private var rvAllFriends: RecyclerView? = null
@@ -85,6 +84,7 @@ class FriendFragment : Fragment() {
             .getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
             .getString("TOKEN", null) ?: return
 
+        showLoading("Đang mở cuộc trò chuyện...")
         lifecycleScope.launch {
             try {
                 val res = RetrofitClient.api.openPrivateChat("Bearer $token", friend.userId)
@@ -99,6 +99,8 @@ class FriendFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Không thể mở chat", Toast.LENGTH_SHORT).show()
+            } finally {
+                hideLoading()
             }
         }
     }
@@ -108,17 +110,19 @@ class FriendFragment : Fragment() {
             .getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
             .getString("TOKEN", null) ?: return
 
+        showLoading("Đang tải danh sách bạn bè...")
         lifecycleScope.launch {
             try {
                 val allRes = RetrofitClient.api.getAllFriends("Bearer $token")
                 if (allRes.code == 1000) {
                     val friends = allRes.result ?: emptyList()
-                    // Cả 2 RecyclerView đều dùng chung danh sách tất cả bạn bè
                     allFriendAdapter.submitList(friends)
                     onlineAdapter.submitList(friends) 
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Lỗi tải danh sách bạn bè", Toast.LENGTH_SHORT).show()
+            } finally {
+                hideLoading()
             }
         }
     }
@@ -159,7 +163,6 @@ class FriendFragment : Fragment() {
             activity?.runOnUiThread {
                 val isOnline = status == "ONLINE"
                 allFriendAdapter.updateOnlineStatus(userId, isOnline)
-                // Cập nhật cả adapter ngang
                 loadFriends()
             }
         }
