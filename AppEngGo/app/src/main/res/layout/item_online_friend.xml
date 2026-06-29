@@ -38,6 +38,7 @@
         android:textStyle="bold"
         android:textSize="13sp"
         android:textColor="#333333"
+        android:fontFamily="@font/nunito_black"
         android:maxLines="1"
         android:ellipsize="end"
         android:gravity="center" />

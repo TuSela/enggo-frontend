@@ -12,5 +12,6 @@
         android:text="1"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:textColor="#AFAFAF" />
+        android:textColor="#AFAFAF"
+        android:fontFamily="@font/nunito_black"/>
 </FrameLayout>

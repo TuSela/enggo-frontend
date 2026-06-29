@@ -71,6 +71,16 @@ data class MatchingAnswer(
     val rightId: Int
 )
 
+// --- Level info sau khi nộp bài ---
+data class LevelInfoResponse(
+    val currentLevel: Int,
+    val currentExp: Int,
+    val nextLevel: Int,
+    val expGainedInCurrentLevel: Int,
+    val expRequiredForNextLevel: Int,
+    val progressPercentage: Double
+)
+
 // --- Response sau khi nộp bài ---
 data class SubmitExamResponse(
     val attemptId: Int,
@@ -82,7 +92,9 @@ data class SubmitExamResponse(
     val totalQuestions: Int,
     val totalScore: Double,
     val expGained: Int,
-    val timeSpent: String
+    val bonusExp: Int?,
+    val timeSpent: String,
+    val levelInfo: LevelInfoResponse?
 )
 
 

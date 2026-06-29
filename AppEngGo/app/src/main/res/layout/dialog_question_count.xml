@@ -24,6 +24,7 @@
         android:layout_marginBottom="24dp"
         android:text="Chọn số câu hỏi"
         android:textColor="#4B4B4B"
+        android:fontFamily="@font/nunito_black"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -45,6 +46,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="32dp"
         android:text="LỰA CHỌN SỐ LƯỢNG"
+        android:fontFamily="@font/nunito_bold"
         android:textColor="#AFAFAF"
         android:textSize="11sp"
         android:textStyle="bold"
@@ -66,6 +68,7 @@
             android:background="@drawable/bg_pvp_setting_card"
             android:text="−"
             android:textColor="#4B4B4B"
+            android:fontFamily="@font/nunito_black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:stateListAnimator="@null"
@@ -85,6 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="10"
                 android:textColor="#4B4B4B"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="48sp"
                 android:textStyle="bold" />
 
@@ -93,6 +97,7 @@
                 android:layout_height="wrap_content"
                 android:text="CÂU HỎI"
                 android:textColor="#AFAFAF"
+                android:fontFamily="@font/nunito_bold"
                 android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -105,6 +110,7 @@
             android:background="@drawable/bg_pvp_setting_card"
             android:text="+"
             android:textColor="#4B4B4B"
+            android:fontFamily="@font/nunito_black"
             android:textSize="24sp"
             android:textStyle="bold"
             android:stateListAnimator="@null"
@@ -119,6 +125,7 @@
         android:background="@drawable/bg_button_green_fancy"
         android:text="XÁC NHẬN"
         android:textColor="@color/white"
+        android:fontFamily="@font/nunito_black"
         android:textSize="18sp"
         android:textStyle="bold"
         android:stateListAnimator="@null" />

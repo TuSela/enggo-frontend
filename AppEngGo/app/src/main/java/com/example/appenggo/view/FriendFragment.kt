@@ -53,13 +53,6 @@ class FriendFragment : BaseFragment() {
         view.findViewById<View>(R.id.btn_find_friend)?.setOnClickListener {
             startActivity(Intent(requireContext(), FindFriendActivity::class.java))
         }
-
-        view.findViewById<View>(R.id.btn_back)?.setOnClickListener {
-            val activity = requireActivity()
-            val bottomNav = activity.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView
-                    >(R.id.bottomNavigation)
-            bottomNav?.selectedItemId = R.id.nav_home
-        }
     }
 
     private fun setupAdapters() {

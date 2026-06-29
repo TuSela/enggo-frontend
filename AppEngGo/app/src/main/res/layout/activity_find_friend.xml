@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Tìm bạn mới"
+            android:fontFamily="@font/nunito_black"
             android:textSize="17sp"
             android:textStyle="bold"
             android:textColor="#333333" />
@@ -64,6 +65,7 @@
                 android:background="@null"
                 android:hint="Nhập tên hoặc ID người dùng..."
                 android:textSize="14sp"
+                android:fontFamily="@font/nunito_bold"
                 android:inputType="text"
                 android:imeOptions="actionSearch"
                 android:singleLine="true" />

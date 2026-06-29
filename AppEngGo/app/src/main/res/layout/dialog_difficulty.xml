@@ -25,6 +25,7 @@
         android:layout_marginBottom="20dp"
         android:text="Chọn độ khó"
         android:textColor="#4B4B4B"
+        android:fontFamily="@font/nunito_black"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -65,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="Dễ"
                     android:textColor="#4B4B4B"
+                    android:fontFamily="@font/nunito_black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -73,6 +75,7 @@
                     android:layout_height="wrap_content"
                     android:text="Câu hỏi cơ bản, thời gian dài"
                     android:textColor="#AFAFAF"
+                    android:fontFamily="@font/nunito_bold"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -115,6 +118,7 @@
                     android:layout_height="wrap_content"
                     android:text="Vừa"
                     android:textColor="#4B4B4B"
+                    android:fontFamily="@font/nunito_black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -123,6 +127,7 @@
                     android:layout_height="wrap_content"
                     android:text="Cân bằng thử thách và tốc độ"
                     android:textColor="#AFAFAF"
+                    android:fontFamily="@font/nunito_bold"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -165,6 +170,7 @@
                     android:layout_height="wrap_content"
                     android:text="Khó"
                     android:textColor="#4B4B4B"
+                    android:fontFamily="@font/nunito_black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -173,6 +179,7 @@
                     android:layout_height="wrap_content"
                     android:text="Câu hỏi nâng cao, áp lực thời gian"
                     android:textColor="#AFAFAF"
+                    android:fontFamily="@font/nunito_bold"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -195,6 +202,7 @@
         android:background="@drawable/bg_button_green_fancy"
         android:text="XÁC NHẬN"
         android:textColor="@color/white"
+        android:fontFamily="@font/nunito_black"
         android:textSize="18sp"
         android:textStyle="bold"
         android:stateListAnimator="@null" />

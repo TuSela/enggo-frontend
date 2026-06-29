@@ -1,10 +1,13 @@
 package com.example.appenggo.view
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
@@ -52,6 +55,10 @@ class HomeFragment : BaseFragment() {
     private var btnBell: View? = null
     private var tvNotificationBadge: TextView? = null
     private var rvMissions: RecyclerView? = null
+    private var layoutMissionHeader: View? = null
+    private var layoutMissionContent: View? = null
+    private var ivMissionArrow: ImageView? = null
+    private var isMissionExpanded = true
 
     private var unreadCount = 0
     private var isFirstLoad = true
@@ -89,6 +96,9 @@ class HomeFragment : BaseFragment() {
         btnBell              = view.findViewById(R.id.btn_bell)
         tvNotificationBadge  = view.findViewById(R.id.tv_notification_badge)
         rvMissions           = view.findViewById(R.id.rv_missions)
+        layoutMissionHeader  = view.findViewById(R.id.layout_mission_header)
+        layoutMissionContent = view.findViewById(R.id.layout_mission_content)
+        ivMissionArrow       = view.findViewById(R.id.iv_mission_arrow)
     }
 
     private fun setupMissionRecyclerView() {
@@ -113,6 +123,31 @@ class HomeFragment : BaseFragment() {
             unreadCount = 0
             updateBadge()
             startActivity(Intent(requireContext(), NotificationActivity::class.java))
+        }
+        layoutMissionHeader?.setOnClickListener {
+            toggleMissionSection()
+        }
+    }
+
+    private fun toggleMissionSection() {
+        isMissionExpanded = !isMissionExpanded
+        val content = layoutMissionContent ?: return
+        val arrow   = ivMissionArrow ?: return
+
+        if (isMissionExpanded) {
+            content.visibility = View.VISIBLE
+            ObjectAnimator.ofFloat(arrow, "rotation", 180f, 0f).apply {
+                duration = 250
+                interpolator = AccelerateDecelerateInterpolator()
+                start()
+            }
+        } else {
+            content.visibility = View.GONE
+            ObjectAnimator.ofFloat(arrow, "rotation", 0f, 180f).apply {
+                duration = 250
+                interpolator = AccelerateDecelerateInterpolator()
+                start()
+            }
         }
     }
 

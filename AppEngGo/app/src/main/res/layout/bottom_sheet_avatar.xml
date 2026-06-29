@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_rounded"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="32dp">
+
+    <!-- Handle bar -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:background="#E0E0E0"
+        android:backgroundTint="#E0E0E0" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/nunito_black"
+        android:gravity="center"
+        android:text="Thay đổi ảnh đại diện"
+        android:textColor="#4B4B4B"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <!-- Chụp ảnh -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_camera"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_pvp_setting_card"
+        android:drawableStart="@drawable/ic_cam_st"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/nunito_bold"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:text="Chụp ảnh"
+        android:textColor="#4B4B4B"
+        android:textSize="15sp"
+        app:backgroundTint="@null"
+        app:elevation="0dp"
+        app:iconTint="#1CB0F6" />
+
+    <!-- Chọn từ thư viện -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_pvp_setting_card"
+        android:drawableStart="@drawable/ic_image"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/nunito_bold"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:text="Chọn từ thư viện"
+        android:textColor="#4B4B4B"
+        android:textSize="15sp"
+        app:backgroundTint="@null"
+        app:elevation="0dp"
+        app:iconTint="#1CB0F6" />
+
+    <!-- Huỷ -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_pvp_setting_card"
+        android:fontFamily="@font/nunito_black"
+        android:insetBottom="0dp"
+        android:insetTop="0dp"
+        android:text="HUỶ"
+        android:textColor="#AFAFAF"
+        android:textSize="14sp"
+        app:backgroundTint="@null"
+        app:elevation="0dp" />
+
+</LinearLayout>

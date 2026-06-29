@@ -28,9 +28,9 @@
             android:layout_centerInParent="true"
             android:text="Luyện từ vựng"
             android:textColor="#3C3C3C"
+            android:fontFamily="@font/nunito_black"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif-medium" />
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <!-- PHẦN 1: CHỌN CHỦ ĐỀ — scroll được, chiếm phần còn lại -->
@@ -47,6 +47,7 @@
             android:layout_height="wrap_content"
             android:text="Chọn chủ đề"
             android:textColor="#1A1A1A"
+            android:fontFamily="@font/nunito_black"
             android:textSize="17sp"
             android:textStyle="bold" />
 
@@ -56,6 +57,7 @@
             android:layout_marginTop="2dp"
             android:text="Chọn chủ đề bạn muốn luyện tập"
             android:textColor="#9E9E9E"
+            android:fontFamily="@font/nunito_bold"
             android:textSize="13sp" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -103,6 +105,7 @@
                     android:layout_height="wrap_content"
                     android:text="Độ khó"
                     android:textColor="#3C3C3C"
+                    android:fontFamily="@font/nunito_black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -125,7 +128,8 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:background="@android:color/transparent"
-                    android:textColor="#6B7280" />
+                    android:textColor="#6B7280"
+                    android:fontFamily="@font/nunito_black"/>
 
                 <TextView
                     android:id="@+id/tv_medium"
@@ -137,7 +141,8 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:background="@drawable/bg_button_orange_grad"
-                    android:textColor="#FFFFFF" />
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/nunito_black"/>
 
                 <TextView
                     android:id="@+id/tv_hard"
@@ -149,7 +154,8 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:background="@android:color/transparent"
-                    android:textColor="#6B7280" />
+                    android:textColor="#6B7280"
+                    android:fontFamily="@font/nunito_black"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -180,6 +186,7 @@
                     android:layout_height="wrap_content"
                     android:text="Số câu"
                     android:textColor="#3C3C3C"
+                    android:fontFamily="@font/nunito_black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -213,6 +220,7 @@
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A1A"
+                    android:fontFamily="@font/nunito_black"
                     android:gravity="center" />
 
                 <TextView
@@ -238,6 +246,7 @@
             android:background="@drawable/bg_button_orange_grad"
             android:text="BẮT ĐẦU LUYỆN TẬP"
             android:textColor="#FFFFFF"
+            android:fontFamily="@font/nunito_black"
             android:textSize="16sp"
             android:textStyle="bold"
             android:letterSpacing="0.04"

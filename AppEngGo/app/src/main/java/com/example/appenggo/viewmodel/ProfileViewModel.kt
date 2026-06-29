@@ -10,6 +10,7 @@ import com.example.appenggo.model.UserResponse
 import com.example.appenggo.model.UserUpdateRequest
 import com.example.appenggo.repository.UserRepository
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 
 sealed class ProfileResult<out T> {
     data class Success<out T>(val data: T?) : ProfileResult<T>()
@@ -30,6 +31,9 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
 
     private val _updateUserResult = MutableLiveData<ProfileResult<UserResponse>>()
     val updateUserResult: LiveData<ProfileResult<UserResponse>> = _updateUserResult
+
+    private val _uploadAvatarResult = MutableLiveData<ProfileResult<String>>()
+    val uploadAvatarResult: LiveData<ProfileResult<String>> = _uploadAvatarResult
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -92,6 +96,22 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
                 _updateUserResult.value = ProfileResult.Error("Lỗi kết nối mạng")
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun uploadAvatar(token: String, filePart: MultipartBody.Part) {
+        _uploadAvatarResult.value = ProfileResult.Loading
+        viewModelScope.launch {
+            try {
+                val response = repository.uploadAvatar(token, filePart)
+                if (response.code == 1000) {
+                    _uploadAvatarResult.value = ProfileResult.Success(response.result)
+                } else {
+                    _uploadAvatarResult.value = ProfileResult.Error(response.message ?: "Upload ảnh thất bại")
+                }
+            } catch (e: Exception) {
+                _uploadAvatarResult.value = ProfileResult.Error("Lỗi kết nối mạng")
             }
         }
     }

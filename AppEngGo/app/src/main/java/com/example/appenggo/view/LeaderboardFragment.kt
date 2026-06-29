@@ -50,11 +50,6 @@ class LeaderboardFragment : BaseFragment() {
         btnNext = view.findViewById(R.id.btn_next)
         containerPages = view.findViewById(R.id.container_pages)
 
-        view.findViewById<View>(R.id.btn_back)?.setOnClickListener {
-            val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigation)
-            bottomNav?.selectedItemId = R.id.nav_home
-        }
-
         btnPrev.setOnClickListener {
             if (currentPage > 1) {
                 currentPage--

@@ -57,6 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:text="3 / 10"
+                android:fontFamily="@font/nunito_black"
                 android:textColor="#1A1A1A"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -70,21 +71,22 @@
             android:gravity="center"
             android:paddingHorizontal="12dp"
             android:background="@drawable/bg_rounded_input"
-            android:backgroundTint="#1A1A1A">
+            android:backgroundTint="#F0F0F0">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⏱ "
-                android:textColor="#FFFFFF"
-                android:textSize="12sp" />
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_clock"
+                android:layout_marginEnd="4dp"
+                app:tint="#444444" />
 
             <TextView
                 android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10:00"
-                android:textColor="#FFFFFF"
+                android:textColor="#222222"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -124,20 +126,19 @@
                 android:layout_height="wrap_content"
                 android:text="CHỌN ĐÁP ÁN ĐÚNG ĐỂ HOÀN THÀNH CÂU:"
                 android:textColor="#9E9E9E"
+                android:fontFamily="@font/nunito_black"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.08"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Card nội dung câu hỏi -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Card nội dung câu hỏi — bọc trong bg_pvp_setting_card -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#F0F0F0"
-                app:strokeWidth="1dp">
+                android:background="@drawable/bg_pvp_setting_card"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_question_content"
@@ -146,12 +147,13 @@
                     android:padding="24dp"
                     android:text="Nội dung câu hỏi"
                     android:textColor="#1A1A1A"
+                    android:fontFamily="@font/nunito_bold"
                     android:textSize="20sp"
                     android:lineSpacingExtra="6sp"
                     android:gravity="center"
                     android:textStyle="bold" />
 
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
 
             <!-- Container đáp án (dynamic) — fill hết phần còn lại -->
             <LinearLayout
@@ -186,6 +188,7 @@
             android:text="QUAY LẠI"
             android:textAllCaps="true"
             android:textColor="#333333"
+            android:fontFamily="@font/nunito_black"
             android:textSize="14sp"
             android:textStyle="bold"
             android:letterSpacing="0.05"
@@ -201,6 +204,7 @@
             android:text="TIẾP THEO"
             android:textAllCaps="true"
             android:textColor="#FFFFFF"
+            android:fontFamily="@font/nunito_black"
             android:textSize="14sp"
             android:textStyle="bold"
             android:letterSpacing="0.05"

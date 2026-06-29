@@ -67,6 +67,7 @@
                         android:layout_height="wrap_content"
                         android:text="LV. 1"
                         android:textColor="#1CB0F6"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="12sp"
                         android:textStyle="bold" />
                     <ProgressBar
@@ -138,11 +139,15 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
-                    <!-- Title row -->
+                    <!-- Title row — clickable để collapse/expand -->
                     <RelativeLayout
+                        android:id="@+id/layout_mission_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -159,6 +164,7 @@
                                 android:layout_marginStart="8dp"
                                 android:text="Nhiệm vụ hàng ngày"
                                 android:textColor="#4B4B4B"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -175,9 +181,11 @@
                                 android:layout_height="wrap_content"
                                 android:text="0/3"
                                 android:textColor="#4B4B4B"
+                                android:fontFamily="@font/nunito_black"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
                             <ImageView
+                                android:id="@+id/iv_mission_arrow"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginStart="4dp"
@@ -185,21 +193,31 @@
                         </LinearLayout>
                     </RelativeLayout>
 
-                    <!-- Daily Mission Progress Bar -->
-                    <ProgressBar
-                        android:id="@+id/pb_daily_mission"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:layout_marginBottom="16dp"
-                        android:progress="0"
-                        android:max="100"
-                        android:progressDrawable="@drawable/custom_progress_bar" />
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_missions"
+                    <!-- Nội dung nhiệm vụ — ẩn/hiện khi collapse/expand -->
+                    <LinearLayout
+                        android:id="@+id/layout_mission_content"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
+                        android:orientation="vertical">
+
+                        <!-- Daily Mission Progress Bar -->
+                        <ProgressBar
+                            android:id="@+id/pb_daily_mission"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="8dp"
+                            android:layout_marginBottom="16dp"
+                            android:progress="0"
+                            android:max="100"
+                            android:progressDrawable="@drawable/custom_progress_bar" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_missions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false" />
+
+                    </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

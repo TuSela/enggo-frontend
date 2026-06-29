@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,13 +17,11 @@ import com.example.appenggo.viewmodel.AuthResult
 import com.example.appenggo.viewmodel.AuthViewModel
 import com.example.appenggo.viewmodel.AuthViewModelFactory
 import com.example.appenggo.websocket.WebSocketManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class SettingFragment : Fragment() {
 
     private lateinit var authViewModel: AuthViewModel
     private lateinit var btnLogout: Button
-    private lateinit var btnBack: ImageView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +30,6 @@ class SettingFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
         
         btnLogout = view.findViewById(R.id.btn_logout)
-        btnBack = view.findViewById(R.id.btn_back)
         
         val btnProfile = view.findViewById<View>(R.id.btn_profile_info)
         btnProfile.setOnClickListener {
@@ -63,12 +59,6 @@ class SettingFragment : Fragment() {
     private fun setupListeners() {
         btnLogout.setOnClickListener {
             handleLogout()
-        }
-
-        btnBack.setOnClickListener {
-            // Chuyển BottomNavigation về tab Home.
-            val bottomNav = activity?.findViewById<BottomNavigationView>(R.id.bottomNavigation)
-            bottomNav?.selectedItemId = R.id.nav_home
         }
     }
 

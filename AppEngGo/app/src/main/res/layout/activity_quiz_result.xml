@@ -220,28 +220,30 @@
         </LinearLayout>
 
         <!-- Progress Bar -->
+
+        <!-- XP Gained + level detail -->
         <ProgressBar
             android:id="@+id/progress_bar_level"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="0dp"
             android:layout_height="14dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
             android:max="100"
             android:progress="75"
             android:progressDrawable="@drawable/progress_bar_green"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_progress_header" />
 
-        <!-- XP Gained -->
         <LinearLayout
             android:id="@+id/layout_xp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="24dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -249,15 +251,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/progress_bar_level">
 
+            <!-- +60 XP -->
             <TextView
                 android:id="@+id/tv_xp_gained"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
                 android:text="+10 XP"
                 android:textColor="#58CC02"
                 android:textSize="15sp"
                 android:textStyle="bold" />
+
+            <!-- spacer -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- LV 5 · 350/700 XP -->
+            <TextView
+                android:id="@+id/tv_level_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#9E9E9E"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

@@ -41,6 +41,7 @@
             android:layout_height="wrap_content"
             android:text="Hoàng Minh"
             android:textColor="#4B4B4B"
+            android:fontFamily="@font/nunito_black"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -50,6 +51,7 @@
             android:layout_height="wrap_content"
             android:text="Đang hoạt động"
             android:textColor="#78C800"
+            android:fontFamily="@font/nunito_bold"
             android:textSize="12sp"
             android:textStyle="italic" />
     </LinearLayout>
@@ -64,6 +66,7 @@
         android:background="@drawable/bg_button_blue_fancy"
         android:text="MỜI"
         android:textColor="@color/white"
+        android:fontFamily="@font/nunito_black"
         android:textSize="13sp"
         android:textStyle="bold"
         android:stateListAnimator="@null" />

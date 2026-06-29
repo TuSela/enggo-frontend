@@ -156,7 +156,10 @@ class QuizActivity : AppCompatActivity() {
         viewModel.submitResult.observe(this) { resource ->
             when (resource) {
                 is Resource.Loading -> Toast.makeText(this, "Đang nộp bài...", Toast.LENGTH_SHORT).show()
-                is Resource.Success -> resource.data?.let { navigateToResult(it) }
+                is Resource.Success -> resource.data?.let {
+                    android.util.Log.d("QuizResult_RAW", "expGained=${it.expGained}, bonusExp=${it.bonusExp}, levelInfo=${it.levelInfo}, levelInfo?.currentLevel=${it.levelInfo?.currentLevel}, pct=${it.levelInfo?.progressPercentage}")
+                    navigateToResult(it)
+                }
                 is Resource.Error   -> Toast.makeText(this, "Nộp bài thất bại: ${resource.message}", Toast.LENGTH_LONG).show()
             }
         }
@@ -578,6 +581,15 @@ class QuizActivity : AppCompatActivity() {
             putExtra("SCORE",           result.totalScore)
             putExtra("TIME_TAKEN",      timeTaken)
             putExtra("EXP_GAINED",      result.expGained)
+            putExtra("BONUS_EXP",       result.bonusExp ?: 0)
+            // LevelInfo từ server — dùng trực tiếp, không tính lại client
+            result.levelInfo?.let { li ->
+                putExtra("LEVEL_CURRENT",      li.currentLevel)
+                putExtra("LEVEL_NEXT",         li.nextLevel)
+                putExtra("EXP_IN_LEVEL",       li.expGainedInCurrentLevel)
+                putExtra("EXP_REQUIRED",       li.expRequiredForNextLevel)
+                putExtra("LEVEL_PROGRESS_PCT", li.progressPercentage.toFloat())
+            }
         }
         startActivity(intent)
         finish()

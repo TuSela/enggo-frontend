@@ -51,6 +51,7 @@
             android:background="@drawable/bg_button_blue_fancy"
             android:text="ĐÓNG"
             android:textColor="#FFFFFF"
+            android:fontFamily="@font/nunito_black"
             android:textStyle="bold"
             app:backgroundTint="@null"
             app:elevation="0dp"

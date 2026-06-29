@@ -32,7 +32,8 @@
                 android:textStyle="bold"
                 android:textColor="#212121"
                 android:textSize="15sp"
-                android:text="Tiêu đề thông báo" />
+                android:text="Tiêu đề thông báo"
+                android:fontFamily="@font/nunito_black"/>
 
             <TextView
                 android:id="@+id/tv_message"
@@ -42,7 +43,8 @@
                 android:textSize="13sp"
                 android:maxLines="2"
                 android:ellipsize="end"
-                android:text="Nội dung " />
+                android:text="Nội dung "
+                android:fontFamily="@font/nunito_bold"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -58,13 +60,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Từ chối"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp"
+            android:fontFamily="@font/nunito_black"/>
 
         <Button
             android:id="@+id/btn_accept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chấp nhận"/>
+            android:text="Chấp nhận"
+            android:fontFamily="@font/nunito_black"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -5,6 +5,7 @@ import com.example.appenggo.model.ApiResponse
 import com.example.appenggo.model.UpdatePasswordRequest
 import com.example.appenggo.model.UserBadge
 import com.example.appenggo.model.UserResponse
+import okhttp3.MultipartBody
 import com.example.appenggo.model.UserUpdateRequest
 
 class UserRepository(private val apiService: ApiService) {
@@ -22,5 +23,9 @@ class UserRepository(private val apiService: ApiService) {
 
     suspend fun updateUser(token: String, request: UserUpdateRequest): ApiResponse<UserResponse> {
         return apiService.updateUser("Bearer $token", request)
+    }
+
+    suspend fun uploadAvatar(token: String, filePart: MultipartBody.Part): ApiResponse<String> {
+        return apiService.uploadAvatar("Bearer $token", filePart)
     }
 }

@@ -43,6 +43,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="#222222"
+                android:fontFamily="@font/nunito_black"
                 android:maxLines="1"
                 android:ellipsize="end" />
 
@@ -52,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:text="@vanna123"
                 android:textSize="12sp"
-                android:textColor="#AAAAAA" />
+                android:textColor="#AAAAAA"
+                android:fontFamily="@font/nunito_bold"/>
         </LinearLayout>
 
         <!-- Nút KẾT BẠN -->
@@ -66,6 +68,7 @@
             android:gravity="center"
             android:text="KẾT BẠN"
             android:textColor="#FFFFFF"
+            android:fontFamily="@font/nunito_black"
             android:textSize="12sp"
             android:textStyle="bold"
             android:clickable="true"

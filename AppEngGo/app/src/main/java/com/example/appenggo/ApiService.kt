@@ -2,6 +2,7 @@ package com.example.appenggo
 
 import com.example.appenggo.model.*
 import retrofit2.Response
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface ApiService {
@@ -36,6 +37,13 @@ interface ApiService {
     suspend fun updateUserPassword(
         @Header("Authorization") token: String,
         @Body request: UpdatePasswordRequest
+    ): ApiResponse<String>
+
+    @Multipart
+    @POST("api/users/uploadAvatar")
+    suspend fun uploadAvatar(
+        @Header("Authorization") token: String,
+        @Part file: MultipartBody.Part
     ): ApiResponse<String>
 
     @GET("api/gamification/user-badges/my-badges")

@@ -34,6 +34,7 @@
             android:paddingVertical="10dp"
             android:text="Tin nhắn"
             android:textColor="#222222"
+            android:fontFamily="@font/nunito_bold"
             android:textSize="14sp"
             android:lineSpacingExtra="2dp" />
 
@@ -44,6 +45,7 @@
             android:layout_marginTop="3dp"
             android:text="10:30 AM"
             android:textColor="#AAAAAA"
+            android:fontFamily="@font/nunito_black"
             android:textSize="10sp" />
     </LinearLayout>
 </LinearLayout>

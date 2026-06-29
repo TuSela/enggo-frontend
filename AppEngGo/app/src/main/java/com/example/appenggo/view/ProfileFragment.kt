@@ -111,11 +111,6 @@ class ProfileFragment : BaseFragment() {
             startActivity(Intent(requireContext(), ProfileInfoActivity::class.java))
         }
 
-        view.findViewById<View>(R.id.btn_back).setOnClickListener {
-            val bottomNav = activity?.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigation)
-            bottomNav?.selectedItemId = R.id.nav_home
-        }
-
         view.findViewById<View>(R.id.btn_see_all_badges).setOnClickListener {
             startActivity(Intent(requireContext(), AllBadgesActivity::class.java))
         }
