@@ -78,7 +78,7 @@
                         android:layout_marginStart="6dp"
                         android:progress="0"
                         android:max="100"
-                        android:progressDrawable="@drawable/custom_progress_bar" />
+                        android:progressDrawable="@drawable/progress_bar_blue" />
                 </LinearLayout>
 
                 <!-- Chuông + Badge đỏ -->

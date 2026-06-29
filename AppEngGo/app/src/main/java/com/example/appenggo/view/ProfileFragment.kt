@@ -1,8 +1,10 @@
 package com.example.appenggo.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,6 +59,19 @@ class ProfileFragment : BaseFragment() {
     private lateinit var badgeAdapter: BadgeAdapter
     private val badgeList = mutableListOf<UserBadge>()
 
+    private val editProfileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val token = requireContext()
+                .getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+                .getString("TOKEN", "") ?: ""
+            if (token.isNotEmpty()) {
+                viewModel.fetchProfileData(token)
+            }
+        }
+    }
+
     private lateinit var tvUsername: TextView
     private lateinit var tvBio: TextView
     private lateinit var tvLevel: TextView
@@ -108,7 +123,9 @@ class ProfileFragment : BaseFragment() {
         rvBadges.adapter = badgeAdapter
 
         view.findViewById<View>(R.id.btn_edit_profile).setOnClickListener {
-            startActivity(Intent(requireContext(), ProfileInfoActivity::class.java))
+            editProfileLauncher.launch(
+                Intent(requireContext(), ProfileInfoActivity::class.java)
+            )
         }
 
         view.findViewById<View>(R.id.btn_see_all_badges).setOnClickListener {
@@ -166,7 +183,14 @@ class ProfileFragment : BaseFragment() {
 
         user.badgeRank?.let {
             tvRankName.text = it.description
-            Glide.with(this).load(it.iconUrl).into(imgRankIcon)
+            val rankIconUrl = it.iconUrl?.let { url ->
+                if (url.contains(".svg")) url.replace(".svg", ".png") else url
+            }
+            Glide.with(this)
+                .load(rankIconUrl)
+                .placeholder(R.drawable.ic_themes)
+                .error(R.drawable.ic_themes)
+                .into(imgRankIcon)
 
             // Giả sử thang điểm Rank là 2000
             tvRankPoint.text = "${user.elo} / 2000"

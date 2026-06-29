@@ -212,7 +212,7 @@ class HomeFragment : BaseFragment() {
             Toast.makeText(requireContext(), "Lỗi: $err", Toast.LENGTH_SHORT).show()
         }
 
-        missionViewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+        missionViewModel.isLoadingClaim.observe(viewLifecycleOwner) { loading ->
             if (loading) showLoading("Đang xử lý nhiệm vụ...") else hideLoading()
         }
     }

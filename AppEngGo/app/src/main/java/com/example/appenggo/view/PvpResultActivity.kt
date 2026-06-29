@@ -120,7 +120,13 @@ class PvpResultActivity : AppCompatActivity() {
             val ivBadge = findViewById<ImageView>(R.id.iv_my_badge_rank)
             val badge = myResult.badgeRank
             if (badge?.iconUrl != null) {
-                Glide.with(this).load(badge.iconUrl).into(ivBadge)
+                val badgeIconUrl = if (badge.iconUrl.contains(".svg"))
+                    badge.iconUrl.replace(".svg", ".png") else badge.iconUrl
+                Glide.with(this)
+                    .load(badgeIconUrl)
+                    .placeholder(R.drawable.ic_themes)
+                    .error(R.drawable.ic_themes)
+                    .into(ivBadge)
             }
 
             // ELO progress bar (dùng elo hiện tại % 100 để giả lập thanh tiến trình)

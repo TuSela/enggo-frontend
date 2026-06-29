@@ -20,6 +20,7 @@
             android:layout_centerInParent="true"
             android:text="Profile"
             android:textColor="#4B4B4B"
+            android:fontFamily="@font/nunito_black"
             android:textSize="18sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -77,8 +78,9 @@
                         android:background="@drawable/bg_pvp_lv_badge"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="3dp"
-                        android:text="Lv 15"
+                        android:text="LV 15"
                         android:textColor="@color/white"
+                        android:fontFamily="@font/nunito_black"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         android:elevation="4dp"/>
@@ -181,7 +183,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="12dp"
                     android:progress="80"
-                    android:progressDrawable="@drawable/custom_progress_bar" />
+                    android:progressDrawable="@drawable/progress_bar_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/layout_progress_header"/>
             </LinearLayout>
 
             <!-- Stats Section -->
@@ -253,7 +259,7 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:src="@drawable/ic_rank" />
+                            android:src="@drawable/ic_leaderboar" />
 
                         <TextView
                             android:id="@+id/tv_stats_ranking"
@@ -315,10 +321,13 @@
                         android:id="@+id/pb_rank"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="12dp"
                         android:progress="80"
-                        android:progressDrawable="@drawable/custom_progress_bar" />
+                        android:progressDrawable="@drawable/progress_bar_orange"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/layout_progress_header"/>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
