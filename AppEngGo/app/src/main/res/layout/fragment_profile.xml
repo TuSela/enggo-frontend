@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/avatar_container"
                     android:layout_marginTop="16dp"
-                    android:layout_marginStart="26dp"
+                    android:layout_marginStart="15dp"
                     android:text="tuan"
                     android:textColor="#4B4B4B"
                     android:fontFamily="@font/nunito_black"

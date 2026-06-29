@@ -569,18 +569,8 @@ class QuizActivity : AppCompatActivity() {
     }
 
     private fun navigateToResult(result: SubmitExamResponse) {
-        val timeTaken: String = if (result.timeTakenSeconds != null) {
-            String.format("%02d:%02d", result.timeTakenSeconds / 60, result.timeTakenSeconds % 60)
-        } else {
-            try {
-                val fmt   = java.time.LocalDateTime.parse(result.completedAt.substringBefore("."))
-                val start = java.time.LocalDateTime.parse(result.startedAt.substringBefore("."))
-                val secs  = java.time.Duration.between(start, fmt).seconds
-                String.format("%02d:%02d", secs / 60, secs % 60)
-            } catch (e: Exception) {
-                "--:--"
-            }
-        }
+        // Sử dụng trực tiếp result.timeSpent từ server
+        val timeTaken = result.timeSpent
 
         val intent = Intent(this, QuizResultActivity::class.java).apply {
             putExtra("CORRECT_COUNT",   result.correctAnswersCount)

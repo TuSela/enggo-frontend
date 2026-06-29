@@ -81,7 +81,8 @@ data class SubmitExamResponse(
     val timeTakenSeconds: Int?,
     val totalQuestions: Int,
     val totalScore: Double,
-    val expGained: Int
+    val expGained: Int,
+    val timeSpent: String
 )
 
 

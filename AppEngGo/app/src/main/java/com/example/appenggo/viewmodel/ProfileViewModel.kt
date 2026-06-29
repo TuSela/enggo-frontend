@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.appenggo.model.UpdatePasswordRequest
 import com.example.appenggo.model.UserBadge
 import com.example.appenggo.model.UserResponse
+import com.example.appenggo.model.UserUpdateRequest
 import com.example.appenggo.repository.UserRepository
 import kotlinx.coroutines.launch
 
@@ -26,6 +27,9 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
 
     private val _updatePasswordResult = MutableLiveData<ProfileResult<String>>()
     val updatePasswordResult: LiveData<ProfileResult<String>> = _updatePasswordResult
+
+    private val _updateUserResult = MutableLiveData<ProfileResult<UserResponse>>()
+    val updateUserResult: LiveData<ProfileResult<UserResponse>> = _updateUserResult
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -68,6 +72,24 @@ class ProfileViewModel(private val repository: UserRepository) : ViewModel() {
                 }
             } catch (e: Exception) {
                 _updatePasswordResult.value = ProfileResult.Error("Lỗi kết nối mạng")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun updateUser(token: String, request: UserUpdateRequest) {
+        _isLoading.value = true
+        viewModelScope.launch {
+            try {
+                val response = repository.updateUser(token, request)
+                if (response.code == 1000) {
+                    _updateUserResult.value = ProfileResult.Success(response.result)
+                } else {
+                    _updateUserResult.value = ProfileResult.Error(response.message ?: "Cập nhật thông tin thất bại")
+                }
+            } catch (e: Exception) {
+                _updateUserResult.value = ProfileResult.Error("Lỗi kết nối mạng")
             } finally {
                 _isLoading.value = false
             }

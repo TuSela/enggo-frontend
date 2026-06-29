@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.appenggo.R
 import com.example.appenggo.model.ThemeResponse
 import com.google.android.material.card.MaterialCardView
@@ -21,9 +22,22 @@ class ThemeAdapter(
     inner class ThemeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val cardTheme: MaterialCardView = view.findViewById(R.id.card_theme)
         val tvThemeName: TextView = view.findViewById(R.id.tv_theme_name)
+        val ivThemeIcon: ImageView = view.findViewById(R.id.iv_theme_icon)
 
         fun bind(theme: ThemeResponse, position: Int) {
             tvThemeName.text = theme.themeName
+
+            // Load ảnh chủ đề từ imageUrl, fallback về ic_book nếu null/lỗi
+            if (!theme.imageUrl.isNullOrBlank()) {
+                Glide.with(itemView.context)
+                    .load(theme.imageUrl)
+                    .placeholder(R.drawable.ic_book)
+                    .error(R.drawable.ic_book)
+                    .centerCrop()
+                    .into(ivThemeIcon)
+            } else {
+                ivThemeIcon.setImageResource(R.drawable.ic_book)
+            }
 
             val ivCheck = itemView.findViewById<ImageView>(R.id.iv_check)
 
@@ -62,6 +76,7 @@ class ThemeAdapter(
         this.themes = newThemes
         notifyDataSetChanged()
     }
+
     fun getSelectedTheme(): ThemeResponse? {
         return if (selectedPosition >= 0) themes[selectedPosition] else null
     }

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -19,11 +20,32 @@ import com.example.appenggo.model.NotificationRepository
 
 class HomeFragment : BaseFragment() {
 
+    // ── Bảng mốc XP theo level (index 0 = level 1) ───────────────────────────
+    private val levelTable = listOf(
+        0, 100, 250, 450, 700, 1000, 1350, 1750, 2200, 2700,
+        3300, 4000, 4800, 5700, 6700, 7900, 9300, 10900, 12700, 14700,
+        17000, 19600, 22500, 25700, 29300, 33300, 37800, 42800, 48400, 55000
+    )
+
+    /** Trả về % (0–100) XP tiến độ trong level hiện tại */
+    private fun calcXpPercent(totalExp: Int, level: Int): Int {
+        val idx = (level - 1).coerceIn(0, levelTable.lastIndex)
+        if (idx + 1 > levelTable.lastIndex) return 100          // max level
+        val currentReq = levelTable[idx]
+        val nextReq    = levelTable[idx + 1]
+        val inLevel    = (totalExp - currentReq).coerceAtLeast(0)
+        val needed     = nextReq - currentReq
+        return (inLevel * 100 / needed).coerceIn(0, 100)
+    }
+
+    // ── Views ─────────────────────────────────────────────────────────────────
+
     private lateinit var viewModel: MainViewModel
     private lateinit var missionViewModel: MissionViewModel
 
     private var tvStreak: TextView? = null
     private var tvLevel: TextView? = null
+    private var pbLevel: ProgressBar? = null
     private var tvProgress: TextView? = null
     private var btnLearnVocabulary: View? = null
     private var btn_battle: View? = null
@@ -32,6 +54,7 @@ class HomeFragment : BaseFragment() {
     private var rvMissions: RecyclerView? = null
 
     private var unreadCount = 0
+    private var isFirstLoad = true
     private lateinit var missionAdapter: MissionAdapter
 
     override fun onCreateView(
@@ -48,26 +71,24 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Sử dụng requireActivity() để dùng chung ViewModel với MainActivity
         viewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         missionViewModel = ViewModelProvider(requireActivity())[MissionViewModel::class.java]
 
         observeViewModel()
         observeMissions()
         listenNotifications()
-        
-        // KHÔNG gọi loadMyInfo() ở đây nữa để tránh load lại khi chuyển tab
     }
 
     private fun initViews(view: View) {
-        tvStreak = view.findViewById(R.id.tv_streak)
-        tvLevel = view.findViewById(R.id.tv_level)
-        tvProgress = view.findViewById(R.id.tv_progress)
-        btnLearnVocabulary = view.findViewById(R.id.btn_learn_vocabulary)
-        btn_battle = view.findViewById(R.id.btn_battle)
-        btnBell = view.findViewById(R.id.btn_bell)
-        tvNotificationBadge = view.findViewById(R.id.tv_notification_badge)
-        rvMissions = view.findViewById(R.id.rv_missions)
+        tvStreak             = view.findViewById(R.id.tv_streak)
+        tvLevel              = view.findViewById(R.id.tv_level)
+        pbLevel              = view.findViewById(R.id.pb_level)
+        tvProgress           = view.findViewById(R.id.tv_progress)
+        btnLearnVocabulary   = view.findViewById(R.id.btn_learn_vocabulary)
+        btn_battle           = view.findViewById(R.id.btn_battle)
+        btnBell              = view.findViewById(R.id.btn_bell)
+        tvNotificationBadge  = view.findViewById(R.id.tv_notification_badge)
+        rvMissions           = view.findViewById(R.id.rv_missions)
     }
 
     private fun setupMissionRecyclerView() {
@@ -95,14 +116,34 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refresh XP bar + missions mỗi khi fragment hiển thị lại
+        if (::viewModel.isInitialized) {
+            viewModel.loadMyInfo()
+        }
+        if (::missionViewModel.isInitialized) {
+            missionViewModel.loadTodayMissions()
+        }
+    }
+
     private fun observeViewModel() {
         viewModel.userInfo.observe(viewLifecycleOwner) { user ->
             tvStreak?.text = " ${user.streakDays}"
-            tvLevel?.text = "LV. ${user.level}"
+            tvLevel?.text  = "LV ${user.level}"
+
+            // ── XP bar theo bảng level ────────────────────────────────────────
+            val percent = calcXpPercent(user.exp, user.level)
+            pbLevel?.progress = percent
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { loading ->
-            if (loading) showLoading("Đang tải thông tin...") else hideLoading()
+            if (isFirstLoad) {
+                if (loading) showLoading("Đang tải thông tin...") else {
+                    hideLoading()
+                    isFirstLoad = false
+                }
+            }
         }
     }
 
@@ -110,11 +151,11 @@ class HomeFragment : BaseFragment() {
         missionViewModel.missions.observe(viewLifecycleOwner) { missions ->
             missionAdapter.submitList(missions)
             val completed = missions.count { it.status == "COMPLETED" || it.status == "CLAIMED" }
-            val total = missions.size
+            val total     = missions.size
             tvProgress?.text = "$completed/$total"
-            val pbDaily = view?.findViewById<android.widget.ProgressBar>(R.id.pb_daily_mission)
+            val pbDaily = view?.findViewById<ProgressBar>(R.id.pb_daily_mission)
             if (total > 0) {
-                pbDaily?.max = total
+                pbDaily?.max      = total
                 pbDaily?.progress = completed
             }
         }
@@ -148,9 +189,9 @@ class HomeFragment : BaseFragment() {
                 unreadCount++
                 updateBadge()
                 val msg = when (payload.type) {
-                    "FRIEND_REQUEST" -> "🔔 ${payload.fromUsername} gửi lời mời kết bạn"
+                    "FRIEND_REQUEST"  -> "🔔 ${payload.fromUsername} gửi lời mời kết bạn"
                     "FRIEND_ACCEPTED" -> "✅ ${payload.fromUsername} đã chấp nhận kết bạn"
-                    else -> payload.message
+                    else              -> payload.message
                 }
                 Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
             }

@@ -9,6 +9,7 @@ data class ApiResponse<T>(
 data class ThemeResponse(
     val id: Int,
     val themeName: String,
-    val category: String? = null, // JSON của bạn không có trường này
-    val active: Boolean? = null   // JSON của bạn không có trường này
+    val imageUrl: String? = null,
+    val category: String? = null,
+    val active: Boolean? = null
 )

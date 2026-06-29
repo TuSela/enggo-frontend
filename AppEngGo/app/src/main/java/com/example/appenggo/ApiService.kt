@@ -26,6 +26,12 @@ interface ApiService {
         @Header("Authorization") token: String
     ): ApiResponse<UserResponse>
 
+    @PUT("api/users/me")
+    suspend fun updateUser(
+        @Header("Authorization") token: String,
+        @Body request: UserUpdateRequest
+    ): ApiResponse<UserResponse>
+
     @PUT("api/users/updatePassword")
     suspend fun updateUserPassword(
         @Header("Authorization") token: String,

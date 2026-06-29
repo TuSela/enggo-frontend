@@ -43,8 +43,8 @@ class PvpActivity : BaseActivity() {
     private lateinit var rvFriendsPvp: RecyclerView
     private lateinit var friendPvpAdapter: FriendPvpAdapter
 
-    private var currentTopicId: Int = 1
-    private var currentTopicName: String = "Gia đình"
+    private var currentTopicId: Int = -1
+    private var currentTopicName: String = ""
     private var currentDifficulty: DifficultyBottomSheet.Difficulty = DifficultyBottomSheet.Difficulty.MEDIUM
     private var currentQuestionCount: Int = 10
     private lateinit var token: String
@@ -131,14 +131,30 @@ class PvpActivity : BaseActivity() {
         setupClickListeners()
         setupFriendList()
         setupRankingList()
+        loadDefaultTheme()
         loadFriends()
         loadRankingData()
         listenPvpInviteResponse()
         listenOnlineStatus()
 
-        tvTopicValue.text = currentTopicName
         tvDifficultyValue.text = currentDifficulty.label
         updateSettingCardSelection(cardDifficulty)
+    }
+    // Thêm hàm mới vào PvpActivity
+    private fun loadDefaultTheme() {
+        lifecycleScope.launch {
+            try {
+                val res = RetrofitClient.api.getAllThemesGroupedByCategory(token)
+                val firstTheme = res.result?.values?.flatten()?.firstOrNull()
+                if (firstTheme != null) {
+                    currentTopicId   = firstTheme.id
+                    currentTopicName = firstTheme.themeName
+                    tvTopicValue.text = firstTheme.themeName
+                }
+            } catch (e: Exception) {
+                // Giữ nguyên nếu lỗi, UI vẫn hiển thị trống
+            }
+        }
     }
 
     private fun initViews() {
