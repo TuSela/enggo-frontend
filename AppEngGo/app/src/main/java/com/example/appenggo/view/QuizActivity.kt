@@ -154,7 +154,7 @@ class QuizActivity : AppCompatActivity() {
                 val parts = time.split(":")
                 val totalSecs = (parts.getOrNull(0)?.toIntOrNull() ?: 0) * 60 +
                         (parts.getOrNull(1)?.toIntOrNull() ?: 0)
-                tvTimer.setTextColor(if (totalSecs <= 60) Color.parseColor("#F44336") else Color.WHITE)
+                tvTimer.setTextColor(if (totalSecs <= 60) Color.parseColor("#F44336") else Color.BLACK)
             }
             if (time == "00:00") submitExam()
         }
@@ -589,6 +589,7 @@ class QuizActivity : AppCompatActivity() {
         val timeTaken = result.timeSpent
 
         val intent = Intent(this, QuizResultActivity::class.java).apply {
+            putExtra("ATTEMPT_ID",      result.attemptId)
             putExtra("CORRECT_COUNT",   result.correctAnswersCount)
             putExtra("TOTAL_QUESTIONS", result.totalQuestions)
             putExtra("SCORE",           result.totalScore)

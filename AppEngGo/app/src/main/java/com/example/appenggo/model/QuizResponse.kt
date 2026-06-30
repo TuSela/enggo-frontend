@@ -146,3 +146,66 @@ data class PlayerResult(
     val elo: Int?,
     val badgeRank: BadgeRank?
 )
+
+// --- Review Models ---
+data class ReviewResponse(
+    val accuracyPercent: Double,
+    val attemptId: Int,
+    val bonusExp: Int,
+    val completedAt: String,
+    val correctAnswersCount: Int,
+    val difficulty: Int,
+    val examId: Int,
+    val examTitle: String,
+    val expGained: Int,
+    val questions: List<ReviewQuestionWrapper>,
+    val startedAt: String,
+    val timeSpent: String,
+    val totalExpGained: Int,
+    val totalQuestions: Int,
+    val totalScore: Double,
+    val wrongAnswersCount: Int
+)
+
+data class ReviewQuestionWrapper(
+    val isCorrect: Boolean,
+    val orderPriority: Int,
+    val question: ReviewQuestionDetail,
+    val score: Double
+)
+
+data class ReviewQuestionDetail(
+    val id: Int,
+    val content: String,
+    val explanation: String?,
+    val questionType: String,
+    val multipleOptions: List<ReviewMultipleChoiceOption>?,
+    val fillBlankOptions: List<ReviewFillBlankOption>?,
+    val matchingResults: List<ReviewMatchingResult>?
+)
+
+data class ReviewMultipleChoiceOption(
+    val id: Int,
+    val optionText: String,
+    val correct: Boolean,
+    val selected: Boolean
+)
+
+data class ReviewFillBlankOption(
+    val blankId: Int,
+    val correctValue: String,
+    val isCorrect: Boolean,
+    val maxLength: Int?,
+    val position: Int,
+    val userInput: String?
+)
+
+data class ReviewMatchingResult(
+    val correctRightId: Int,
+    val correctRightText: String,
+    val isCorrect: Boolean,
+    val leftId: Int,
+    val leftText: String,
+    val userRightId: Int?,
+    val userRightText: String?
+)

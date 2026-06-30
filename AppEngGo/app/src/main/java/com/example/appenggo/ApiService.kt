@@ -83,6 +83,12 @@ interface ApiService {
         @Body request: SubmitExamRequest
     ): ApiResponse<SubmitExamResponse>
 
+    @GET("api/attempts/{attemptId}/review")
+    suspend fun reviewAttempt(
+        @Header("Authorization") token: String,
+        @Path("attemptId") attemptId: Int
+    ): ApiResponse<ReviewResponse>
+
     // ===== FRIEND APIs =====
     @GET("api/users/search")
     suspend fun searchUsers(

@@ -28,9 +28,7 @@
             android:layout_height="36dp"
             android:padding="8dp"
             android:src="@drawable/ic_arrow_back"
-            android:background="@drawable/bg_circle"
-            android:backgroundTint="#F0F0F0"
-            app:tint="#333333" />
+            app:tint="#AFAFAF" />
 
         <!-- Progress bar + số câu – chiếm phần giữa -->
         <LinearLayout

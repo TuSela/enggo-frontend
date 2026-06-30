@@ -21,4 +21,7 @@ class ThemeRepository(private val apiService: ApiService) {
 
     suspend fun submitExam(token: String, examId: Int, attemptId: Int, request: SubmitExamRequest) =
         apiService.submitExam("Bearer $token", examId, attemptId, request)
+
+    suspend fun reviewAttempt(token: String, attemptId: Int) =
+        apiService.reviewAttempt("Bearer $token", attemptId)
 }

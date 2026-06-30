@@ -19,11 +19,11 @@
 
             <ImageView
                 android:id="@+id/btn_back"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/ic_arrow_back"
-                app:tint="#B0B0B0" />
+                app:tint="#AFAFAF" />
 
             <TextView
                 android:id="@+id/tv_header_title"

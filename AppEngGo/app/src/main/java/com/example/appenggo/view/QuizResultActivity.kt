@@ -16,6 +16,7 @@ class QuizResultActivity : AppCompatActivity() {
         setContentView(R.layout.activity_quiz_result)
 
         // ── Nhận dữ liệu từ Intent ──────────────────────────────────────────
+        val attemptId      = intent.getIntExtra("ATTEMPT_ID", -1)
         val correctCount   = intent.getIntExtra("CORRECT_COUNT", 0)
         val totalQuestions = intent.getIntExtra("TOTAL_QUESTIONS", 0)
         val score          = intent.getDoubleExtra("SCORE", 0.0)
@@ -33,7 +34,7 @@ class QuizResultActivity : AppCompatActivity() {
         val hasLevelInfo = levelCurrent != -1 && levelProgressPct >= 0f
 
         // ── DEBUG: xem backend có trả levelInfo không ─────────────────────
-        android.util.Log.d("QuizResult", "=== levelCurrent=$levelCurrent, levelNext=$levelNext, pct=$levelProgressPct, expIn=$expInLevel, expReq=$expRequired, hasLevelInfo=$hasLevelInfo ===")
+        android.util.Log.d("QuizResult", "=== attemptId=$attemptId, levelCurrent=$levelCurrent, levelNext=$levelNext, pct=$levelProgressPct, expIn=$expInLevel, expReq=$expRequired, hasLevelInfo=$hasLevelInfo ===")
 
         // ── Tính accuracy ────────────────────────────────────────────────────
         val accuracy = if (totalQuestions > 0)
@@ -48,6 +49,7 @@ class QuizResultActivity : AppCompatActivity() {
         val progressBar   = findViewById<ProgressBar>(R.id.progress_bar_level)
         val tvXpGained    = findViewById<TextView>(R.id.tv_xp_gained)
         val tvLevelLabel  = findViewById<TextView>(R.id.tv_level_label)
+        val btnReview     = findViewById<Button>(R.id.btn_review)
         val btnFinish     = findViewById<Button>(R.id.btn_finish)
 
         // ── Hiển thị stats ────────────────────────────────────────────────────
@@ -85,6 +87,14 @@ class QuizResultActivity : AppCompatActivity() {
             }
             startActivity(i)
             finish()
+        }
+
+        btnReview.setOnClickListener {
+            if (attemptId != -1) {
+                val intent = Intent(this, QuizReviewActivity::class.java)
+                intent.putExtra("ATTEMPT_ID", attemptId)
+                startActivity(intent)
+            }
         }
 
         btnFinish.setOnClickListener { goHome() }

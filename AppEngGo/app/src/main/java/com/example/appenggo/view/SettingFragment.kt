@@ -28,9 +28,9 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_setting, container, false)
-        
+
         btnLogout = view.findViewById(R.id.btn_logout)
-        
+
         val btnProfile = view.findViewById<View>(R.id.btn_profile_info)
         btnProfile.setOnClickListener {
             val intent = Intent(requireContext(), ProfileInfoActivity::class.java)
@@ -46,7 +46,7 @@ class SettingFragment : Fragment() {
         setupViewModel()
         setupListeners()
         observeViewModel()
-        
+
         return view
     }
 
@@ -85,7 +85,7 @@ class SettingFragment : Fragment() {
     private fun handleLogout() {
         val sharedPrefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val token = sharedPrefs.getString("TOKEN", "") ?: ""
-        
+
         if (token.isNotEmpty()) {
             authViewModel.logout(token)
         } else {

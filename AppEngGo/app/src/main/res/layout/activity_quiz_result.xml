@@ -21,7 +21,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back"
             android:contentDescription="Back"
-            app:tint="#BDBDBD"
+            app:tint="#FFFFFF"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -290,13 +290,33 @@
 
         </LinearLayout>
 
+        <!-- XEM CHI TIẾT Button -->
+        <Button
+            android:id="@+id/btn_review"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/bg_pvp_setting_card"
+            android:text="XEM CHI TIẾT"
+            android:textColor="#FF8C00"
+            android:fontFamily="@font/nunito_black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            app:backgroundTint="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_xp" />
+
         <!-- TIẾP TỤC Button -->
         <Button
             android:id="@+id/btn_finish"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/bg_button_orange_grad"
             android:text="TIẾP TỤC"
@@ -308,7 +328,7 @@
             app:backgroundTint="@null"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_xp" />
+            app:layout_constraintTop_toBottomOf="@id/btn_review" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

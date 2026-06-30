@@ -23,7 +23,8 @@
             android:src="@drawable/ic_arrow_back"
             android:padding="6dp"
             android:clickable="true"
-            android:focusable="true" />
+            android:focusable="true"
+            app:tint="#AFAFAF" />
 
         <!-- Avatar + tên + trạng thái -->
         <LinearLayout
