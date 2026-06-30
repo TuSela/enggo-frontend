@@ -209,7 +209,7 @@ class PvpActivity : BaseActivity() {
 
                     rankingResult.myRank?.let { myRank ->
                         currentMyRank = myRank
-                        
+
                         tvMyRankName.text = myRank.username
                         tvMyProfileLevel.text = "LV. ${myRank.level}"
                         tvMyBadgeName.text = myRank.badgeRank?.description ?: "Chưa xếp hạng"
@@ -248,7 +248,7 @@ class PvpActivity : BaseActivity() {
                             rankNamesByPosition[i].text = user.username
                             rankDescsByPosition[i].text = user.badgeRank?.description ?: "Chưa xếp hạng"
                             rankPointsByPosition[i].text = String.format("%,d", user.elo)
-                            
+
                             Glide.with(this@PvpActivity)
                                 .load(user.avatarUrl)
                                 .circleCrop()
@@ -317,9 +317,11 @@ class PvpActivity : BaseActivity() {
                     ).show()
                 } else {
                     Toast.makeText(this@PvpActivity, "Gửi lời mời thất bại", Toast.LENGTH_SHORT).show()
+                    friendPvpAdapter.resetInviteState(friendId)
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@PvpActivity, "Lỗi: ${e.message}", Toast.LENGTH_SHORT).show()
+                friendPvpAdapter.resetInviteState(friendId)
             } finally {
                 hideLoading()
             }
@@ -349,6 +351,9 @@ class PvpActivity : BaseActivity() {
                     "PVP_DECLINED" -> {
                         val msg = event["message"] as? String ?: "Lời mời bị từ chối"
                         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                        // Mở lại nút mời cho đúng người vừa từ chối, nếu server có trả fromUserId
+                        val fromUserId = (event["fromUserId"] as? Double)?.toInt()
+                        fromUserId?.let { friendPvpAdapter.resetInviteState(it) }
                     }
                 }
             }

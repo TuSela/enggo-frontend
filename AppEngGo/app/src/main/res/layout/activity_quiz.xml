@@ -144,13 +144,13 @@
                     android:id="@+id/tv_question_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/nunito_bold"
+                    android:gravity="center"
+                    android:lineSpacingExtra="6sp"
                     android:padding="24dp"
                     android:text="Nội dung câu hỏi"
                     android:textColor="#1A1A1A"
-                    android:fontFamily="@font/nunito_bold"
                     android:textSize="20sp"
-                    android:lineSpacingExtra="6sp"
-                    android:gravity="center"
                     android:textStyle="bold" />
 
             </LinearLayout>

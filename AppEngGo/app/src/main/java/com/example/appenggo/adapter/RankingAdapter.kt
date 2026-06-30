@@ -46,9 +46,16 @@ class RankingAdapter : RecyclerView.Adapter<RankingAdapter.RankingViewHolder>() 
             .into(holder.ivAvatar)
 
         // 2. Load Icon Huy hiệu nhỏ ở dòng dưới bên cạnh chữ danh hiệu (Thách Đấu, Vàng II...)
-        if (!user.badgeRank?.iconUrl.isNullOrEmpty()) {
+        // Áp dụng xử lý tương tự PvpResultActivity: Chuyển .svg sang .png nếu cần
+        val badgeUrl = user.badgeRank?.iconUrl
+        if (!badgeUrl.isNullOrEmpty()) {
+            val processedUrl = if (badgeUrl.contains(".svg")) {
+                badgeUrl.replace(".svg", ".png")
+            } else {
+                badgeUrl
+            }
             Glide.with(holder.itemView.context)
-                .load(user.badgeRank.iconUrl)
+                .load(processedUrl)
                 .placeholder(R.drawable.ic_rank)
                 .error(R.drawable.ic_rank)
                 .into(holder.ivBadgeIcon)

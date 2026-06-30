@@ -95,6 +95,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): ApiResponse<List<Int>>
 
+    @GET("api/social/friends/requests/pending")
+    suspend fun getPendingFriendRequests(
+        @Header("Authorization") token: String
+    ): ApiResponse<List<NotificationPayload>>
+
     @GET("api/social/friends")
     suspend fun getAllFriends(
         @Header("Authorization") token: String

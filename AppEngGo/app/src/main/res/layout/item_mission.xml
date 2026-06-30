@@ -9,13 +9,6 @@
     android:gravity="center_vertical"
     android:padding="12dp">
 
-    <!-- Icon -->
-    <ImageView
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:src="@drawable/ic_check_circle"
-        android:layout_marginEnd="12dp" />
-
     <!-- Text block -->
     <LinearLayout
         android:layout_width="0dp"
@@ -98,6 +91,7 @@
         android:background="@drawable/bg_button_blue"
         android:text="Nhận thưởng"
         android:textColor="#FFFFFF"
+        android:fontFamily="@font/nunito_black"
         android:textSize="11sp"
         android:paddingHorizontal="10dp"
         android:visibility="gone" />

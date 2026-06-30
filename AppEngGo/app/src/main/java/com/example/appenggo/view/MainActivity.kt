@@ -1,14 +1,19 @@
 package com.example.appenggo.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.appenggo.R
+import com.example.appenggo.RetrofitClient
+import com.example.appenggo.model.NotificationRepository
 import com.example.appenggo.viewmodel.MainViewModel
 import com.example.appenggo.viewmodel.MissionViewModel
 import com.example.appenggo.websocket.WebSocketManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity() {
 
@@ -23,6 +28,7 @@ class MainActivity : BaseActivity() {
         missionViewModel = ViewModelProvider(this)[MissionViewModel::class.java]
 
         WebSocketManager.connect(this)
+        loadPendingFriendRequests()
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
@@ -37,11 +43,11 @@ class MainActivity : BaseActivity() {
                     true
                 }
                 R.id.nav_friend -> {
-                     loadFragment(FriendFragment())
+                    loadFragment(FriendFragment())
                     true
                 }
                 R.id.nav_profile -> {
-                     loadFragment(ProfileFragment())
+                    loadFragment(ProfileFragment())
                     true
                 }
                 R.id.nav_setting -> {
@@ -73,7 +79,7 @@ class MainActivity : BaseActivity() {
         if (intent?.getBooleanExtra("RELOAD_HOME", false) == true) {
             mainViewModel.loadMyInfo()
             missionViewModel.loadTodayMissions()
-            
+
             // Xóa cờ sau khi đã xử lý để tránh reload lặp lại nếu onNewIntent gọi lại
             intent.putExtra("RELOAD_HOME", false)
         }
@@ -88,5 +94,23 @@ class MainActivity : BaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
+    }
+
+    // Bù cho trường hợp lúc bạn bè gửi lời mời kết bạn thì mình đang offline
+    // (không nhận được qua WebSocket). Gọi 1 lần khi mở app để nạp lại các
+    // lời mời đang PENDING từ server vào NotificationRepository.
+    private fun loadPendingFriendRequests() {
+        val token = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            .getString("TOKEN", null) ?: return
+
+        lifecycleScope.launch {
+            try {
+                val res = RetrofitClient.api.getPendingFriendRequests("Bearer $token")
+                if (res.code == 1000) {
+                    res.result?.forEach { NotificationRepository.addIfAbsent(it) }
+                }
+            } catch (e: Exception) {
+            }
+        }
     }
 }

@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="THÁCH ĐẤU PVP"
+                android:text="Thách đấu PVP"
                 android:textColor="#4B4B4B"
                 android:fontFamily="@font/nunito_black"
                 android:textSize="18sp"
@@ -264,7 +264,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:text="ĐỘ KHÓ"
-                            android:textColor="@color/primary_orange"
+                            android:textColor="#AFAFAF"
                             android:fontFamily="@font/nunito_black"
                             android:textSize="10sp"
                             android:textStyle="bold" />

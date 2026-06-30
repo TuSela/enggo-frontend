@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Luyện từ vựng"
+            android:text="Luyện tập"
             android:textColor="#3C3C3C"
             android:fontFamily="@font/nunito_black"
             android:textSize="18sp"

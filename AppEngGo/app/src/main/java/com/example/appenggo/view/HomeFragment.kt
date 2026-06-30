@@ -47,6 +47,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var missionViewModel: MissionViewModel
 
     private var tvStreak: TextView? = null
+    private var tvGreeting: TextView? = null
     private var tvLevel: TextView? = null
     private var pbLevel: ProgressBar? = null
     private var tvProgress: TextView? = null
@@ -88,6 +89,7 @@ class HomeFragment : BaseFragment() {
 
     private fun initViews(view: View) {
         tvStreak             = view.findViewById(R.id.tv_streak)
+        tvGreeting           = view.findViewById(R.id.tv_greeting)
         tvLevel              = view.findViewById(R.id.tv_level)
         pbLevel              = view.findViewById(R.id.pb_level)
         tvProgress           = view.findViewById(R.id.tv_progress)
@@ -165,6 +167,7 @@ class HomeFragment : BaseFragment() {
     private fun observeViewModel() {
         viewModel.userInfo.observe(viewLifecycleOwner) { user ->
             tvStreak?.text = " ${user.streakDays}"
+            tvGreeting?.text = "Xin chào, ${user.fullName?.takeIf { it.isNotBlank() } ?: user.username}"
             tvLevel?.text  = "LV ${user.level}"
 
             // ── XP bar theo bảng level ────────────────────────────────────────
@@ -198,12 +201,14 @@ class HomeFragment : BaseFragment() {
         missionViewModel.claimResult.observe(viewLifecycleOwner) { result ->
             result ?: return@observe
             val msg = buildString {
-                append("🎉 Nhận thưởng thành công! +${result.expAwarded} XP")
+                append("Nhận thưởng thành công! +${result.expAwarded} XP")
                 if (!result.badgeResponse.isNullOrEmpty()) {
                     append("\n🏅 Badge mới: ${result.badgeResponse.joinToString { it.name }}")
                 }
             }
             Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+            // Cập nhật lại EXP/Level ngay sau khi nhận thưởng, không cần chờ onResume
+            viewModel.loadMyInfo()
             missionViewModel.clearClaimResult()
         }
 

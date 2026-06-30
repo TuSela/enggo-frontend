@@ -14,6 +14,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.Resource
@@ -70,6 +71,11 @@ class QuizActivity : AppCompatActivity() {
         getSharedPreferences("app_prefs", MODE_PRIVATE).getString("TOKEN", null)
 
     private fun dp(value: Float) = (value * resources.displayMetrics.density).toInt()
+
+    // Áp font Nunito đồng bộ với XML (mặc định TextView tạo bằng code không tự lấy fontFamily từ theme)
+    private fun applyFont(view: TextView, fontRes: Int = R.font.nunito_bold) {
+        view.typeface = ResourcesCompat.getFont(this, fontRes)
+    }
 
     // ── Load ──────────────────────────────────────────────────────────────────
 
@@ -237,11 +243,14 @@ class QuizActivity : AppCompatActivity() {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { setMargins(0, 0, 0, dp(12f)) }
-                radius      = dp(14f).toFloat()
-                strokeWidth = dp(if (isSelected) 2f else 1f)
-                strokeColor = if (isSelected) colorOrangeStroke else colorGrayStroke
-                setCardBackgroundColor(if (isSelected) colorOrangeLight else Color.WHITE)
+                radius        = dp(16f).toFloat() // khớp bán kính 16dp của bg_pvp_setting_card
                 cardElevation = 0f
+                strokeWidth   = 0
+                setCardBackgroundColor(Color.TRANSPARENT)
+                setBackgroundResource(
+                    if (isSelected) R.drawable.bg_pvp_setting_card_selected
+                    else R.drawable.bg_pvp_setting_card
+                )
 
                 val row = LinearLayout(this@QuizActivity).apply {
                     orientation = LinearLayout.HORIZONTAL
@@ -259,7 +268,7 @@ class QuizActivity : AppCompatActivity() {
                     text = option.optionText
                     textSize = 16f
                     setTextColor(if (isSelected) colorOrange else colorTextDark)
-                    if (isSelected) setTypeface(null, Typeface.BOLD)
+                    applyFont(this)
                 }
 
                 // Checkmark badge khi đã chọn
@@ -272,7 +281,7 @@ class QuizActivity : AppCompatActivity() {
                         textSize = 14f
                         gravity = Gravity.CENTER
                         setTextColor(Color.WHITE)
-                        setTypeface(null, Typeface.BOLD)
+                        applyFont(this)
                         background = createCircleBg(colorOrange)
                     }
                     row.addView(tvText)
@@ -306,11 +315,11 @@ class QuizActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            radius        = dp(14f).toFloat()
-            strokeWidth   = dp(1f)
-            strokeColor   = colorGrayStroke
-            setCardBackgroundColor(Color.WHITE)
+            radius        = dp(16f).toFloat()
             cardElevation = 0f
+            strokeWidth   = 0
+            setCardBackgroundColor(Color.TRANSPARENT)
+            setBackgroundResource(R.drawable.bg_pvp_setting_card)
         }
 
         val inner = LinearLayout(this).apply {
@@ -323,7 +332,7 @@ class QuizActivity : AppCompatActivity() {
                 text = "Ô trống ${opt.position}"
                 textSize = 12f
                 setTextColor(colorTextGray)
-                setTypeface(null, Typeface.BOLD)
+                applyFont(this)
                 letterSpacing = 0.05f
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -346,6 +355,7 @@ class QuizActivity : AppCompatActivity() {
                 imeOptions  = android.view.inputmethod.EditorInfo.IME_ACTION_DONE
                 setTextColor(colorTextDark)
                 setHintTextColor(Color.parseColor("#BDBDBD"))
+                applyFont(this)
                 background  = createUnderlineBg(colorOrange)
                 setPadding(dp(2f), dp(8f), dp(2f), dp(10f))
 
@@ -389,11 +399,11 @@ class QuizActivity : AppCompatActivity() {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     itemHeight
                 ).apply { setMargins(0, 0, 0, dp(12f)) }
-                radius = dp(14f).toFloat()
-                strokeWidth = dp(2f)
-                strokeColor = colorOrangeStroke
-                setCardBackgroundColor(Color.WHITE)
+                radius        = dp(16f).toFloat()
                 cardElevation = 0f
+                strokeWidth   = 0
+                setCardBackgroundColor(Color.TRANSPARENT)
+                setBackgroundResource(R.drawable.bg_pvp_setting_card_selected)
 
                 val row = LinearLayout(this@QuizActivity).apply {
                     orientation = LinearLayout.HORIZONTAL
@@ -411,8 +421,8 @@ class QuizActivity : AppCompatActivity() {
                     text = leftText
                     gravity = Gravity.CENTER
                     textSize = 15f
-                    setTextColor(colorTextDark)
-                    setTypeface(null, Typeface.BOLD)
+                    setTextColor(colorOrange)
+                    applyFont(this)
                 }
 
                 // Đường cam nối giữa
@@ -429,8 +439,8 @@ class QuizActivity : AppCompatActivity() {
                     text = rightText
                     gravity = Gravity.CENTER
                     textSize = 15f
-                    setTextColor(colorTextDark)
-                    setTypeface(null, Typeface.BOLD)
+                    setTextColor(colorOrange)
+                    applyFont(this)
                 }
 
                 row.addView(tvL)
@@ -504,11 +514,14 @@ class QuizActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 height
             ).apply { setMargins(0, 0, 0, dp(12f)) }
-            radius      = dp(14f).toFloat()
-            strokeWidth = dp(if (isSelected) 2.5f else 1f)
-            strokeColor = if (isSelected) colorOrangeStroke else colorGrayStroke
-            setCardBackgroundColor(if (isSelected) colorOrangeLight else Color.WHITE)
+            radius        = dp(16f).toFloat()
             cardElevation = 0f
+            strokeWidth   = 0
+            setCardBackgroundColor(Color.TRANSPARENT)
+            setBackgroundResource(
+                if (isSelected) R.drawable.bg_pvp_setting_card_selected
+                else R.drawable.bg_pvp_setting_card
+            )
 
             addView(TextView(this@QuizActivity).apply {
                 layoutParams = FrameLayout.LayoutParams(
@@ -520,7 +533,7 @@ class QuizActivity : AppCompatActivity() {
                 gravity   = Gravity.CENTER
                 textSize  = 14f
                 setTextColor(if (isSelected) colorOrange else colorTextDark)
-                if (isSelected) setTypeface(null, Typeface.BOLD)
+                applyFont(this)
             })
         }
     }

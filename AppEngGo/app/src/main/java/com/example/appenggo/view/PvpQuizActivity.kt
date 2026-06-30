@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.appenggo.R
 import com.example.appenggo.Resource
@@ -75,6 +76,11 @@ class PvpQuizActivity : AppCompatActivity() {
     private val colorTextGray    get() = Color.parseColor("#9E9E9E")
 
     private fun dp(v: Float) = (v * resources.displayMetrics.density).toInt()
+
+    // Áp font Nunito đồng bộ với XML (mặc định TextView tạo bằng code không tự lấy fontFamily từ theme)
+    private fun applyFont(view: TextView, fontRes: Int = R.font.nunito_bold) {
+        view.typeface = ResourcesCompat.getFont(this, fontRes)
+    }
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -208,11 +214,11 @@ class PvpQuizActivity : AppCompatActivity() {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 ).apply { setMargins(0, 0, 0, dp(12f)) }
-                radius        = dp(14f).toFloat()
-                strokeWidth   = dp(1f)
-                strokeColor   = colorGrayStroke
-                setCardBackgroundColor(Color.WHITE)
+                radius        = dp(16f).toFloat() // khớp bán kính 16dp của bg_pvp_setting_card
                 cardElevation = 0f
+                strokeWidth   = 0
+                setCardBackgroundColor(Color.TRANSPARENT)
+                setBackgroundResource(R.drawable.bg_pvp_setting_card)
 
                 addView(TextView(this@PvpQuizActivity).apply {
                     layoutParams = LinearLayout.LayoutParams(
@@ -222,6 +228,7 @@ class PvpQuizActivity : AppCompatActivity() {
                     text = option.optionText
                     textSize = 16f
                     setTextColor(colorTextDark)
+                    applyFont(this)
                     setPadding(dp(20f), dp(22f), dp(20f), dp(22f))
                     gravity = Gravity.CENTER_VERTICAL
                     minimumHeight = dp(70f)
@@ -232,10 +239,8 @@ class PvpQuizActivity : AppCompatActivity() {
                     isAnswered = true
                     viewModel.saveAnswer(question.id, option.id)
 
-                    // Highlight đáp án đã chọn
-                    strokeWidth = dp(2f)
-                    strokeColor = colorOrangeStroke
-                    setCardBackgroundColor(colorOrangeLight)
+                    // Highlight đáp án đã chọn bằng background cam thay vì chỉ đổi viền
+                    setBackgroundResource(R.drawable.bg_pvp_setting_card_selected)
 
                     // Gửi progress lên server
                     sendProgressAndAdvance(wrapper, selectedOptionId = option.id)
@@ -344,38 +349,50 @@ class PvpQuizActivity : AppCompatActivity() {
         containerAnswers.removeAllViews()
         val question = wrapper.question
 
-        // Các cặp đã ghép
         matchedPairs.forEach { (leftId, rightId) ->
             val lt = question.leftOptions?.find  { it.id == leftId  }?.optionText ?: ""
             val rt = question.rightOptions?.find { it.id == rightId }?.optionText ?: ""
 
-            val row = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
+            val matchedCard = MaterialCardView(this).apply {
                 layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, dp(52f)
-                ).apply { setMargins(0, 0, 0, dp(8f)) }
-                setBackgroundColor(colorGreenLight)
-                setPadding(dp(12f), 0, dp(12f), 0)
-                gravity = Gravity.CENTER_VERTICAL
-                weightSum = 2.2f
-            }
-            row.addView(TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-                text = lt; gravity = Gravity.CENTER; textSize = 14f
-                setTextColor(Color.parseColor("#2E7D32")); setTypeface(null, Typeface.BOLD)
-            })
-            row.addView(View(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, dp(2f), 0.2f).apply {
-                    marginStart = dp(8f); marginEnd = dp(8f)
+                    ViewGroup.LayoutParams.MATCH_PARENT, itemHeight
+                ).apply { setMargins(0, 0, 0, dp(10f)) }
+                radius        = dp(16f).toFloat()
+                cardElevation = 0f
+                strokeWidth   = 0
+                setCardBackgroundColor(Color.TRANSPARENT)
+                setBackgroundResource(R.drawable.bg_pvp_setting_card_selected)
+
+                val row = LinearLayout(this@PvpQuizActivity).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    setPadding(dp(16f), 0, dp(16f), 0)
+                    gravity = Gravity.CENTER_VERTICAL
+                    layoutParams = android.widget.FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    weightSum = 2.2f
                 }
-                setBackgroundColor(Color.parseColor("#4CAF50"))
-            })
-            row.addView(TextView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-                text = rt; gravity = Gravity.CENTER; textSize = 14f
-                setTextColor(Color.parseColor("#2E7D32")); setTypeface(null, Typeface.BOLD)
-            })
-            containerAnswers.addView(row)
+                row.addView(TextView(this@PvpQuizActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                    text = lt; gravity = Gravity.CENTER; textSize = 14f
+                    setTextColor(colorOrange)
+                    applyFont(this, R.font.nunito_black)
+                })
+                row.addView(View(this@PvpQuizActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, dp(2.5f), 0.2f).apply {
+                        marginStart = dp(10f); marginEnd = dp(10f)
+                    }
+                    setBackgroundColor(colorOrange)
+                })
+                row.addView(TextView(this@PvpQuizActivity).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+                    text = rt; gravity = Gravity.CENTER; textSize = 14f
+                    setTextColor(colorOrange)
+                    applyFont(this, R.font.nunito_black)
+                })
+                addView(row)
+            }
+            containerAnswers.addView(matchedCard)
         }
 
         // Còn lại chưa ghép
@@ -452,11 +469,14 @@ class PvpQuizActivity : AppCompatActivity() {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, height
             ).apply { setMargins(0, 0, 0, dp(10f)) }
-            radius        = dp(12f).toFloat()
-            strokeWidth   = dp(if (isSelected) 2f else 1f)
-            strokeColor   = if (isSelected) colorOrangeStroke else colorGrayStroke
-            setCardBackgroundColor(if (isSelected) colorOrangeLight else Color.WHITE)
+            radius        = dp(16f).toFloat() // khớp bán kính 16dp của bg_pvp_setting_card
             cardElevation = 0f
+            strokeWidth   = 0
+            setCardBackgroundColor(Color.TRANSPARENT)
+            setBackgroundResource(
+                if (isSelected) R.drawable.bg_pvp_setting_card_selected
+                else R.drawable.bg_pvp_setting_card
+            )
 
             addView(TextView(this@PvpQuizActivity).apply {
                 layoutParams = android.widget.FrameLayout.LayoutParams(
@@ -467,7 +487,7 @@ class PvpQuizActivity : AppCompatActivity() {
                 gravity  = Gravity.CENTER
                 textSize = 14f
                 setTextColor(if (isSelected) colorOrange else colorTextDark)
-                if (isSelected) setTypeface(null, Typeface.BOLD)
+                applyFont(this, if (isSelected) R.font.nunito_black else R.font.nunito_bold)
             })
         }
     }

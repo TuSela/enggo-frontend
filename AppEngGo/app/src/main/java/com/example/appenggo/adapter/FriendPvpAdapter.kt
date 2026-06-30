@@ -61,6 +61,12 @@ class FriendPvpAdapter(
             holder.btnInvite.text = "Đã mời"
             holder.btnInvite.isEnabled = false
             holder.btnInvite.alpha = 0.5f
+        } else if (!friend.online) {
+            // Bạn đang offline → không cho mời, tránh tạo match "treo"
+            // vì backend không có cơ chế timeout cho luồng mời trực tiếp này.
+            holder.btnInvite.text = "Offline"
+            holder.btnInvite.isEnabled = false
+            holder.btnInvite.alpha = 0.5f
         } else {
             holder.btnInvite.text = "MỜI"
             holder.btnInvite.isEnabled = true
@@ -91,5 +97,13 @@ class FriendPvpAdapter(
             items[index] = current.copy(online = isOnline)
             notifyItemChanged(index)
         }
+    }
+
+    // Mở lại nút mời khi: request bị backend từ chối (vd bạn vừa offline),
+    // hoặc khi nhận PVP_DECLINED từ đúng người đó.
+    fun resetInviteState(userId: Int) {
+        invitedIds.remove(userId)
+        val index = items.indexOfFirst { it.userId == userId }
+        if (index != -1) notifyItemChanged(index)
     }
 }

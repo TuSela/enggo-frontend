@@ -363,7 +363,7 @@
                         android:id="@+id/iv_my_badge_rank"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/badges1"
+                        android:src="@drawable/badges3"
                         android:layout_marginEnd="12dp" />
 
                     <LinearLayout
