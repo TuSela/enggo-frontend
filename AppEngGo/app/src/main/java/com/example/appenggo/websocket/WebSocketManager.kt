@@ -17,7 +17,7 @@ import ua.naiksoftware.stomp.dto.LifecycleEvent
 object WebSocketManager {
 
     private const val TAG = "WebSocketManager"
-    private const val WS_URL = "ws://10.0.2.2:8080/api/ws/websocket"
+    private const val WS_URL = "ws://13.158.23.199:8080/api/ws/websocket"
 
     var stompClient: StompClient? = null
     private val disposables = CompositeDisposable()
